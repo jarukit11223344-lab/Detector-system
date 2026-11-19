@@ -6935,10 +6935,14 @@ function computeCandleConfirmation(dir,taData){
   // แท่งท้ายอาเรย์คือแท่งที่ปิดสมบูรณ์แล้วล่าสุด — fetchCandles()/fetchCandlesM15() ตัดแท่งกำลังก่อตัวทิ้งแล้ว
   // ด้วย usableBarCount() (ดูคอมเมนต์ที่ fetchCandles()) เดิม comment นี้เขียนไว้เป็นสมมติฐานเฉยๆ ไม่เคยมีโค้ดบังคับ
   // จริง เป็นสาเหตุที่แท้จริงของ "high=low" ที่โผล่ซ้ำๆ (แท่งที่เพิ่งเริ่มมีแค่ tick เดียว) — แก้แล้วที่ต้นทาง
-  const o=opens[n-1],h=highs[n-1],l=lows[n-1],c=closes[n-1];
-  const po=opens[n-2],pc=closes[n-2];
+  // v20.28 — แท่งที่ high=low คือข้อมูลเพี้ยน (แท่งทองจริงที่ปิดแล้วต้องมี range) เดิมบล็อกสัญญาณทันที → ข้ามย้อนไปได้สูงสุด 2 แท่งเพื่อหาแท่งที่ข้อมูลสมบูรณ์ล่าสุด
+  // (ตัวด่านยังเข้มเท่าเดิม ต้อง Pin Bar/Engulfing บนแท่งนั้น) ถ้า 3 แท่งท้ายเสียหมดค่อยบล็อก — ตรงกับฝั่ง cron
+  let k=n-1;
+  while(k>=1&&k>n-3&&!(highs[k]-lows[k]>0))k--;
+  const o=opens[k],h=highs[k],l=lows[k],c=closes[k];
+  const po=opens[k-1],pc=closes[k-1];
   const body=Math.abs(c-o),range=h-l;
-  if(range<=0)return{confirmed:false,pattern:null,detail:'ข้อมูลแท่งล่าสุดไม่สมบูรณ์ (high=low)'};
+  if(!(range>0)||k<1)return{confirmed:false,pattern:null,detail:'ข้อมูลแท่งล่าสุดไม่สมบูรณ์ (high=low)'};
   const upperWick=h-Math.max(o,c),lowerWick=Math.min(o,c)-l;
   let bullPin=false,bearPin=false,bullEngulf=false,bearEngulf=false;
   // Pin Bar: body เล็ก (<40% ของ range ทั้งแท่ง) + ไส้ฝั่งหนึ่งยาวอย่างน้อย 2 เท่าของ body และยาวกว่าไส้อีกฝั่ง
@@ -7398,7 +7402,7 @@ async function fetchCandles(){
         // "high=low" (หรือค่าเพี้ยนอื่นๆ) ที่เจอซ้ำๆ ใน Entry Confirmation Candle — แก้ให้ตรงกับ fetchBacktestCandles()
         // ที่ทำถูกอยู่แล้ว (เช็ค valid ของทั้ง 4 field ที่ index เดียวกันก่อนค่อยเก็บ รับประกัน array ยาวเท่ากันและ
         // ตรงแท่งเวลาเดียวกันเป๊ะ)
-        const off=sym==='GC=F'?22:0; // GC=F เป็นฟิวเจอร์ส offset นี้เป็นค่าประมาณ อาจคลาดเคลื่อนถ้าใช้เป็นตัวหลัก จึงลองสปอตจริงก่อนเสมอ
+        const off=(sym==='GC=F'&&!(r.headers.get('X-Data-Source')||'').includes('twelvedata'))?22:0; /* v20.28 — offset 22 ใช้แก้ premium ของ futures เฉพาะข้อมูลจาก Yahoo; ถ้า proxy ตกไป TwelveData (ราคา spot อยู่แล้ว) ห้ามลบซ้ำ */ // GC=F เป็นฟิวเจอร์ส offset นี้เป็นค่าประมาณ อาจคลาดเคลื่อนถ้าใช้เป็นตัวหลัก จึงลองสปอตจริงก่อนเสมอ
         const hRaw=q.high||[],lRaw=q.low||[],oRaw=q.open||[];
         // ⚠️ ตัดแท่งที่ยังไม่ปิด (ดู usableBarCount ด้านบน) ก่อน align/filter null — กัน "high=low" จากแท่งกำลังก่อตัว
         const usableLen=usableBarCount(closesRaw.length,result?.timestamp,3600);
@@ -7449,7 +7453,7 @@ async function fetchCandlesM5(){
         const _uL5=usableBarCount(closesRaw.length,result?.timestamp,300); // v20.28 — ตัดแท่ง M5 ที่ยังไม่ปิด
         const closes=closesRaw.slice(0,_uL5).filter(c=>c!==null);
         if(closes.length<60)continue; // 2d ของ 5m ควรได้เป็นร้อยแท่ง พอสำหรับ EMA50 ถ้าน้อยกว่านี้แปลว่าข้อมูลไม่ครบ ข้ามไปลองตัวถัดไป
-        const off=sym==='GC=F'?22:0;
+        const off=(sym==='GC=F'&&!(r.headers.get('X-Data-Source')||'').includes('twelvedata'))?22:0; /* v20.28 — offset 22 ใช้แก้ premium ของ futures เฉพาะข้อมูลจาก Yahoo; ถ้า proxy ตกไป TwelveData (ราคา spot อยู่แล้ว) ห้ามลบซ้ำ */
         const adj=closes.map(c=>c-off);
         return{closes:adj};
       }catch(e){}
@@ -7485,7 +7489,7 @@ async function fetchCandlesM15(){
         if(!closesRaw)continue;
         // 🚨 FIX (v19, CRITICAL) — mirror fetchCandles() (H1) เป๊ะ ดูคอมเมนต์เต็มที่นั่น — align 4 field พร้อมกันก่อน
         // filter กันแท่งเวลาไม่ตรงกันระหว่าง close/high/low/open
-        const off=sym==='GC=F'?22:0; // ฟิวเจอร์ส offset เป็นค่าประมาณ ลองสปอตจริงก่อนเสมอ
+        const off=(sym==='GC=F'&&!(r.headers.get('X-Data-Source')||'').includes('twelvedata'))?22:0; /* v20.28 — offset 22 ใช้แก้ premium ของ futures เฉพาะข้อมูลจาก Yahoo; ถ้า proxy ตกไป TwelveData (ราคา spot อยู่แล้ว) ห้ามลบซ้ำ */ // ฟิวเจอร์ส offset เป็นค่าประมาณ ลองสปอตจริงก่อนเสมอ
         const hRaw=q.high||[],lRaw=q.low||[],oRaw=q.open||[];
         // ⚠️ ตัดแท่งที่ยังไม่ปิด (ดู usableBarCount ที่ fetchCandles() (H1)) ก่อน align/filter null
         const usableLen=usableBarCount(closesRaw.length,result?.timestamp,900);
@@ -7534,7 +7538,7 @@ async function fetchCandlesH4(){
         // ตำแหน่ง index จาก adj/highsRaw/lowsRaw/opensRaw ตรงๆ ถ้า 4 array นี้ยาวไม่เท่ากัน (จาก null คนละตำแหน่ง)
         // การ chunk ทุก 4 แท่งจะเอาข้อมูลคนละแท่งเวลามารวมกันเป็น H4 เดียวกันโดยไม่รู้ตัว กระทบ HTF Lock/Trend Rider
         // ทั้งระบบ — align 4 field พร้อมกันก่อนเสมอ (ดูคอมเมนต์เต็มที่ fetchCandles() (H1))
-        const off=sym==='GC=F'?22:0;
+        const off=(sym==='GC=F'&&!(r.headers.get('X-Data-Source')||'').includes('twelvedata'))?22:0; /* v20.28 — offset 22 ใช้แก้ premium ของ futures เฉพาะข้อมูลจาก Yahoo; ถ้า proxy ตกไป TwelveData (ราคา spot อยู่แล้ว) ห้ามลบซ้ำ */
         const hRaw=q.high||[],lRaw=q.low||[],oRaw=q.open||[];
         // ⚠️ ตัดแท่ง 60m ที่ยังไม่ปิด (ดู usableBarCount ที่ fetchCandles() (H1)) ก่อน align/filter null —
         // สำคัญกว่า H1/M15 ด้วยซ้ำ เพราะ resample ด้านล่าง chunk ทุก 4 แท่งเป็น H4 ถ้าแท่งสุดท้ายยังไม่ปิดจะ
@@ -7610,7 +7614,7 @@ async function fetchCandlesD1(){
         const _uLD=usableBarCount(closesRaw.length,result?.timestamp,86400); // v20.28 — ตัดแท่ง D1 ของวันนี้ที่ยังไม่ปิด (เดิมทำให้ D1 bias/HTF Lock พลิกกลางวัน)
         const closes=closesRaw.slice(0,_uLD).filter(c=>c!==null);
         if(closes.length<60)continue;
-        const off=sym==='GC=F'?22:0;
+        const off=(sym==='GC=F'&&!(r.headers.get('X-Data-Source')||'').includes('twelvedata'))?22:0; /* v20.28 — offset 22 ใช้แก้ premium ของ futures เฉพาะข้อมูลจาก Yahoo; ถ้า proxy ตกไป TwelveData (ราคา spot อยู่แล้ว) ห้ามลบซ้ำ */
         const adj=closes.map(c=>c-off);
         return{closes:adj};
       }catch(e){}
