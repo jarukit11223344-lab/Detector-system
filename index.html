@@ -1904,6 +1904,7 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
   <!-- Liquidity as product-row style -->
   <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">💧 Liquidity Zones <span style="text-transform:none;letter-spacing:0;">(swing high/low จริงจาก candle H1)</span></div>
   <div id="liqList"></div>
+  <div id="liqKey"></div>
   <div class="hdiv"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
     <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;">🔔 Price Alerts</div>
@@ -3555,7 +3556,49 @@ function computeRealLiquidityZones(price){
   const supClusters=cluster(swingLows).filter(c=>c.level<price).sort((a,b)=>b.level-a.level).slice(0,3);
   return{res:resClusters,sup:supClusters};
 }
+// ═══ v20.32 — Key Levels: แนวต้าน/แนวรับ "ใกล้สุด" จากหลายแหล่ง (swing H1 · High/Low เมื่อวาน · High/Low 5 วัน · เลขกลมทุก 50) วัดระยะเป็น ATR(H1) ═══
+// แสดงข้อมูลอย่างเดียว ไม่ปรับคะแนน/เกณฑ์ — ใช้ดูว่า "เข้าไม้ตอนนี้ ชนแนวใกล้ไหม" ก่อนตัดสินใจเอง
+function keyLevelInfo(price,atr,swing,d1){
+  const cands=[];
+  if(swing){(swing.res||[]).forEach(z=>cands.push({lv:z.level,name:'Swing H1 ('+z.touches+' touches)'}));(swing.sup||[]).forEach(z=>cands.push({lv:z.level,name:'Swing H1 ('+z.touches+' touches)'}));}
+  if(d1&&d1.highs&&d1.lows&&d1.highs.length>=6&&d1.lows.length===d1.highs.length){
+    const n=d1.highs.length,H=d1.highs.slice(-5).filter(v=>v!=null),L=d1.lows.slice(-5).filter(v=>v!=null);
+    if(d1.highs[n-1]!=null)cands.push({lv:d1.highs[n-1],name:'Prev Day High'});
+    if(d1.lows[n-1]!=null)cands.push({lv:d1.lows[n-1],name:'Prev Day Low'});
+    if(H.length)cands.push({lv:Math.max(...H),name:'5-Day High'});
+    if(L.length)cands.push({lv:Math.min(...L),name:'5-Day Low'});
+  }
+  const rUp=Math.floor(price/50)*50+50,rDn=Math.ceil(price/50)*50-50;
+  cands.push({lv:rUp,name:'Round '+rUp});cands.push({lv:rDn,name:'Round '+rDn});
+  let res=null,sup=null;
+  cands.forEach(c=>{
+    if(!isFinite(c.lv))return;
+    if(c.lv>price&&(!res||c.lv<res.lv))res=c;
+    if(c.lv<price&&(!sup||c.lv>sup.lv))sup=c;
+  });
+  const wrap=c=>c?{level:c.lv,name:c.name,dist:Math.abs(c.lv-price),atrDist:atr>0?Math.abs(c.lv-price)/atr:null}:null;
+  return{res:wrap(res),sup:wrap(sup)};
+}
+function renderKeyLevels(price){
+  const el=document.getElementById('liqKey');
+  if(!el)return;
+  const atr=realTA&&realTA.atr?realTA.atr:null;
+  const k=keyLevelInfo(price,atr,computeRealLiquidityZones(price),(typeof realTA_D1!=='undefined')?realTA_D1:null);
+  const row=(c,lab,col)=>c?`<div style="display:flex;justify-content:space-between;gap:8px;font-size:10.5px;padding:3px 0;"><span style="color:${col};font-weight:700;">${lab}</span><span style="color:var(--t2);text-align:right;">${_escH(c.name)} · ${c.level.toFixed(2)} · ±${c.dist.toFixed(1)}${c.atrDist!=null?' ('+c.atrDist.toFixed(1)+' ATR)':''}</span></div>`:'';
+  let hint='';
+  if(k.res&&k.res.atrDist!=null&&k.res.atrDist<1)hint='แนวต้านใกล้สุดอยู่ห่าง <1 ATR — ฝั่ง BUY มีที่วิ่งจำกัด';
+  else if(k.sup&&k.sup.atrDist!=null&&k.sup.atrDist<1)hint='แนวรับใกล้สุดอยู่ห่าง <1 ATR — ฝั่ง SELL มีที่วิ่งจำกัด';
+  else if(k.res&&k.sup)hint='ห่างแนวใกล้สุดทั้งสองฝั่งเกิน 1 ATR';
+  el.innerHTML=(k.res||k.sup)?`<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
+    <div style="font-size:10px;color:var(--t3);margin-bottom:3px;">🎯 Key Levels · แนวใกล้สุดจากทุกแหล่ง (ATR = H1)</div>
+    ${row(k.res,'▲ ต้าน','var(--red)')}${row(k.sup,'▼ รับ','var(--green)')}
+    ${hint?`<div style="font-size:10px;color:var(--t3);margin-top:3px;">${hint}</div>`:''}</div>`:'';
+}
 function renderLiq(price){
+  _renderLiqList(price);
+  try{renderKeyLevels(price||livePrice||4300);}catch(e){} // v20.32
+}
+function _renderLiqList(price){
   price=price||livePrice||4300;
   const el=document.getElementById('liqList');
   if(!el)return;
@@ -7663,9 +7706,12 @@ async function fetchCandlesD1(){
         const _uLD=usableBarCount(closesRaw.length,result?.timestamp,86400); // v20.28 — ตัดแท่ง D1 ของวันนี้ที่ยังไม่ปิด (เดิมทำให้ D1 bias/HTF Lock พลิกกลางวัน)
         const closes=closesRaw.slice(0,_uLD).filter(c=>c!==null);
         if(closes.length<60)continue;
+        // v20.32 — เก็บ high/low รายวันคู่กับ closes (จัดแถวเดียวกัน) ไว้ทำ Key Levels (Prev Day / 5D High-Low)
+        const _hiL=[],_loL=[];
+        for(let i=0;i<_uLD;i++){if(closesRaw[i]===null)continue;const hh=q.high?.[i],ll=q.low?.[i];_hiL.push(Number.isFinite(hh)?hh:null);_loL.push(Number.isFinite(ll)?ll:null);}
         const off=(sym==='GC=F'&&!(r.headers.get('X-Data-Source')||'').includes('twelvedata'))?22:0; /* v20.28 — offset 22 ใช้แก้ premium ของ futures เฉพาะข้อมูลจาก Yahoo; ถ้า proxy ตกไป TwelveData (ราคา spot อยู่แล้ว) ห้ามลบซ้ำ */
         const adj=closes.map(c=>c-off);
-        return{closes:adj};
+        return{closes:adj,highs:_hiL.map(v=>v==null?null:v-off),lows:_loL.map(v=>v==null?null:v-off)};
       }catch(e){}
     }
     return null;
@@ -9158,7 +9204,7 @@ function volRegimeInfo(closes,highs,lows,vix){
   if(ser.length<30)return null;
   const win=ser.slice(-240),cur=win[win.length-1];
   const pct=Math.round(win.filter(v=>v<=cur).length/win.length*100);
-  const label=pct>=90?'สูงมาก':pct>=75?'สูง':pct>=25?'ปกติ':'เงียบ';
+  const label=pct>=90?'Extreme':pct>=75?'High':pct>=25?'Normal':'Quiet';
   const col=pct>=90?'var(--red)':pct>=75?'var(--amber)':pct>=25?'var(--indigo)':'var(--t2)';
   return{pct,atr:cur,n:win.length,label,col};
 }
@@ -9169,7 +9215,7 @@ function renderVolRegime(){
   const m15=(typeof realTA_M15!=='undefined'&&realTA_M15&&realTA_M15.closes)?volRegimeInfo(realTA_M15.closes,realTA_M15.highs,realTA_M15.lows):null;
   if(!h1){vEl.textContent='—';vEl.style.color='var(--indigo)';if(pEl)pEl.textContent='—';if(sEl)sEl.textContent='รอข้อมูล H1';return;}
   vEl.textContent=h1.label;vEl.style.color=h1.col;
-  if(pEl){pEl.className='delta d-flat';pEl.textContent='H1 ATR '+h1.pct+'%';}
+  if(pEl){pEl.className='delta d-flat';pEl.textContent=h1.pct+'%';}
   const mult=computeVolAdjustMultiplier();
   const parts=['ATR H1 สูงกว่า '+h1.pct+'% ของ '+h1.n+' แท่งล่าสุด'];
   if(m15)parts.push('M15 '+m15.pct+'%');
@@ -9314,6 +9360,7 @@ async function refreshRealTA_D1(){
     ema20:calcEMA(closes,20),
     ema50:calcEMA(closes,50),
     lastClose:closes[closes.length-1],
+    highs:data.highs||null,lows:data.lows||null, // v20.32 — Key Levels
   };
   return realTA_D1;
 }
