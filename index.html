@@ -1553,7 +1553,7 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
   <div class="hdiv"></div>
   <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">📊 Win Rate แยกตาม Session (เวลาเปิดสัญญาณ)</div>
   <div id="shSessionStats" style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px;"></div>
-  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour ของสัญญาณ (ไม่ใช่เวลาไทย): Asian 22:00-07:00 · London 07:00-13:00 · Overlap 13:00-16:00 · New York 16:00-22:00 — ยิ่งมีสัญญาณสะสมเยอะ สถิติยิ่งน่าเชื่อถือ (ตัวเลขจากสัญญาณน้อยยังไม่ควรเชื่อทั้งหมด)</div>
+  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour ของสัญญาณ (ไม่ใช่เวลาไทย): ตามเวลา London/New York จริง (ฤดูหนาว UTC: London 08-13 · Overlap 13-16 · NY 16-22 · ฤดูร้อนเลื่อนเร็วขึ้น 1 ชม.) · ที่เหลือ = Asian — ยิ่งมีสัญญาณสะสมเยอะ สถิติยิ่งน่าเชื่อถือ (ตัวเลขจากสัญญาณน้อยยังไม่ควรเชื่อทั้งหมด)</div>
   <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">
     * นับผลจากราคาที่ชนจริงเท่านั้น (TP1/TP2/SL) · <strong style="color:var(--indigo);">ระบบตรวจสัญญาณใหม่อัตโนมัติทุก ~30 วิด้วย</strong> — ถ้าทิศทางเปลี่ยนจริง (ไม้เดิม resolve แล้ว + Confluence เห็นทิศใหม่ชัดเจน) จะถูกบันทึกเพิ่มเองโดยไม่ต้องกดปุ่ม สังเกตได้จาก tag <span style="background:rgba(99,102,241,.12);color:var(--indigo);padding:0 4px;border-radius:4px;">AUTO</span> vs <span style="background:rgba(255,255,255,.08);color:var(--t3);padding:0 4px;border-radius:4px;">MANUAL</span> ต่อรายการ · สัญญาณที่ไม่ชนอะไรภายใน 48 ชม. จะนับเป็น EXPIRED (ไม่รวมในสถิติ) · กันบันทึกซ้ำ: ถ้าห่างจากสัญญาณล่าสุดไม่ถึง 30 นาที จะไม่บันทึกเพิ่ม
   </div>
@@ -1616,7 +1616,7 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
   <div class="hdiv"></div>
   <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">📊 Win Rate แยกตาม Session (เวลาที่สัญญาณล็อก)</div>
   <div id="m15shSessionStats" style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px;"></div>
-  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour เดียวกับ Signal History ของ H1 ด้านบน: Asian 22:00-07:00 · London 07:00-13:00 · Overlap 13:00-16:00 · New York 16:00-22:00</div>
+  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour เดียวกับ Signal History ของ H1 ด้านบน: ตามเวลา London/New York จริง (ฤดูหนาว UTC: London 08-13 · Overlap 13-16 · NY 16-22 · ฤดูร้อนเลื่อนเร็วขึ้น 1 ชม.) · ที่เหลือ = Asian</div>
   <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">
     * บันทึกอัตโนมัติทุกครั้งที่การ์ด M15 Entry Signal ล็อกสัญญาณใหม่ ไม่ต้องกดปุ่มเอง (การ์ด M15 Entry Signal เองยังเป็น Display Only เหมือนเดิม — ตัวเลขบนการ์ดนั้นไม่เปลี่ยน สถิตินี้แค่บันทึกผลลัพธ์คู่ขนานไว้ต่างหาก) · นับผลจากราคาที่ชนจริงเท่านั้น (TP1/TP2/trailing stop/SL — ผ่าน anti-noise confirm 3 ครั้งเหมือนการ์ดสด) · R-multiple ใช้สูตรเดียวกับ Quick Signal (partial ที่ TP1 = ครึ่งพอร์ต, ครึ่งหลัง trail ต่อ) · สัญญาณที่ไม่ resolve ภายใน 12 ชม. จะนับเป็น EXPIRED (ไม่รวมสถิติ ถ้ายังไม่ผ่าน TP1) หรือนับเป็น partial-timeout (ถ้าผ่าน TP1 แล้วแต่ไม่ทันถึง TP2/trailing stop) — 12 ชม. สั้นกว่า 48 ชม. ของ H1 เพราะ M15 เป็น timeframe ที่เร็วกว่า 4 เท่า
   </div>
@@ -1655,7 +1655,7 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
   <div class="hdiv"></div>
   <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">📊 Win Rate แยกตาม Session (เวลาที่สัญญาณล็อก)</div>
   <div id="m15ccSessionStats" style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px;"></div>
-  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour เดียวกับ Signal History ของ H1: Asian 22:00-07:00 · London 07:00-13:00 · Overlap 13:00-16:00 · New York 16:00-22:00</div>
+  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour เดียวกับ Signal History ของ H1: ตามเวลา London/New York จริง (ฤดูหนาว UTC: London 08-13 · Overlap 13-16 · NY 16-22 · ฤดูร้อนเลื่อนเร็วขึ้น 1 ชม.) · ที่เหลือ = Asian</div>
   <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">
     * บันทึกอัตโนมัติทุกครั้งที่การ์ด M15 Confirmation ล็อกสัญญาณ resolve (TP2/BE-trailing/timeout-หลัง-TP1/SL/override-หลัง-TP1) — ไม่นับ "Pending" เพราะบันทึกเฉพาะตอน resolve แล้วเท่านั้น (ไม้ที่ยังล็อกอยู่ดูสถานะสดได้ที่การ์ด M15 Confirmation ด้านบนโดยตรง) · R-multiple ใช้สูตรเดียวกับ Quick Signal/M15 Entry Signal (partial ที่ TP1 = ครึ่งพอร์ต, ครึ่งหลัง trail ต่อ) · <strong>sync ขึ้น Cloudflare Worker แล้ว (v20.6)</strong> — เปลี่ยนเครื่อง/ล้าง browser data สถิติไม่หาย · ประวัติ append-only merge ตาม id · กด "ล้าง" จากเครื่องไหนก็ล้างทุกเครื่อง (ไม่ฟื้นคืนชีพ) · ต่างจาก M15 Signal History ด้านบนตรงที่ client เป็นคนบันทึก (การ์ดนี้ไม่มี server-side lock state) จึงต้องเปิดแอปให้ไม้ resolve ถึงจะถูกบันทึกและ sync
   </div>
@@ -2694,8 +2694,14 @@ const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturda
 function isOpen(s,h){return s.o<s.c?(h>=s.o&&h<s.c):(h>=s.o||h<s.c);}
 function prog(s,h){const d=(s.c-s.o+24)%24||1;return Math.min(100,((h-s.o+24)%24/d)*100);}
 
+function _applySessBounds(){ // v20.29 — London/NY ตามเวลาท้องถิ่นจริง (DST) · Sydney/Tokyo คงเดิม
+  const b=sessionBoundsUTC(Date.now());
+  SESS[2].o=b.lonOpen;SESS[2].c=b.lonClose;SESS[3].o=b.nyOpen;SESS[3].c=b.nyClose;
+  return b;
+}
 function tickClock(){
   const n=new Date(),h=n.getUTCHours();
+  const _b=_applySessBounds();
   const lh=n.getHours(),lm=n.getMinutes(),h12=lh%12||12,ap=lh>=12?'PM':'AM';
   document.getElementById('clockEl').textContent=`${String(h12).padStart(2,'0')}:${String(lm).padStart(2,'0')} ${ap}`;
   const lon=isOpen(SESS[2],h),ny=isOpen(SESS[3],h);
@@ -2707,7 +2713,8 @@ function tickClock(){
     const op=isOpen(se,h),pr=op?prog(se,h):0;
     return `<div class="sess-bar-row"><span class="sbn" style="color:${op?se.col:'var(--t3)'};">${se.n}</span><div class="sbb"><div class="sbf" style="width:${pr}%;background:${se.col};${op?'box-shadow:0 0 5px '+se.col+'55':''};"></div></div><span class="sbst ${op?'son':'sof'}">${op?'OPEN':'CLOSED'}</span><span style="font-family:var(--mono);font-size:9px;color:var(--t3);width:24px;text-align:right;">${Math.round(pr)}%</span></div>`;
   }).join('');
-  document.getElementById('nextWin').textContent=h<7?'London Open — 07:00 UTC':h<13?'NY Open — 13:00 UTC':h<16?'London+NY Overlap — ACTIVE 🔥':'Tokyo Open — 00:00 UTC';
+  const _p2=x=>String(x).padStart(2,'0');
+  document.getElementById('nextWin').textContent=h<_b.lonOpen?`London Open — ${_p2(_b.lonOpen)}:00 UTC`:h<_b.nyOpen?`NY Open — ${_p2(_b.nyOpen)}:00 UTC`:h<_b.lonClose?'London+NY Overlap — ACTIVE 🔥':'Tokyo Open — 00:00 UTC';
 }
 
 // ═══ TICKER ═══
@@ -4570,8 +4577,7 @@ function renderM15ConfirmSessionStats(arr){
   if(closed.length===0){el.innerHTML='<div style="font-size:10px;color:var(--t3);text-align:center;">ยังไม่มีข้อมูลพอ</div>';return;}
   const bySession={};
   closed.forEach(s=>{
-    const h=new Date(s.lockedAt).getUTCHours();
-    const sess=getSessionForUTCHour(h);
+    const sess=sessionAtMs(new Date(s.lockedAt).getTime());
     if(!bySession[sess])bySession[sess]={win:0,loss:0};
     if(s.status==='LOSS')bySession[sess].loss++;else bySession[sess].win++;
   });
@@ -5000,8 +5006,7 @@ function renderM15EntrySessionStats(arr){
   if(closed.length===0){el.innerHTML='<div style="font-size:10px;color:var(--t3);text-align:center;">ยังไม่มีข้อมูลพอ</div>';return;}
   const bySession={};
   closed.forEach(s=>{
-    const h=new Date(s.lockedAt).getUTCHours();
-    const sess=getSessionForUTCHour(h);
+    const sess=sessionAtMs(new Date(s.lockedAt).getTime());
     if(!bySession[sess])bySession[sess]={win:0,loss:0};
     if(s.status==='LOSS')bySession[sess].loss++;else bySession[sess].win++;
   });
@@ -6175,12 +6180,42 @@ function renderEquityCurve(arr){
 // ═══ SIGNAL HISTORY — WIN RATE BY SESSION ═══
 // จับกลุ่มตาม UTC hour ของเวลาที่เปิดสัญญาณ (s.time) — ใช้ขอบเขต session เดียวกับ Kill Zone & Sessions card
 // เพื่อความสอดคล้องกันทั้งแอป (London 07-13 UTC, Overlap 13-16 UTC, New York 16-22 UTC, ที่เหลือ = Asian)
-function getSessionForUTCHour(h){
-  if(h>=13&&h<16)return 'London+NY Overlap';
-  if(h>=7&&h<13)return 'London';
-  if(h>=16&&h<22)return 'New York';
+// v20.29 — ขอบเขต session ตามนาฬิกาท้องถิ่นจริงของ London (08:00–16:00) และ New York (08:00–17:00 ET) แทน UTC ตายตัว
+// เดิม London 07-13 / Overlap 13-16 / NY 16-22 UTC ถูกเฉพาะบางฤดู (ตอนนี้ฤดูหนาว London เปิด 08:00 UTC ไม่ใช่ 07:00 · ฤดูร้อน NY เปิด 12:00 UTC ไม่ใช่ 13:00)
+// ฤดูหนาว: London 08-13 · Overlap 13-16 · NY 16-22 UTC (เท่าเดิมยกเว้น London เริ่ม 08) · ฤดูร้อน: London 07-12 · Overlap 12-15 · NY 15-21 UTC
+/** @type {Record<string, any>} */
+const _SESS_FMT={};
+function _tzOffsetH(ms,tz){
+  try{
+    const f=_SESS_FMT[tz]||(_SESS_FMT[tz]=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric'}));
+    /** @type {Record<string, number>} */ const p={};f.formatToParts(new Date(ms)).forEach(x=>{if(x.type!=='literal')p[x.type]=parseInt(x.value,10);});
+    return Math.round((Date.UTC(p.year,p.month-1,p.day,p.hour%24,p.minute)-Math.floor(ms/60000)*60000)/3600000);
+  }catch(e){return null;}
+}
+/** @type {Map<number, any>} */
+const _SESS_CACHE=new Map();
+function sessionBoundsUTC(ms){
+  if(!Number.isFinite(ms))ms=Date.now();
+  const key=Math.floor(ms/3600000);
+  let b=_SESS_CACHE.get(key);
+  if(b)return b;
+  const oL=_tzOffsetH(ms,'Europe/London'),oN=_tzOffsetH(ms,'America/New_York');
+  const w=x=>((x%24)+24)%24;
+  b=(oL==null||oN==null)?{lonOpen:8,nyOpen:13,lonClose:16,nyClose:22}:{lonOpen:w(8-oL),lonClose:w(16-oL),nyOpen:w(8-oN),nyClose:w(17-oN)};
+  if(_SESS_CACHE.size>5000)_SESS_CACHE.clear();
+  _SESS_CACHE.set(key,b);
+  return b;
+}
+function sessionAtMs(ms){
+  if(!Number.isFinite(ms))ms=Date.now();
+  const b=sessionBoundsUTC(ms),h=new Date(ms).getUTCHours();
+  if(h>=b.nyOpen&&h<b.lonClose)return 'London+NY Overlap';
+  if(h>=b.lonOpen&&h<b.nyOpen)return 'London';
+  if(h>=b.lonClose&&h<b.nyClose)return 'New York';
   return 'Asian';
 }
+// ตัวเดิมเก็บไว้เป็น wrapper (ใช้ "ตอนนี้" เป็นฐานคำนวณ DST) — โค้ดที่มี timestamp ให้เรียก sessionAtMs(ms) ตรงๆ
+function getSessionForUTCHour(h){return sessionAtMs(Date.now());}
 function renderSessionStats(arr){
   const el=document.getElementById('shSessionStats');
   if(!el)return;
@@ -6193,8 +6228,7 @@ function renderSessionStats(arr){
   const bySession={};
   sessions.forEach(s=>bySession[s]={win:0,loss:0});
   closedArr.forEach(s=>{
-    const h=new Date(s.time).getUTCHours();
-    const sess=getSessionForUTCHour(h);
+    const sess=sessionAtMs(new Date(s.time).getTime());
     if(s.status==='LOSS')bySession[sess].loss++;
     else bySession[sess].win++;
   });
@@ -6257,6 +6291,7 @@ async function generateSignal(){
   const cur=livePrice;if(!cur){alert('รอราคาโหลดก่อนครับ');return;}
   btn.disabled=true;btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".3"/><path d="M21 12a9 9 0 00-9-9"/></svg> AI กำลังวิเคราะห์...';
   const n=new Date(),h=n.getUTCHours();
+  _applySessBounds(); // v20.29 — London/NY ตามเวลาท้องถิ่นจริง (DST)
   const sess=SESS.filter(s=>isOpen(s,h)).map(s=>s.n).join(', ')||'Off-hours';
   const hi=livePriceData.dayHigh?.toFixed(2)||'N/A',lo=livePriceData.dayLow?.toFixed(2)||'N/A',chg=livePriceData.chgPct!=null?livePriceData.chgPct.toFixed(2)+'%':'N/A (ไม่มีข้อมูลรายวัน)'; // v20.25 — เดิม null ถูกแปลงเป็น 0.00 แล้วส่งให้ AI เหมือนเป็นค่าจริง
   const dxyTxt=macroData.dxy?`${macroData.dxy.cur.toFixed(2)} (${macroData.dxy.chg>=0?'+':''}${macroData.dxy.chg.toFixed(2)}%)`:'N/A (ไม่มีข้อมูลสด)' /* v20.25 — เดิมส่งเลขเดา 103.42 ให้ AI (ตลาดจริงต่างไปแล้ว) */;
@@ -6766,16 +6801,16 @@ function renderJournal(){
     return `<div class="jt-row">
       <div class="jt-top">
         <div style="display:flex;align-items:center;gap:6px;">
-          <span class="jt-dir ${t.dir==='BUY'?'jt-buy':'jt-sell'}">${t.dir}</span>
-          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);">${t.lot} lot</span>
+          <span class="jt-dir ${t.dir==='BUY'?'jt-buy':'jt-sell'}">${_escH(t.dir)}</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);">${_escH(t.lot)} lot</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="jt-pnl" style="color:${pnlCol};">${pnlStr}</span>
-          <button class="jt-del" onclick="editTrade(${t.id})" title="แก้ lot / ราคาเข้า-ออกจริง">✎</button>
-          <button class="jt-del" onclick="deleteTrade(${t.id})">✕</button>
+          <button class="jt-del" onclick="editTrade(${Number(t.id)})" title="แก้ lot / ราคาเข้า-ออกจริง">✎</button>
+          <button class="jt-del" onclick="deleteTrade(${Number(t.id)})">✕</button>
         </div>
       </div>
-      <div class="jt-info">Entry: ${t.entry}${t.exit?` → Exit: ${t.exit}`:' → Open'} · ${t.date}${t.note?` · ${t.note}`:''}${journalSlipAdverse(t)!=null?` · slip ${journalSlipAdverse(t)>0?'+':''}${journalSlipAdverse(t).toFixed(2)} จุดราคา (บวก = เสียเปรียบ)`:''}</div>
+      <div class="jt-info">Entry: ${_escH(t.entry)}${t.exit?` → Exit: ${_escH(t.exit)}`:' → Open'} · ${_escH(t.date)}${t.note?` · ${_escH(t.note)}`:''}${journalSlipAdverse(t)!=null?` · slip ${journalSlipAdverse(t)>0?'+':''}${journalSlipAdverse(t).toFixed(2)} จุดราคา (บวก = เสียเปรียบ)`:''}</div>
     </div>`;
   }).join('');
 }
@@ -7213,11 +7248,12 @@ function renderStructure(price){
 function updateSessionOverlap(){
   const n=new Date(),h=n.getUTCHours(),m=n.getUTCMinutes();
   const nowPct=((h*60+m)/(24*60))*100;
+  const _sbo=sessionBoundsUTC(Date.now()); // v20.29 — London/NY ตามเวลาท้องถิ่นจริง (DST)
   const sessColors=[
     {n:'Sydney',  o:21,c:6,  col:'#a78bfa'},
     {n:'Tokyo',   o:0, c:9,  col:'#fbbf24'},
-    {n:'London',  o:7, c:16, col:'#6366f1'},
-    {n:'New York',o:13,c:22, col:'#22d3a0'},
+    {n:'London',  o:_sbo.lonOpen, c:_sbo.lonClose, col:'#6366f1'},
+    {n:'New York',o:_sbo.nyOpen,c:_sbo.nyClose, col:'#22d3a0'},
   ];
   const tl=document.getElementById('sessTimeline');
   if(tl){
@@ -8014,11 +8050,13 @@ function _btSilverCorrScore(isBull,silverChg,goldChg){
   return 0.5;
 }
 // item 2: session score ตาม UTC hour — ค่าเดียวกับที่ evalConfluence() ใช้จริงในแอป (ดู session block ใน evalConfluence)
-function _btSessionScore(utcHour){
-  if(utcHour>=13&&utcHour<16)return 2;    // London+NY Overlap
-  if(utcHour>=7&&utcHour<13)return 1.5;   // London
-  if(utcHour>=16&&utcHour<22)return 1.5;  // New York
-  return 0;                                // Asian/off-hours
+function _btSessionScore(utcHour,ms){
+  // v20.29 — ขอบเขตตาม London/New York จริงของ "วันที่ของแท่งนั้น" (DST) · ไม่มี timestamp → ใช้ UTC hour กับขอบฤดูหนาว
+  const b=Number.isFinite(ms)?sessionBoundsUTC(ms):{lonOpen:8,nyOpen:13,lonClose:16,nyClose:22};
+  if(utcHour>=b.nyOpen&&utcHour<b.lonClose)return 2;    // London+NY Overlap
+  if(utcHour>=b.lonOpen&&utcHour<b.nyOpen)return 1.5;   // London
+  if(utcHour>=b.lonClose&&utcHour<b.nyClose)return 1.5; // New York
+  return 0;                                              // Asian/off-hours
 }
 // ═══ item 3 — พอร์ต SMC (Sweep/FVG/Order Block) ให้รันเป็น series ย้อนหลังได้ใน backtest ═══
 // ของเดิม (detectSweep/detectOrderBlocks/detectFVG) ผูกกับ DOM + global state (sweepLog ฯลฯ) ทั้งหมด เอามาเรียก
@@ -8219,7 +8257,7 @@ function simulateBacktestTrades(c,h,l,t,series,threshold,htf,smc,tf,v,weights,ad
     }
     const barTime=t&&t[i]?t[i]:null;
     const utcHour=barTime?new Date(barTime*1000).getUTCHours():12; // ถ้าไม่มี timestamp fallback เป็นเที่ยง UTC (London session กลางๆ) กันพังทั้งชุด
-    const sessionScore=_btSessionScore(utcHour);
+    const sessionScore=_btSessionScore(utcHour,barTime?barTime*1000:NaN);
 
     // item 3: หา D1/H4 bias และ DXY/Real Yield/VIX/Silver chg ณ เวลาของแท่งนี้ (เดินตัวชี้ไปข้างหน้าเท่านั้น)
     let d1Dir=null,h4Dir=null,dxyChg=null,yChg=null,goldChg=null,vixChg=null,silverChg=null;
@@ -8414,7 +8452,7 @@ async function runHistoricalBacktest(){
     const trades=simulateBacktestTrades(c,h,l,t,series,QS_THRESHOLD,htf,smcSeries,'H1',v); // ใช้เกณฑ์เดียวกับ Quick Signal จริงตอนนี้ (ปรับได้จากช่อง ⚙️ ด้านบน)
     renderBacktestResult(trades,c.length,!!htf);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔁 Run Backtest (3 เดือนย้อนหลัง)';}
 }
@@ -8533,7 +8571,7 @@ async function runAutoTuneWeights(){
     window._atwLastResult={improved:best.train.avgR>baselineTrain.avgR,diverges,holdoutWorseThanBaseline}; // (v14) เก็บไว้ให้ maybeAutoRunWeeklyTune() อ่านตัดสินใจ auto-apply
     renderAutoTuneResult({baseline,baselineTrain,baselineHoldout,best:best.weights,bestTrain:best.train,bestHoldout,diverges,holdoutWorseThanBaseline,improved:best.train.avgR>baselineTrain.avgR});
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🎛️ Run Auto-tune (40 ชุด)';}
 }
@@ -8626,7 +8664,7 @@ async function runM15Backtest(){
     const trades=simulateBacktestTrades(c,h,l,t,series,M15_THRESHOLD,htf,smcSeries,'M15',v); // item 2 continuation — ใช้ M15_THRESHOLD ที่ปรับได้จริงแล้ว (เดิมเป็น local const แยกต่างหาก ไม่ sync กับที่การ์ด M15 Entry ใช้จริง)
     renderM15BacktestResult(trades,c.length,!!htf);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔁 Run M15 Backtest (~60 วันย้อนหลัง)';}
 }
@@ -8685,7 +8723,7 @@ async function runThresholdSweep(){
     window._lastSweepRows=rows;
     renderThresholdSweepResult(rows);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔬 Run Threshold Sweep';}
 }
@@ -8836,7 +8874,7 @@ async function runM15ThresholdSweep(){
     saveM15SweepHistory(rows); // ═══ item — บันทึกผลรอบนี้เข้าประวัติ ก่อน render กันพลาด (ให้รอบนี้นับรวมในสถิติของตัวเองด้วย) ═══
     renderM15ThresholdSweepResult(rows);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔬 Run M15 Threshold Sweep';}
 }
@@ -8946,7 +8984,7 @@ async function runM15AdxSweep(){
     window._lastSweepM15AdxRows=rows;
     renderM15AdxSweepResult(rows);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔬 Run M15 ADX Sweep';}
 }
@@ -9502,7 +9540,7 @@ function diagGroupBy(trades,keyFn,order){
   else out.sort((a,b)=>b.stats.n-a.stats.n);
   return out;
 }
-function diagSession(ts){return ts==null?'ไม่ทราบ':getSessionForUTCHour(new Date(ts).getUTCHours());}
+function diagSession(ts){return ts==null?'ไม่ทราบ':sessionAtMs(new Date(ts).getTime());}
 // ปัจจัยที่มีอยู่/ไม่มีอยู่ตอนเปิดไม้ — Welch z แบบประมาณ · แสดงเฉพาะปัจจัยที่ทั้งสองฝั่งมี ≥5 ไม้
 function diagFactorTable(trades){
   const withF=trades.filter(x=>x.factors);
@@ -9892,7 +9930,7 @@ function sysPriceBasisRowInfo(pb,nowMs){
   const ageMin=pb.at?Math.round(((nowMs||Date.now())-new Date(pb.at).getTime())/60000):null;
   const prem=pb.premium!=null?pb.premium:pb.futures-pb.spot, abs=Math.abs(prem);
   const dirTxt=prem>=0?'ฟิวเจอร์สแพงกว่า spot':'ฟิวเจอร์สถูกกว่า spot';
-  const diagTxt=pb.spotDiag&&Object.keys(pb.spotDiag).length?'<br>แหล่ง spot ที่ล้มรอบนั้น: '+Object.entries(pb.spotDiag).map(([k,v])=>`${k} → ${v}`).join(' · '):''; // v20.24 — บอกสาเหตุ (HTTP/timeout/รูปแบบข้อมูลเปลี่ยน)
+  const diagTxt=pb.spotDiag&&Object.keys(pb.spotDiag).length?'<br>แหล่ง spot ที่ล้มรอบนั้น: '+Object.entries(pb.spotDiag).map(([k,v])=>`${_escH(k)} → ${_escH(v)}`).join(' · '):''; // v20.24 — บอกสาเหตุ (HTTP/timeout/รูปแบบข้อมูลเปลี่ยน)
   const txt=`GC=F ${pb.futures.toFixed(2)} · spot ${pb.spot.toFixed(2)} · ส่วนต่าง ${prem>=0?'+':''}${prem.toFixed(1)} จุด (${dirTxt})${pb.spotSources>=2?` · spot median ${pb.spotSources} แหล่ง`:''}${ageMin!=null?` · ${ageMin} นาทีที่แล้ว`:''}${diagTxt}`;
   if(pb.mixed)return {ok:'warn',detail:txt+'<br>รอบนั้นมีข้อมูลบางส่วนมาจาก TwelveData (spot) ตัวเลขส่วนต่างจึงไม่แน่นอน',extra:'ใช้แหล่งสำรอง'};
   if(pb.spotSources===1)return {ok:'warn',detail:txt+'<br>ราคา spot รอบนั้นมาจากแหล่งเดียว (อีก 2 แหล่งไม่ตอบ) — ระบบข้ามการล็อก/ตัดสินไม้ M15 และ TP/SL ของ H1 ในรอบนั้นเพื่อกันราคาเพี้ยน ถ้าเห็นข้อความนี้ติดกันหลายรอบ แปลว่า metals.live หรือ goldprice.org ล่ม',extra:'spot แหล่งเดียว'};
@@ -9905,13 +9943,13 @@ function sysSpotCandlesRowInfo(sc){
   if(!sc)return null;
   if(sc.ok){
     const t=sc.lastT?new Date(sc.lastT).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'';
-    return {ok:true,detail:`แท่ง M15 ของ spot XAU/USD พร้อม (${sc.src==='twelvedata'?'TwelveData ผ่าน proxy':'Yahoo'} · ${sc.n} แท่ง${t?` · ล่าสุด ${t}`:''})<br>ตัดสิน TP/SL แบบ "แตะระดับ" (high/low ของแท่ง · SL ก่อนถ้าแท่งเดียวแตะทั้งสองฝั่ง) ไม่พึ่งราคา spot แหล่งเดียวอีก`,extra:'แตะระดับ'};
+    return {ok:true,detail:`แท่ง M15 ของ spot XAU/USD พร้อม (${sc.src==='twelvedata'?'TwelveData ผ่าน proxy':'Yahoo'} · ${_escH(sc.n)} แท่ง${t?` · ล่าสุด ${t}`:''})<br>ตัดสิน TP/SL แบบ "แตะระดับ" (high/low ของแท่ง · SL ก่อนถ้าแท่งเดียวแตะทั้งสองฝั่ง) ไม่พึ่งราคา spot แหล่งเดียวอีก`,extra:'แตะระดับ'};
   }
-  return {ok:'warn',detail:`ยังใช้กติกาเดิม (ต้องเห็นเงื่อนไขซ้ำ 2 รอบ H1 / 3 รอบ M15 — สถิติเอนเอียงดีกว่าจริง เพราะราคาที่แหย่ทะลุแล้วกลับไม่ถูกนับ) เพราะ: ${sc.why||'ไม่ทราบสาเหตุ'}<br>วิธีแก้: ตั้ง Secret TWELVE_DATA_API_KEY ที่ gold-data-proxy (twelvedata.com ฟรี 800 credits/วัน · ใช้ราว 1 credit ต่อรอบที่มีไม้ที่ต้องตัดสิน)`,extra:'กติกาเดิม'};
+  return {ok:'warn',detail:`ยังใช้กติกาเดิม (ต้องเห็นเงื่อนไขซ้ำ 2 รอบ H1 / 3 รอบ M15 — สถิติเอนเอียงดีกว่าจริง เพราะราคาที่แหย่ทะลุแล้วกลับไม่ถูกนับ) เพราะ: ${_escH(sc.why||'ไม่ทราบสาเหตุ')}<br>วิธีแก้: ตั้ง Secret TWELVE_DATA_API_KEY ที่ gold-data-proxy (twelvedata.com ฟรี 800 credits/วัน · ใช้ราว 1 credit ต่อรอบที่มีไม้ที่ต้องตัดสิน)`,extra:'กติกาเดิม'};
 }
 function sysDataSourceRowInfo(ds){
   if(!ds)return null;
-  const y=ds.yahoo||0,p=ds.proxy||0,td=ds.twelvedata||0,f=ds.failed||0;
+  const y=Number(ds.yahoo)||0,p=Number(ds.proxy)||0,td=Number(ds.twelvedata)||0,f=Number(ds.failed)||0; // v20.30 — บังคับเป็นตัวเลข (ข้อมูลมาจาก worker)
   if(y+p+td+f===0)return null; // รอบนั้นไม่ได้ดึงข้อมูล (ตลาดปิด/ข้ามรอบ) — ไม่โชว์เลขศูนย์ที่ชวนสับสน
   const txt=`รอบล่าสุด: Yahoo ตรง ${y} · ผ่าน proxy ${p} · TwelveData ${td} · ล้มเหลว ${f}`;
   if(f>0)return {ok:false,detail:txt+'<br>ดึงข้อมูลบางส่วนไม่ได้ — คะแนนบางตัวอาจเป็นกลางในรอบนั้น',extra:'⚠️ มีข้อมูลขาด'};
@@ -9954,10 +9992,10 @@ async function checkSystemStatus(){
     const d=await r.json();
     if(d.lastRunStatus){
       const mins=d.minutesSinceLastRun;
-      const detail=`รันล่าสุด ${mins!=null?mins+' นาทีที่แล้ว':'ไม่ทราบ'} · ${d.lastRunStatus.sent?`ส่งสัญญาณ ${d.lastRunStatus.dir}`:d.lastRunStatus.skipped?'ไม่ส่ง (ปกติ): '+d.lastRunStatus.reason:'-'}`;
+      const detail=`รันล่าสุด ${mins!=null?mins+' นาทีที่แล้ว':'ไม่ทราบ'} · ${d.lastRunStatus.sent?`ส่งสัญญาณ ${_escH(d.lastRunStatus.dir)}`:d.lastRunStatus.skipped?'ไม่ส่ง (ปกติ): '+_escH(d.lastRunStatus.reason):'-'}`;
       // v20.12 — โควต้า KV write วันนี้ (นับเฉพาะ cron; แอปเขียนเพิ่มได้อีกส่วนหนึ่ง) เตือนเมื่อใกล้เพดานฟรี 1,000/วัน
       const kw=d.kvWritesToday;
-      const kvTxt=kw?`<br>KV write วันนี้ (cron) ~${kw.count}/${kw.limit} (${kw.pct}%)${kw.pct>=70?' ⚠️ ใกล้เพดานฟรี':''}`:'';
+      const kvTxt=kw?`<br>KV write วันนี้ (cron) ~${_escH(kw.count)}/${_escH(kw.limit)} (${_escH(kw.pct)}%)${kw.pct>=70?' ⚠️ ใกล้เพดานฟรี':''}`:'';
       cronHtml=statusRow('Telegram Background Worker', d.healthy, detail+kvTxt, d.healthy?'ทำงานปกติ':'⚠️ อาจมีปัญหา');
       const dsi=sysDataSourceRowInfo(d.lastRunStatus.dataSources); // v20.19
       if(dsi)dsHtml=statusRow('แหล่งข้อมูลราคา (cron)',dsi.ok,dsi.detail,dsi.extra);
@@ -9977,8 +10015,8 @@ async function checkSystemStatus(){
       const tgOk=d.lastTelegramSend.success;
       const streak=d.telegramFailStreak||0;
       const detail=tgOk
-        ?`ส่งล่าสุดสำเร็จ${d.lastTelegramSend.note?' ('+d.lastTelegramSend.note+')':''}`
-        :`ส่งล่าสุดล้มเหลว: ${d.lastTelegramSend.note||'ไม่ทราบสาเหตุ'}${streak>1?` · ล้มเหลวติดกัน ${streak} ครั้ง`:''}`;
+        ?`ส่งล่าสุดสำเร็จ${d.lastTelegramSend.note?' ('+_escH(d.lastTelegramSend.note)+')':''}`
+        :`ส่งล่าสุดล้มเหลว: ${_escH(d.lastTelegramSend.note||'ไม่ทราบสาเหตุ')}${streak>1?` · ล้มเหลวติดกัน ${_escH(streak)} ครั้ง`:''}`;
       tgDeliveryHtml=statusRow('Telegram Delivery',tgOk,detail,tgOk?undefined:'⚠️ ข้อความอาจไม่ถึงมือถือ');
     }else{
       tgDeliveryHtml=statusRow('Telegram Delivery',null,'ยังไม่เคยมีการส่งข้อความ หรือ KV ยังไม่มีข้อมูล');
@@ -9998,10 +10036,10 @@ async function checkSystemStatus(){
     const streak=d.crumb_fail_streak;
     const rlHits=d.rate_limit_hits_24h;
     const metricsTxt=[
-      (streak!=null&&streak>0)?`⚠️ crumb ล้มเหลวติดกัน ${streak} ครั้ง`:null,
-      (rlHits!=null&&rlHits>0)?`โดน rate-limit ${rlHits} ครั้ง/24ชม.`:null,
+      (streak!=null&&streak>0)?`⚠️ crumb ล้มเหลวติดกัน ${_escH(streak)} ครั้ง`:null,
+      (rlHits!=null&&rlHits>0)?`โดน rate-limit ${_escH(rlHits)} ครั้ง/24ชม.`:null,
     ].filter(Boolean).join(' · ');
-    const baseDetail=d.healthy?'เชื่อมต่อ Yahoo Finance ได้ปกติ (cookie+crumb ใช้งานได้)':`มีปัญหา: ${d.error||'ไม่ทราบสาเหตุ'} — แอปจะ fallback ไปใช้ public proxy อัตโนมัติ ไม่กระทบการทำงาน`;
+    const baseDetail=d.healthy?'เชื่อมต่อ Yahoo Finance ได้ปกติ (cookie+crumb ใช้งานได้)':`มีปัญหา: ${_escH(d.error||'ไม่ทราบสาเหตุ')} — แอปจะ fallback ไปใช้ public proxy อัตโนมัติ ไม่กระทบการทำงาน`;
     proxyHtml=statusRow('Data Proxy Worker', d.healthy, metricsTxt?`${baseDetail}<br>${metricsTxt}`:baseDetail);
   }catch(e){
     proxyHtml=statusRow('Data Proxy Worker', false, 'เชื่อมต่อไม่ได้ — แอปจะ fallback ไปใช้ public proxy อัตโนมัติ ไม่กระทบการทำงานหลัก');
@@ -10013,7 +10051,7 @@ async function checkSystemStatus(){
     const d=await r.json();
     const rlHits=d.rate_limit_hits_24h;
     const baseDetail=d.healthy?'ANTHROPIC_API_KEY ตั้งค่าครบ พร้อมใช้ปุ่ม AI ทั้ง 3 ปุ่ม':'ANTHROPIC_API_KEY ยังไม่ได้ตั้งค่าใน Worker secret — ปุ่ม AI จะ error';
-    const metricsTxt=(rlHits!=null&&rlHits>0)?`โดน rate-limit ${rlHits} ครั้ง/24ชม. (ป้องกัน Anthropic bill พุ่งไปแล้ว)`:'';
+    const metricsTxt=(rlHits!=null&&rlHits>0)?`โดน rate-limit ${_escH(rlHits)} ครั้ง/24ชม. (ป้องกัน Anthropic bill พุ่งไปแล้ว)`:'';
     aiHtml=statusRow('AI Worker (Claude)', d.healthy, metricsTxt?`${baseDetail}<br>${metricsTxt}`:baseDetail);
   }catch(e){
     aiHtml=statusRow('AI Worker (Claude)', false, 'เชื่อมต่อไม่ได้ — เช็คว่า worker gold-dashboard-ai ยัง deploy อยู่ไหม (ปุ่ม AI 3 ปุ่มจะใช้งานไม่ได้)');
@@ -10147,7 +10185,7 @@ function calcPositionSize(){
   const lot=riskUsd/(slPips*usdPerPipPerLot);
   // ═══ SESSION-BASED LOT ADJUSTMENT — ช่วง Asian session สภาพคล่องต่ำ, spread กว้างกว่าปกติ, ราคาแกว่งหลอกง่ายกว่า
   // ลด lot ที่แนะนำลงอัตโนมัติเพื่อความปลอดภัย (ไม่ได้บังคับ แค่แนะนำ ผู้ใช้ยังปรับเองได้เสมอ) ═══
-  const curSession=getSessionForUTCHour(new Date().getUTCHours());
+  const curSession=sessionAtMs(Date.now());
   const sessionMult=curSession==='Asian'?0.6:(curSession==='London+NY Overlap'?1.0:0.85);
   const lotAdjusted=lot*sessionMult;
   const lotRounded=Math.max(0.01,Math.round(lotAdjusted*100)/100);
@@ -10195,8 +10233,9 @@ function evalConfluence(price,chg,forceDir){
   const h=new Date().getUTCHours();
   // ใช้ขอบเขต session เดียวกับที่ Signal History ใช้อยู่แล้ว (getSessionForUTCHour) ให้สอดคล้องกันทั้งแอป
   // London 07-13 UTC, Overlap (London+NY) 13-16 UTC = สภาพคล่องสูงสุด, New York 16-22 UTC, นอกนั้น = Asian/เงียบ
-  const sessionOpen=(h>=7&&h<22); // ยังเก็บไว้ให้โค้ดส่วนอื่นที่อาจอ้างถึงในอนาคต แม้ scoring ด้านล่างจะเช็ค hour range ตรงๆ แล้ว
-  const overlapActive=(h>=13&&h<16);
+  const _sb=sessionBoundsUTC(Date.now()); // v20.29 — ขอบเขต session ตามเวลา London/New York จริง (DST)
+  const sessionOpen=(h>=_sb.lonOpen&&h<_sb.nyClose); // ยังเก็บไว้ให้โค้ดส่วนอื่นที่อาจอ้างถึงในอนาคต แม้ scoring ด้านล่างจะเช็ค hour range ตรงๆ แล้ว
+  const overlapActive=(h>=_sb.nyOpen&&h<_sb.lonClose);
 
   // M15 = noisier, use looser RSI thresholds, weight session more
   // H4 = slower, stricter thresholds, weight MTF/EMA more
@@ -10262,9 +10301,9 @@ function evalConfluence(price,chg,forceDir){
   // เป้าหมาย: ช่วง London/NY ให้คะแนนสูงพอที่จะช่วยดันสัญญาณดีๆ ผ่านเกณฑ์ได้ง่ายขึ้น ส่วนช่วง Asian/นอกเวลาให้คะแนนต่ำจริงจัง
   // เพื่อกรองสัญญาณ trend-following ที่เสี่ยงโดนหลอกในช่วงสภาพคล่องต่ำออกไป (ช่วยทั้งความถี่ในเวลาที่ดี และความแม่นยำในเวลาที่ไม่ดี)
   let sessLbl,sessBaseScore,sessCol,sessDetail,sessName;
-  if(overlapActive)   {sessName='London+NY Overlap';sessBaseScore=2;  sessLbl='✅ London+NY Overlap';sessCol='var(--green)';sessDetail='ช่วง Overlap (13:00-16:00 UTC) — สภาพคล่องสูงสุดของวัน เทรนด์มีโอกาสไปต่อมากกว่าช่วงอื่น';}
-  else if(h>=7&&h<13) {sessName='London';           sessBaseScore=tf==='M15'?1.7:1.5;sessLbl='🟡 London Session';sessCol='var(--amber)';sessDetail='London เปิด (07:00-13:00 UTC) — สภาพคล่องดี';}
-  else if(h>=16&&h<22){sessName='New York';         sessBaseScore=tf==='M15'?1.7:1.5;sessLbl='🟡 New York Session';sessCol='var(--amber)';sessDetail='New York เปิด (16:00-22:00 UTC) — สภาพคล่องดี';}
+  if(overlapActive)   {sessName='London+NY Overlap';sessBaseScore=2;  sessLbl='✅ London+NY Overlap';sessCol='var(--green)';sessDetail=`ช่วง Overlap (${String(_sb.nyOpen).padStart(2,'0')}:00-${String(_sb.lonClose).padStart(2,'0')}:00 UTC) — สภาพคล่องสูงสุดของวัน เทรนด์มีโอกาสไปต่อมากกว่าช่วงอื่น`;}
+  else if(h>=_sb.lonOpen&&h<_sb.nyOpen) {sessName='London';           sessBaseScore=tf==='M15'?1.7:1.5;sessLbl='🟡 London Session';sessCol='var(--amber)';sessDetail=`London เปิด (${String(_sb.lonOpen).padStart(2,'0')}:00-${String(_sb.nyOpen).padStart(2,'0')}:00 UTC) — สภาพคล่องดี`;}
+  else if(h>=_sb.lonClose&&h<_sb.nyClose){sessName='New York';         sessBaseScore=tf==='M15'?1.7:1.5;sessLbl='🟡 New York Session';sessCol='var(--amber)';sessDetail=`New York เปิด (${String(_sb.lonClose).padStart(2,'0')}:00-${String(_sb.nyClose).padStart(2,'0')}:00 UTC) — สภาพคล่องดี`;}
   else                 {sessName='Asian';           sessBaseScore=0;  sessLbl='❌ Asian/Off-hours';sessCol='var(--red)';sessDetail='ช่วง Asian/นอกเวลาทำการหลัก — สภาพคล่องต่ำ สัญญาณ trend-following เสี่ยงโดนหลอกมากกว่าปกติ';}
 
   // ═══ ปรับคะแนนตาม Win Rate จริงของ session นี้ที่เก็บสถิติไว้แล้ว (การ์ด "Win Rate แยกตาม Session") — ใช้ข้อมูลจริง
@@ -10274,7 +10313,7 @@ function evalConfluence(price,chg,forceDir){
   let sessScore=sessBaseScore;
   try{
     const closedHist=loadSignalHistory().filter(s=>SIG_CLOSED_STATUSES.includes(s.status));
-    const inSess=closedHist.filter(s=>getSessionForUTCHour(new Date(s.time).getUTCHours())===sessName);
+    const inSess=closedHist.filter(s=>sessionAtMs(new Date(s.time).getTime())===sessName);
     const winN=inSess.filter(s=>s.status!=='LOSS').length,lossN=inSess.filter(s=>s.status==='LOSS').length,totalN=winN+lossN;
     if(totalN>=SESSION_MIN_SAMPLE){
       const wr=winN/totalN;
@@ -11552,6 +11591,12 @@ const KILL_ZONES=[
   {n:'NY Close',  open:20,close:22, col:'#f43f5e',flag:'🇺🇸'},
 ];
 function updateKillZones(){
+  { // v20.29 — Kill Zone ผูกกับเวลาเปิด London/NY จริง (DST): London เปิด+4 ชม. · NY Open เปิด+4 ชม. · NY Close = 2 ชม.ก่อนปิด
+    const _b=sessionBoundsUTC(Date.now());
+    KILL_ZONES[2].open=_b.lonOpen;KILL_ZONES[2].close=(_b.lonOpen+4)%24;
+    KILL_ZONES[3].open=_b.nyOpen;KILL_ZONES[3].close=(_b.nyOpen+4)%24;
+    KILL_ZONES[4].open=(_b.nyClose+22)%24;KILL_ZONES[4].close=_b.nyClose;
+  }
   const now=new Date();
   const h=now.getUTCHours(),m=now.getUTCMinutes();
   const nowMins=h*60+m;
@@ -12024,7 +12069,7 @@ async function runTrendRiderBacktest(){
     const trades=simulateTrendRiderTrades(h4,d1);
     renderTrendRiderBacktestResult(trades,h4.c.length);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='📐 Run Backtest (~1 ปี)';}
 }
