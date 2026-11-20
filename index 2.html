@@ -6801,16 +6801,16 @@ function renderJournal(){
     return `<div class="jt-row">
       <div class="jt-top">
         <div style="display:flex;align-items:center;gap:6px;">
-          <span class="jt-dir ${t.dir==='BUY'?'jt-buy':'jt-sell'}">${t.dir}</span>
-          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);">${t.lot} lot</span>
+          <span class="jt-dir ${t.dir==='BUY'?'jt-buy':'jt-sell'}">${_escH(t.dir)}</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--t2);">${_escH(t.lot)} lot</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="jt-pnl" style="color:${pnlCol};">${pnlStr}</span>
-          <button class="jt-del" onclick="editTrade(${t.id})" title="แก้ lot / ราคาเข้า-ออกจริง">✎</button>
-          <button class="jt-del" onclick="deleteTrade(${t.id})">✕</button>
+          <button class="jt-del" onclick="editTrade(${Number(t.id)})" title="แก้ lot / ราคาเข้า-ออกจริง">✎</button>
+          <button class="jt-del" onclick="deleteTrade(${Number(t.id)})">✕</button>
         </div>
       </div>
-      <div class="jt-info">Entry: ${t.entry}${t.exit?` → Exit: ${t.exit}`:' → Open'} · ${t.date}${t.note?` · ${t.note}`:''}${journalSlipAdverse(t)!=null?` · slip ${journalSlipAdverse(t)>0?'+':''}${journalSlipAdverse(t).toFixed(2)} จุดราคา (บวก = เสียเปรียบ)`:''}</div>
+      <div class="jt-info">Entry: ${_escH(t.entry)}${t.exit?` → Exit: ${_escH(t.exit)}`:' → Open'} · ${_escH(t.date)}${t.note?` · ${_escH(t.note)}`:''}${journalSlipAdverse(t)!=null?` · slip ${journalSlipAdverse(t)>0?'+':''}${journalSlipAdverse(t).toFixed(2)} จุดราคา (บวก = เสียเปรียบ)`:''}</div>
     </div>`;
   }).join('');
 }
@@ -8452,7 +8452,7 @@ async function runHistoricalBacktest(){
     const trades=simulateBacktestTrades(c,h,l,t,series,QS_THRESHOLD,htf,smcSeries,'H1',v); // ใช้เกณฑ์เดียวกับ Quick Signal จริงตอนนี้ (ปรับได้จากช่อง ⚙️ ด้านบน)
     renderBacktestResult(trades,c.length,!!htf);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔁 Run Backtest (3 เดือนย้อนหลัง)';}
 }
@@ -8571,7 +8571,7 @@ async function runAutoTuneWeights(){
     window._atwLastResult={improved:best.train.avgR>baselineTrain.avgR,diverges,holdoutWorseThanBaseline}; // (v14) เก็บไว้ให้ maybeAutoRunWeeklyTune() อ่านตัดสินใจ auto-apply
     renderAutoTuneResult({baseline,baselineTrain,baselineHoldout,best:best.weights,bestTrain:best.train,bestHoldout,diverges,holdoutWorseThanBaseline,improved:best.train.avgR>baselineTrain.avgR});
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🎛️ Run Auto-tune (40 ชุด)';}
 }
@@ -8664,7 +8664,7 @@ async function runM15Backtest(){
     const trades=simulateBacktestTrades(c,h,l,t,series,M15_THRESHOLD,htf,smcSeries,'M15',v); // item 2 continuation — ใช้ M15_THRESHOLD ที่ปรับได้จริงแล้ว (เดิมเป็น local const แยกต่างหาก ไม่ sync กับที่การ์ด M15 Entry ใช้จริง)
     renderM15BacktestResult(trades,c.length,!!htf);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔁 Run M15 Backtest (~60 วันย้อนหลัง)';}
 }
@@ -8723,7 +8723,7 @@ async function runThresholdSweep(){
     window._lastSweepRows=rows;
     renderThresholdSweepResult(rows);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔬 Run Threshold Sweep';}
 }
@@ -8874,7 +8874,7 @@ async function runM15ThresholdSweep(){
     saveM15SweepHistory(rows); // ═══ item — บันทึกผลรอบนี้เข้าประวัติ ก่อน render กันพลาด (ให้รอบนี้นับรวมในสถิติของตัวเองด้วย) ═══
     renderM15ThresholdSweepResult(rows);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔬 Run M15 Threshold Sweep';}
 }
@@ -8984,7 +8984,7 @@ async function runM15AdxSweep(){
     window._lastSweepM15AdxRows=rows;
     renderM15AdxSweepResult(rows);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='🔬 Run M15 ADX Sweep';}
 }
@@ -9930,7 +9930,7 @@ function sysPriceBasisRowInfo(pb,nowMs){
   const ageMin=pb.at?Math.round(((nowMs||Date.now())-new Date(pb.at).getTime())/60000):null;
   const prem=pb.premium!=null?pb.premium:pb.futures-pb.spot, abs=Math.abs(prem);
   const dirTxt=prem>=0?'ฟิวเจอร์สแพงกว่า spot':'ฟิวเจอร์สถูกกว่า spot';
-  const diagTxt=pb.spotDiag&&Object.keys(pb.spotDiag).length?'<br>แหล่ง spot ที่ล้มรอบนั้น: '+Object.entries(pb.spotDiag).map(([k,v])=>`${k} → ${v}`).join(' · '):''; // v20.24 — บอกสาเหตุ (HTTP/timeout/รูปแบบข้อมูลเปลี่ยน)
+  const diagTxt=pb.spotDiag&&Object.keys(pb.spotDiag).length?'<br>แหล่ง spot ที่ล้มรอบนั้น: '+Object.entries(pb.spotDiag).map(([k,v])=>`${_escH(k)} → ${_escH(v)}`).join(' · '):''; // v20.24 — บอกสาเหตุ (HTTP/timeout/รูปแบบข้อมูลเปลี่ยน)
   const txt=`GC=F ${pb.futures.toFixed(2)} · spot ${pb.spot.toFixed(2)} · ส่วนต่าง ${prem>=0?'+':''}${prem.toFixed(1)} จุด (${dirTxt})${pb.spotSources>=2?` · spot median ${pb.spotSources} แหล่ง`:''}${ageMin!=null?` · ${ageMin} นาทีที่แล้ว`:''}${diagTxt}`;
   if(pb.mixed)return {ok:'warn',detail:txt+'<br>รอบนั้นมีข้อมูลบางส่วนมาจาก TwelveData (spot) ตัวเลขส่วนต่างจึงไม่แน่นอน',extra:'ใช้แหล่งสำรอง'};
   if(pb.spotSources===1)return {ok:'warn',detail:txt+'<br>ราคา spot รอบนั้นมาจากแหล่งเดียว (อีก 2 แหล่งไม่ตอบ) — ระบบข้ามการล็อก/ตัดสินไม้ M15 และ TP/SL ของ H1 ในรอบนั้นเพื่อกันราคาเพี้ยน ถ้าเห็นข้อความนี้ติดกันหลายรอบ แปลว่า metals.live หรือ goldprice.org ล่ม',extra:'spot แหล่งเดียว'};
@@ -9943,13 +9943,13 @@ function sysSpotCandlesRowInfo(sc){
   if(!sc)return null;
   if(sc.ok){
     const t=sc.lastT?new Date(sc.lastT).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'';
-    return {ok:true,detail:`แท่ง M15 ของ spot XAU/USD พร้อม (${sc.src==='twelvedata'?'TwelveData ผ่าน proxy':'Yahoo'} · ${sc.n} แท่ง${t?` · ล่าสุด ${t}`:''})<br>ตัดสิน TP/SL แบบ "แตะระดับ" (high/low ของแท่ง · SL ก่อนถ้าแท่งเดียวแตะทั้งสองฝั่ง) ไม่พึ่งราคา spot แหล่งเดียวอีก`,extra:'แตะระดับ'};
+    return {ok:true,detail:`แท่ง M15 ของ spot XAU/USD พร้อม (${sc.src==='twelvedata'?'TwelveData ผ่าน proxy':'Yahoo'} · ${_escH(sc.n)} แท่ง${t?` · ล่าสุด ${t}`:''})<br>ตัดสิน TP/SL แบบ "แตะระดับ" (high/low ของแท่ง · SL ก่อนถ้าแท่งเดียวแตะทั้งสองฝั่ง) ไม่พึ่งราคา spot แหล่งเดียวอีก`,extra:'แตะระดับ'};
   }
-  return {ok:'warn',detail:`ยังใช้กติกาเดิม (ต้องเห็นเงื่อนไขซ้ำ 2 รอบ H1 / 3 รอบ M15 — สถิติเอนเอียงดีกว่าจริง เพราะราคาที่แหย่ทะลุแล้วกลับไม่ถูกนับ) เพราะ: ${sc.why||'ไม่ทราบสาเหตุ'}<br>วิธีแก้: ตั้ง Secret TWELVE_DATA_API_KEY ที่ gold-data-proxy (twelvedata.com ฟรี 800 credits/วัน · ใช้ราว 1 credit ต่อรอบที่มีไม้ที่ต้องตัดสิน)`,extra:'กติกาเดิม'};
+  return {ok:'warn',detail:`ยังใช้กติกาเดิม (ต้องเห็นเงื่อนไขซ้ำ 2 รอบ H1 / 3 รอบ M15 — สถิติเอนเอียงดีกว่าจริง เพราะราคาที่แหย่ทะลุแล้วกลับไม่ถูกนับ) เพราะ: ${_escH(sc.why||'ไม่ทราบสาเหตุ')}<br>ที่ต้องมี: Secret TWELVE_DATA_API_KEY ที่ gold-data-proxy (twelvedata.com ฟรี 800 credits/วัน · ใช้ราว 1 credit ต่อรอบที่มีไม้ที่ต้องตัดสิน) ถ้าตั้งแล้วแต่ยังเตือน ให้ดูข้อความ "ตอบกลับ" ข้างบนเพื่อหาสาเหตุ`,extra:'กติกาเดิม'};
 }
 function sysDataSourceRowInfo(ds){
   if(!ds)return null;
-  const y=ds.yahoo||0,p=ds.proxy||0,td=ds.twelvedata||0,f=ds.failed||0;
+  const y=Number(ds.yahoo)||0,p=Number(ds.proxy)||0,td=Number(ds.twelvedata)||0,f=Number(ds.failed)||0; // v20.30 — บังคับเป็นตัวเลข (ข้อมูลมาจาก worker)
   if(y+p+td+f===0)return null; // รอบนั้นไม่ได้ดึงข้อมูล (ตลาดปิด/ข้ามรอบ) — ไม่โชว์เลขศูนย์ที่ชวนสับสน
   const txt=`รอบล่าสุด: Yahoo ตรง ${y} · ผ่าน proxy ${p} · TwelveData ${td} · ล้มเหลว ${f}`;
   if(f>0)return {ok:false,detail:txt+'<br>ดึงข้อมูลบางส่วนไม่ได้ — คะแนนบางตัวอาจเป็นกลางในรอบนั้น',extra:'⚠️ มีข้อมูลขาด'};
@@ -9992,10 +9992,10 @@ async function checkSystemStatus(){
     const d=await r.json();
     if(d.lastRunStatus){
       const mins=d.minutesSinceLastRun;
-      const detail=`รันล่าสุด ${mins!=null?mins+' นาทีที่แล้ว':'ไม่ทราบ'} · ${d.lastRunStatus.sent?`ส่งสัญญาณ ${d.lastRunStatus.dir}`:d.lastRunStatus.skipped?'ไม่ส่ง (ปกติ): '+d.lastRunStatus.reason:'-'}`;
+      const detail=`รันล่าสุด ${mins!=null?mins+' นาทีที่แล้ว':'ไม่ทราบ'} · ${d.lastRunStatus.sent?`ส่งสัญญาณ ${_escH(d.lastRunStatus.dir)}`:d.lastRunStatus.skipped?'ไม่ส่ง (ปกติ): '+_escH(d.lastRunStatus.reason):'-'}`;
       // v20.12 — โควต้า KV write วันนี้ (นับเฉพาะ cron; แอปเขียนเพิ่มได้อีกส่วนหนึ่ง) เตือนเมื่อใกล้เพดานฟรี 1,000/วัน
       const kw=d.kvWritesToday;
-      const kvTxt=kw?`<br>KV write วันนี้ (cron) ~${kw.count}/${kw.limit} (${kw.pct}%)${kw.pct>=70?' ⚠️ ใกล้เพดานฟรี':''}`:'';
+      const kvTxt=kw?`<br>KV write วันนี้ (cron) ~${_escH(kw.count)}/${_escH(kw.limit)} (${_escH(kw.pct)}%)${kw.pct>=70?' ⚠️ ใกล้เพดานฟรี':''}`:'';
       cronHtml=statusRow('Telegram Background Worker', d.healthy, detail+kvTxt, d.healthy?'ทำงานปกติ':'⚠️ อาจมีปัญหา');
       const dsi=sysDataSourceRowInfo(d.lastRunStatus.dataSources); // v20.19
       if(dsi)dsHtml=statusRow('แหล่งข้อมูลราคา (cron)',dsi.ok,dsi.detail,dsi.extra);
@@ -10015,8 +10015,8 @@ async function checkSystemStatus(){
       const tgOk=d.lastTelegramSend.success;
       const streak=d.telegramFailStreak||0;
       const detail=tgOk
-        ?`ส่งล่าสุดสำเร็จ${d.lastTelegramSend.note?' ('+d.lastTelegramSend.note+')':''}`
-        :`ส่งล่าสุดล้มเหลว: ${d.lastTelegramSend.note||'ไม่ทราบสาเหตุ'}${streak>1?` · ล้มเหลวติดกัน ${streak} ครั้ง`:''}`;
+        ?`ส่งล่าสุดสำเร็จ${d.lastTelegramSend.note?' ('+_escH(d.lastTelegramSend.note)+')':''}`
+        :`ส่งล่าสุดล้มเหลว: ${_escH(d.lastTelegramSend.note||'ไม่ทราบสาเหตุ')}${streak>1?` · ล้มเหลวติดกัน ${_escH(streak)} ครั้ง`:''}`;
       tgDeliveryHtml=statusRow('Telegram Delivery',tgOk,detail,tgOk?undefined:'⚠️ ข้อความอาจไม่ถึงมือถือ');
     }else{
       tgDeliveryHtml=statusRow('Telegram Delivery',null,'ยังไม่เคยมีการส่งข้อความ หรือ KV ยังไม่มีข้อมูล');
@@ -10036,10 +10036,10 @@ async function checkSystemStatus(){
     const streak=d.crumb_fail_streak;
     const rlHits=d.rate_limit_hits_24h;
     const metricsTxt=[
-      (streak!=null&&streak>0)?`⚠️ crumb ล้มเหลวติดกัน ${streak} ครั้ง`:null,
-      (rlHits!=null&&rlHits>0)?`โดน rate-limit ${rlHits} ครั้ง/24ชม.`:null,
+      (streak!=null&&streak>0)?`⚠️ crumb ล้มเหลวติดกัน ${_escH(streak)} ครั้ง`:null,
+      (rlHits!=null&&rlHits>0)?`โดน rate-limit ${_escH(rlHits)} ครั้ง/24ชม.`:null,
     ].filter(Boolean).join(' · ');
-    const baseDetail=d.healthy?'เชื่อมต่อ Yahoo Finance ได้ปกติ (cookie+crumb ใช้งานได้)':`มีปัญหา: ${d.error||'ไม่ทราบสาเหตุ'} — แอปจะ fallback ไปใช้ public proxy อัตโนมัติ ไม่กระทบการทำงาน`;
+    const baseDetail=d.healthy?'เชื่อมต่อ Yahoo Finance ได้ปกติ (cookie+crumb ใช้งานได้)':`มีปัญหา: ${_escH(d.error||'ไม่ทราบสาเหตุ')} — แอปจะ fallback ไปใช้ public proxy อัตโนมัติ ไม่กระทบการทำงาน`;
     proxyHtml=statusRow('Data Proxy Worker', d.healthy, metricsTxt?`${baseDetail}<br>${metricsTxt}`:baseDetail);
   }catch(e){
     proxyHtml=statusRow('Data Proxy Worker', false, 'เชื่อมต่อไม่ได้ — แอปจะ fallback ไปใช้ public proxy อัตโนมัติ ไม่กระทบการทำงานหลัก');
@@ -10051,7 +10051,7 @@ async function checkSystemStatus(){
     const d=await r.json();
     const rlHits=d.rate_limit_hits_24h;
     const baseDetail=d.healthy?'ANTHROPIC_API_KEY ตั้งค่าครบ พร้อมใช้ปุ่ม AI ทั้ง 3 ปุ่ม':'ANTHROPIC_API_KEY ยังไม่ได้ตั้งค่าใน Worker secret — ปุ่ม AI จะ error';
-    const metricsTxt=(rlHits!=null&&rlHits>0)?`โดน rate-limit ${rlHits} ครั้ง/24ชม. (ป้องกัน Anthropic bill พุ่งไปแล้ว)`:'';
+    const metricsTxt=(rlHits!=null&&rlHits>0)?`โดน rate-limit ${_escH(rlHits)} ครั้ง/24ชม. (ป้องกัน Anthropic bill พุ่งไปแล้ว)`:'';
     aiHtml=statusRow('AI Worker (Claude)', d.healthy, metricsTxt?`${baseDetail}<br>${metricsTxt}`:baseDetail);
   }catch(e){
     aiHtml=statusRow('AI Worker (Claude)', false, 'เชื่อมต่อไม่ได้ — เช็คว่า worker gold-dashboard-ai ยัง deploy อยู่ไหม (ปุ่ม AI 3 ปุ่มจะใช้งานไม่ได้)');
@@ -12069,7 +12069,7 @@ async function runTrendRiderBacktest(){
     const trades=simulateTrendRiderTrades(h4,d1);
     renderTrendRiderBacktestResult(trades,h4.c.length);
   }catch(e){
-    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${String(e).slice(0,120)}</div>`;
+    if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='📐 Run Backtest (~1 ปี)';}
 }
