@@ -1208,17 +1208,6 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
     <div class="kpi-foot"><span class="delta d-flat" id="kpiVIXChg">—</span><span class="kpi-sub" id="kpiVIXSub">รอข้อมูล</span></div>
   </div>
 
-  <!-- Volatility Regime (v20.32 — ให้เห็นว่า "ตอนนี้ตลาดผันผวนผิดปกติแค่ไหน" เทียบกับช่วงล่าสุดของ H1/M15 · แสดงข้อมูลเท่านั้น ไม่ปรับคะแนน/เกณฑ์สัญญาณ) -->
-  <div class="kpi-card">
-    <div class="kpi-top">
-      <div class="kpi-label">ความผันผวน · Regime</div>
-      <div class="kpi-ico ico-indigo">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-    </div>
-    <div class="kpi-value" id="kpiRegime" style="color:var(--indigo);">—</div>
-    <div class="kpi-foot"><span class="delta d-flat" id="kpiRegimePct">—</span><span class="kpi-sub" id="kpiRegimeSub">รอข้อมูล</span></div>
-  </div>
 
   <!-- AI Confidence -->
   <div class="kpi-card">
@@ -1244,6 +1233,18 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
     <div class="kpi-value" style="color:var(--cyan);" id="kpiXAG">กำลังโหลด...</div>
     <div class="kpi-foot"><span class="delta d-up" id="kpiXAGChg">—</span><span class="kpi-sub" id="kpiXAGSub">Metal</span></div>
     <div class="kpi-spark"><canvas id="sparkAg" aria-label="ag"></canvas></div>
+  </div>
+
+  <!-- Volatility Regime (v20.32 — ให้เห็นว่า "ตอนนี้ตลาดผันผวนผิดปกติแค่ไหน" เทียบกับช่วงล่าสุดของ H1/M15 · แสดงข้อมูลเท่านั้น ไม่ปรับคะแนน/เกณฑ์สัญญาณ) -->
+  <div class="kpi-card">
+    <div class="kpi-top">
+      <div class="kpi-label">ความผันผวน · Regime</div>
+      <div class="kpi-ico ico-indigo">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+    </div>
+    <div class="kpi-value" id="kpiRegime" style="color:var(--indigo);">—</div>
+    <div class="kpi-foot"><span class="delta d-flat" id="kpiRegimePct">—</span><span class="kpi-sub" id="kpiRegimeSub">รอข้อมูล</span></div>
   </div>
 
 </div>
@@ -8804,22 +8805,26 @@ function computeSweepRowsWalkForward(data,htf,tf){
     const series=computeBacktestSeries(cc,hh,ll);
     const smcSeries=computeSmcSeriesForBacktest(cc,hh,ll,oo);
     const daysSpan=cc.length/barsPerDay;
-    return SWEEP_THRESHOLDS.map(threshold=>{
+    let _lowTrades=null; // v20.32 — ไม้ของ run เกณฑ์ต่ำสุด (5.0) ใช้แบ่งช่วงคะแนนแบบไม่ซ้อนกัน
+    const _rowsArr=SWEEP_THRESHOLDS.map(threshold=>{
       // ⚠️ FIX — เดิมไม่ส่ง adxMin เข้าไปเลย simulateBacktestTrades() จึง fallback เป็น ADX_MIN=18 hardcode
       // เสมอ ไม่ว่าจะตั้ง M15_ADX_MIN ไว้เป็นอะไรก็ตาม (จาก M15 ADX Sweep) — ทำให้ M15 Threshold Sweep กับ
       // M15 Entry Signal สด (evalM15EntrySignal อ่าน M15_ADX_MIN ตรงๆ) ใช้ ADX คนละค่ากันโดยไม่มีใครรู้ตัว —
       // ส่งเข้าไปเฉพาะตอน tf==='M15' (H1 ไม่มี ADX threshold ที่ปรับได้แยก ยังคงพฤติกรรมเดิมคือ hardcode 18)
       const trades=simulateBacktestTrades(cc,hh,ll,tt,series,threshold,htf,smcSeries,tf,vv,undefined,tf==='M15'?M15_ADX_MIN:undefined);
+      if(threshold===SWEEP_THRESHOLDS[0])_lowTrades=trades;
       if(trades.length===0)return{threshold,trades:0,winRate:null,totalR:0,signalsPerDay:0};
       const wins=trades.filter(x=>x.r>0).length;
       const winRate=Math.round((wins/trades.length)*100);
       const totalR=trades.reduce((s,x)=>s+x.r,0);
       return{threshold,trades:trades.length,winRate,totalR,signalsPerDay:trades.length/daysSpan};
     });
+    _rowsArr.bands=sweepScoreBands(_lowTrades);
+    return _rowsArr;
   }
   const trainRows=rowsFor(cS.train,hS.train,lS.train,oS.train,tsS.train,vS.train);
   const holdoutRows=rowsFor(cS.holdout,hS.holdout,lS.holdout,oS.holdout,tsS.holdout,vS.holdout);
-  return SWEEP_THRESHOLDS.map((threshold,i)=>{
+  const _out=SWEEP_THRESHOLDS.map((threshold,i)=>{
     const train=trainRows?trainRows[i]:null;
     const holdout=holdoutRows?holdoutRows[i]:null;
     const hasBoth=!!(train&&train.trades>0&&holdout&&holdout.trades>0);
@@ -8831,6 +8836,36 @@ function computeSweepRowsWalkForward(data,htf,tf){
     const diverges=winRateDiverges||rSignFlips;
     return{threshold,train,holdout,diverges,rSignFlips};
   });
+  _out.bands={train:trainRows?trainRows.bands:null,holdout:holdoutRows?holdoutRows.bands:null}; // v20.32
+  return _out;
+}
+// ═══ v20.32 — ตารางแบ่งช่วงคะแนนแบบ "ไม่ซ้อนกัน" (ต่างจากตารางเกณฑ์ที่นับสะสม: เกณฑ์ 5.0 รวมไม้ของ 5.5/6.0/... ไว้ด้วย) ═══
+// ใช้ไม้ของ run เกณฑ์ต่ำสุด (5.0) แบ่งตามคะแนนตอนเข้า → เห็นว่าคะแนนช่วงไหนให้ผลดี/แย่จริงๆ ไม่ใช่แค่ผลสะสม
+// ⚠️ ข้อจำกัด: ไม้ต่อช่วงน้อย (มักสิบกว่าไม้) ตัวเลขแกว่งมาก · เป็นผลจาก run เกณฑ์ 5.0 (ไม้ที่เปิดอยู่บังไม้ใหม่ จึงไม่เท่ากับรันเกณฑ์นั้นๆ เดี่ยวๆ) · ใช้ประกอบการตัดสินใจ ห้ามเลือกเกณฑ์จากช่วงเดียว
+const SWEEP_BAND_EDGES=[[5.0,5.5],[5.5,6.0],[6.0,6.5],[6.5,7.0],[7.0,99]];
+function sweepScoreBands(trades){
+  if(!trades)return null;
+  return SWEEP_BAND_EDGES.map(([lo,hi])=>{
+    const g=trades.filter(x=>typeof x.score==='number'&&x.score>=lo&&x.score<hi);
+    const n=g.length;
+    if(!n)return{lo,hi,n:0,wr:null,avgR:null,totalR:0};
+    const wins=g.filter(x=>x.r>0).length,tot=g.reduce((a,x)=>a+x.r,0);
+    return{lo,hi,n,wr:Math.round(wins/n*100),avgR:tot/n,totalR:tot};
+  });
+}
+function sweepBandsHTML(rows){
+  const b=rows&&rows.bands;
+  if(!b||(!b.train&&!b.holdout))return '';
+  const cell=x=>!x||!x.n?'<span style="color:var(--t3);">—</span>':`<span style="color:${x.avgR>=0?'var(--green)':'var(--red)'};font-weight:700;">${x.wr}% · ${x.avgR>=0?'+':''}${x.avgR.toFixed(2)}R</span> <span style="color:var(--t3);">(${x.n})</span>`;
+  const lab=x=>x.hi>=99?x.lo.toFixed(1)+'+':x.lo.toFixed(1)+'–'+x.hi.toFixed(1);
+  const base=b.train||b.holdout;
+  const lines=base.map((x,i)=>`<div style="display:grid;grid-template-columns:.8fr 1.4fr 1.4fr;gap:4px;padding:5px 8px;border-top:1px solid var(--border);font-size:10px;"><div style="font-weight:800;color:var(--t1);">${lab(x)}</div><div>${cell(b.train?b.train[i]:null)}</div><div>${cell(b.holdout?b.holdout[i]:null)}</div></div>`).join('');
+  return `<div style="margin-top:12px;padding:9px 0 4px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
+    <div style="font-size:10.5px;font-weight:700;color:var(--t1);padding:0 8px;">📐 ผลแยกตามช่วงคะแนน (ไม่ซ้อนกัน) <span style="font-weight:400;color:var(--t3);">— Win% · R เฉลี่ย/ไม้ (จำนวนไม้)</span></div>
+    <div style="display:grid;grid-template-columns:.8fr 1.4fr 1.4fr;gap:4px;padding:6px 8px 3px;font-size:8.5px;color:var(--t3);font-weight:700;"><div>คะแนน</div><div>Train</div><div>Holdout</div></div>
+    ${lines}
+    <div style="font-size:9px;color:var(--t3);padding:6px 8px 4px;line-height:1.5;">ดูแนวโน้มว่าคะแนนสูงขึ้นแล้วผลดีขึ้นต่อเนื่องไหม · ไม้ต่อช่วงน้อย ตัวเลขแกว่งง่าย อย่าตัดสินจากช่วงเดียว · คำนวณจากไม้ของ run เกณฑ์ 5.0 (ไม้ที่เปิดค้างบังไม้ใหม่ จึงไม่เท่ากับรันแต่ละเกณฑ์แยก)</div>
+  </div>`;
 }
 function renderThresholdSweepResult(rows){
   const resultEl=document.getElementById('sweepResult');
@@ -8859,6 +8894,7 @@ function renderThresholdSweepResult(rows){
       <div>เกณฑ์</div><div>Win Rate</div><div>สัญญาณ/วัน</div><div>Total R</div><div></div>
     </div>
     ${rowsHtml}
+    ${sweepBandsHTML(rows)}
     <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">💡 เกณฑ์ต่ำ = สัญญาณถี่ขึ้นแต่ win rate มักลดลง, เกณฑ์สูง = สัญญาณน้อยลงแต่ win rate มักดีขึ้น — เลือกจุดที่ Train กับ Holdout ให้ผลไปทางเดียวกัน (ไม่มี ⚠️) แล้วกด "ใช้ค่านี้" หลีกเลี่ยงแถวที่ ⚠️ แม้ตัวเลข Train จะดูดีก็ตาม</div>
   `;
 }
@@ -8975,6 +9011,7 @@ function renderM15ThresholdSweepResult(rows){
       <div>เกณฑ์</div><div>Win Rate</div><div>สัญญาณ/วัน</div><div>Total R</div><div></div>
     </div>
     ${rowsHtml}
+    ${sweepBandsHTML(rows)}
     <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">💡 ข้อมูล M15 มีแค่ ~60 วันทั้งหมด (สั้นกว่า H1) พอแบ่ง train/holdout แล้วแต่ละฝั่งยิ่งมี sample เล็กลงอีก — ควรระวังการเชื่อผลลัพธ์มากเกินไปถ้าจำนวนไม้ต่อแถวยังน้อย (<15-20 ไม้) หรือมี ⚠️ ติดอยู่ แล้วกด "ใช้ค่านี้" จะเซ็ตให้การ์ด M15 Entry Signal สดใช้เกณฑ์นี้ทันที<br>📈 <strong>ผ่านสะอาด X/Y ครั้งล่าสุด</strong> = สถิติสะสมจากทุกครั้งที่กด Run Sweep (เก็บใน localStorage เครื่องนี้ สูงสุด ${M15_SWEEP_HISTORY_MAX} รอบ) รันซ้ำบ่อยๆ เพื่อดูว่าเกณฑ์ไหนผ่าน guard ได้สม่ำเสมอจริง ไม่ใช่แค่บังเอิญผ่านรอบเดียว · <span onclick="clearM15SweepHistory()" style="color:var(--red);cursor:pointer;text-decoration:underline;">ล้างประวัติ</span></div>
   `;
 }
