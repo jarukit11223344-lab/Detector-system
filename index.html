@@ -8546,6 +8546,10 @@ async function runHistoricalBacktest(){
   if(btn){btn.disabled=false;btn.textContent='🔁 Run Backtest (3 เดือนย้อนหลัง)';}
 }
 
+// v20.33 — แบนเนอร์เตือน: Backtest/Sweep คำนวณจาก 16 ปัจจัย ส่วนคะแนนสดใช้ปัจจัยมากกว่า (บางตัวไม่มีข้อมูลย้อนหลัง เช่น COT, ข่าว, MTF) ผลจึงเป็นค่าประมาณ ไม่ใช่ผลของสัญญาณสดเป๊ะ
+function _btFactorWarnHTML(){
+  return '<div style="font-size:9.5px;line-height:1.5;color:var(--amber);background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:6px 8px;margin-bottom:8px;">⚠️ ผลทดสอบนี้ใช้ <b>16 ปัจจัย</b> ส่วนคะแนนสดในแอปใช้มากกว่านี้ (ปัจจัยที่ไม่มีข้อมูลย้อนหลัง เช่น COT, ข่าว, MTF จะไม่ถูกนับ) — ใช้เป็นแนวโน้มเปรียบเทียบเกณฑ์ ไม่ใช่ตัวเลขที่จะได้จริงกับสัญญาณสด</div>';
+}
 function renderBacktestResult(trades,barCount,htfIncluded){
   const resultEl=document.getElementById('btResult');
   if(!resultEl)return;
@@ -8561,7 +8565,7 @@ function renderBacktestResult(trades,barCount,htfIncluded){
   const points=[0];
   trades.forEach(t=>{cum+=t.r;points.push(Math.round(cum*100)/100);if(cum>peak)peak=cum;const dd=peak-cum;if(dd>maxDD)maxDD=dd;});
 
-  resultEl.innerHTML=`
+  resultEl.innerHTML=_btFactorWarnHTML()+`
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
       <div class="ds-stat"><div class="ds-stat-lbl">Win Rate</div><div class="ds-stat-val" style="color:${winRate>=50?'var(--green)':'var(--red)'};">${winRate}%</div></div>
       <div class="ds-stat"><div class="ds-stat-lbl">Trades</div><div class="ds-stat-val" style="color:var(--t2);">${trades.length}</div></div>
@@ -8917,7 +8921,7 @@ function renderThresholdSweepResult(rows){
       <div style="font-size:9px;color:var(--t3);margin-top:4px;">Holdout (30% ล่าสุด, ไม่เคยใช้ตอนเลือกเกณฑ์): ${noHoldout?'ไม่มีไม้':ho.winRate+'% WR ('+ho.trades+' ไม้, '+(ho.totalR>=0?'+':'')+ho.totalR.toFixed(1)+'R)'}${r.diverges?` <span style="color:var(--red);font-weight:700;">⚠️ ${r.rSignFlips?'กำไร/ขาดทุนสลับขั้วกัน (train กับ holdout คนละทิศ)':'win rate ต่างจาก train เกิน 20pp'} — อาจ overfit</span>`:''}</div>
     </div>`;
   }).join('');
-  resultEl.innerHTML=`
+  resultEl.innerHTML=_btFactorWarnHTML()+`
     <div style="font-size:9px;color:var(--t3);margin-bottom:6px;">📊 Train 70% แรกตามเวลา (ตัวเลขหลักในตาราง — ใช้เลือกเกณฑ์) · Holdout 30% ล่าสุด (แถวเล็กด้านล่าง — ยืนยันว่ายังดีจริงกับข้อมูลที่ไม่เคยเห็น)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;gap:4px;padding:0 8px;margin-bottom:6px;font-size:8.5px;color:var(--t3);font-weight:700;">
       <div>เกณฑ์</div><div>Win Rate</div><div>สัญญาณ/วัน</div><div>Total R</div><div></div>
@@ -9034,7 +9038,7 @@ function renderM15ThresholdSweepResult(rows){
       <div style="font-size:9px;margin-top:3px;">${stabHtml}</div>
     </div>`;
   }).join('');
-  resultEl.innerHTML=`
+  resultEl.innerHTML=_btFactorWarnHTML()+`
     <div style="font-size:9px;color:var(--t3);margin-bottom:6px;">📊 Train 70% แรกตามเวลา (~42 วัน — ใช้เลือกเกณฑ์) · Holdout 30% ล่าสุด (~18 วัน — ยืนยันว่ายังดีจริง)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;gap:4px;padding:0 8px;margin-bottom:6px;font-size:8.5px;color:var(--t3);font-weight:700;">
       <div>เกณฑ์</div><div>Win Rate</div><div>สัญญาณ/วัน</div><div>Total R</div><div></div>
