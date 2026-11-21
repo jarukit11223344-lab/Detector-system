@@ -1012,6 +1012,119 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .skel{background:linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.03) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;color:transparent!important;min-height:14px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+/* ═══ v20.38 — GLASS 3D THEME (เปิด/ปิดได้ที่ปุ่ม 🧊 ข้างปุ่มธีม · จำค่าไว้ในเครื่อง) ═══
+   เพิ่มมิติด้วยกระจกหลายชั้น + ไฮไลต์ขอบบน + เงาซ้อน + แสงม่วง/ฟ้า — เป็น CSS ล้วน ไม่แตะตรรกะ/ข้อมูล ปิดแล้วกลับเป็นหน้าตาเดิม */
+body.glass3d:not(.light-mode){
+  --bg:#04051a;--card:rgba(26,28,70,.50);--card2:rgba(30,32,78,.55);
+  --border:rgba(150,140,255,.16);--border2:rgba(175,165,255,.34);
+  --indigo:#8d7dff;--violet:#b9a0ff;--cyan:#38e1ff;
+}
+body.glass3d:not(.light-mode)::before{
+  background:
+    radial-gradient(ellipse 70% 45% at 15% 5%,rgba(124,92,255,.30),transparent 62%),
+    radial-gradient(ellipse 55% 50% at 92% 18%,rgba(56,130,255,.24),transparent 62%),
+    radial-gradient(ellipse 80% 40% at 50% 100%,rgba(100,60,230,.22),transparent 70%),
+    linear-gradient(180deg,#05061c 0%,#070826 55%,#04051a 100%) !important;
+}
+/* การ์ดหลัก: กระจกไล่เฉด + ขอบสว่างด้านบน + เงาซ้อนเป็นชั้น (เหมือนแผ่นกระจกวางซ้อนกัน) */
+body.glass3d:not(.light-mode) .section-card,
+body.glass3d:not(.light-mode) .kpi-card{
+  background:linear-gradient(150deg,rgba(62,58,140,.46) 0%,rgba(24,26,66,.62) 48%,rgba(12,14,40,.74) 100%);
+  border:1px solid rgba(160,150,255,.24);
+  border-radius:20px;
+  -webkit-backdrop-filter:blur(16px) saturate(1.35);backdrop-filter:blur(16px) saturate(1.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(0,0,0,.45),
+    inset 0 0 28px rgba(110,90,255,.07),
+    0 16px 34px -14px rgba(0,0,0,.75),
+    0 0 30px -10px rgba(110,90,255,.45);
+}
+body.glass3d:not(.light-mode) .section-card{
+  margin-bottom:22px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(0,0,0,.45),
+    inset 0 0 28px rgba(110,90,255,.07),
+    0 7px 0 -3px rgba(70,58,170,.34),
+    0 13px 0 -6px rgba(46,38,120,.26),
+    0 22px 38px -14px rgba(0,0,0,.75),
+    0 0 30px -10px rgba(110,90,255,.45);
+}
+body.glass3d:not(.light-mode) .desk-grid .section-card,
+body.glass3d:not(.light-mode) .desk-grid-3 .section-card{margin-bottom:0;}
+body.glass3d:not(.light-mode) .kpi-card{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(0,0,0,.45),
+    inset 0 0 24px rgba(110,90,255,.08),
+    0 5px 0 -2px rgba(70,58,170,.32),
+    0 14px 26px -12px rgba(0,0,0,.8),
+    0 0 26px -10px rgba(110,90,255,.5);
+}
+body.glass3d:not(.light-mode) .section-card::before,
+body.glass3d:not(.light-mode) .kpi-card::before{
+  left:6%;right:6%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(190,175,255,.75),rgba(90,200,255,.6),transparent);
+}
+body.glass3d:not(.light-mode) .section-card::after{
+  background:linear-gradient(90deg,transparent,rgba(120,100,255,.28),transparent);
+}
+/* hover = ยกขึ้น + เอียงเล็กน้อยให้ดูมีมิติ (เฉพาะอุปกรณ์ที่มีเมาส์/ไม่ปิด motion) */
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  body.glass3d:not(.light-mode) .kpi-card:hover{
+    transform:perspective(900px) rotateX(2.5deg) translateY(-4px);
+    border-color:rgba(190,175,255,.5);
+  }
+  body.glass3d:not(.light-mode) .section-card:hover{
+    border-color:rgba(190,175,255,.42);
+  }
+}
+/* ตัวเลข KPI เรืองแสงอ่อน · ไอคอนเป็นแผ่นกระจกนูน */
+body.glass3d:not(.light-mode) .kpi-value{text-shadow:0 0 18px rgba(140,120,255,.38),0 2px 0 rgba(0,0,0,.35);}
+body.glass3d:not(.light-mode) .kpi-ico{
+  background:linear-gradient(145deg,rgba(150,130,255,.30),rgba(60,50,150,.18)) !important;
+  border:1px solid rgba(190,175,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 14px -4px rgba(0,0,0,.7),0 0 16px -4px currentColor;
+}
+body.glass3d:not(.light-mode) .sh-title{text-shadow:0 0 16px rgba(130,110,255,.4);}
+/* กล่องสถิติย่อย / ช่อง input / badge */
+body.glass3d:not(.light-mode) .ds-stat,
+body.glass3d:not(.light-mode) .ind-cell{
+  background:linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.015));
+  border:1px solid rgba(165,155,255,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 12px -8px rgba(0,0,0,.7);
+}
+body.glass3d:not(.light-mode) .cinp{
+  background:rgba(8,9,32,.55);border-color:rgba(150,140,255,.22);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.45);
+}
+body.glass3d:not(.light-mode) .sh-badge{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 14px -4px rgba(120,100,255,.55);
+}
+/* ปุ่ม: นูน + เรืองแสง */
+body.glass3d:not(.light-mode) .btn-indigo,
+body.glass3d:not(.light-mode) .btn-green{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 8px 18px -8px rgba(0,0,0,.8),0 0 18px -6px rgba(120,100,255,.55);
+}
+body.glass3d:not(.light-mode) .cs-tf-active{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 16px -2px rgba(130,110,255,.65);
+}
+/* แถบบน/ไซด์บาร์: กระจกเช่นกัน */
+body.glass3d:not(.light-mode) .ticker{
+  background:linear-gradient(180deg,rgba(30,28,80,.72),rgba(8,9,30,.72));
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(160,150,255,.28);
+  box-shadow:0 8px 24px -12px rgba(110,90,255,.55);
+}
+body.glass3d:not(.light-mode) .desk-sidebar{
+  background:linear-gradient(170deg,rgba(54,50,128,.5),rgba(12,14,40,.72));
+  border-right:1px solid rgba(160,150,255,.26);
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.06),12px 0 30px -14px rgba(100,80,240,.45);
+}
+/* ปุ่มสลับธีมกระจก */
+#glassToggle{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;padding:5px 7px;cursor:pointer;font-size:14px;line-height:1;transition:all .2s;flex-shrink:0;}
+body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-color:rgba(190,175,255,.5);}
 </style>
 <body>
 
@@ -1133,6 +1246,7 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
     </div>
   </div>
   <div class="topbar-r">
+    <button id="glassToggle" onclick="toggleGlass3D()" title="เปิด/ปิดธีมกระจก 3D">🧊</button>
     <button id="themeToggle" onclick="toggleTheme()" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;padding:5px 10px;cursor:pointer;font-size:15px;line-height:1;transition:all .2s;" title="Toggle Light/Dark mode">🌙</button>
     <div class="clk" id="clockEl">--:-- --</div>
   </div>
@@ -12835,6 +12949,14 @@ function applyTheme(t) {
   const btn = document.getElementById('themeToggle');
   if (btn) btn.textContent = t === 'light' ? '☀️' : '🌙';
 }
+// v20.38 — ธีมกระจก 3D: เปิดเป็นค่าเริ่มต้น จำค่าไว้ใน localStorage (ปิดได้ที่ปุ่ม 🧊)
+function _applyGlass3D(on){ document.body.classList.toggle('glass3d',!!on); }
+function toggleGlass3D(){
+  const on=!document.body.classList.contains('glass3d');
+  _applyGlass3D(on);
+  try{localStorage.setItem('gtGlass3D',on?'1':'0');}catch(e){}
+}
+(function(){ let on=true; try{ if(localStorage.getItem('gtGlass3D')==='0')on=false; }catch(e){} _applyGlass3D(on); })();
 function toggleTheme() {
   applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
   showToast(currentTheme === 'light' ? '☀️ Light Mode' : '🌙 Dark Mode');
