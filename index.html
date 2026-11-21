@@ -1247,6 +1247,18 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
     <div class="kpi-foot"><span class="delta d-flat" id="kpiRegimePct">—</span><span class="kpi-sub" id="kpiRegimeSub">รอข้อมูล</span></div>
   </div>
 
+  <!-- Nearest Level (v20.33 — แนวต้าน/รับ "ใกล้สุด" จาก Key Levels · แสดงข้อมูลเท่านั้น ไม่ปรับคะแนน/เกณฑ์สัญญาณ) -->
+  <div class="kpi-card">
+    <div class="kpi-top">
+      <div class="kpi-label">แนวใกล้สุด · Nearest Level</div>
+      <div class="kpi-ico ico-indigo">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><polyline points="8 7 12 3 16 7"/><polyline points="8 17 12 21 16 17"/></svg>
+      </div>
+    </div>
+    <div class="kpi-value" id="kpiNearLv">—</div>
+    <div class="kpi-foot"><span class="delta d-flat" id="kpiNearLvDist">—</span><span class="kpi-sub" id="kpiNearLvSub">รอข้อมูล</span></div>
+  </div>
+
 </div>
 
 <!-- ── PRICE HERO CARD ── -->
@@ -3580,11 +3592,28 @@ function keyLevelInfo(price,atr,swing,d1){
   const wrap=c=>c?{level:c.lv,name:c.name,dist:Math.abs(c.lv-price),atrDist:atr>0?Math.abs(c.lv-price)/atr:null}:null;
   return{res:wrap(res),sup:wrap(sup)};
 }
+// v20.33 — การ์ด KPI "Nearest Level": แสดงแนวที่ใกล้ราคาที่สุด (ต้านหรือรับ) + ระยะเป็น ATR · อีกฝั่งอยู่ในบรรทัดล่าง
+function renderNearestLevelCard(k){
+  const vEl=document.getElementById('kpiNearLv'),dEl=document.getElementById('kpiNearLvDist'),sEl=document.getElementById('kpiNearLvSub');
+  if(!vEl||!dEl||!sEl)return;
+  const fmt=v=>Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const cs=[];
+  if(k&&k.res)cs.push({c:k.res,arrow:'▲',col:'var(--red)'});
+  if(k&&k.sup)cs.push({c:k.sup,arrow:'▼',col:'var(--green)'});
+  if(!cs.length){vEl.textContent='—';vEl.style.color='';dEl.textContent='—';sEl.textContent='รอข้อมูล';return;}
+  cs.sort((a,b)=>a.c.dist-b.c.dist);
+  const n=cs[0],o=cs[1];
+  vEl.textContent=n.arrow+' '+fmt(n.c.level);
+  vEl.style.color=n.col;
+  dEl.textContent=(n.c.atrDist!=null?n.c.atrDist.toFixed(1)+' ATR · ':'')+'$'+n.c.dist.toFixed(1);
+  sEl.textContent=n.c.name+(o?' · '+o.arrow+' '+o.c.dist.toFixed(1)+(o.c.atrDist!=null?' ('+o.c.atrDist.toFixed(1)+' ATR)':''):'');
+}
 function renderKeyLevels(price){
   const el=document.getElementById('liqKey');
   if(!el)return;
   const atr=realTA&&realTA.atr?realTA.atr:null;
   const k=keyLevelInfo(price,atr,computeRealLiquidityZones(price),(typeof realTA_D1!=='undefined')?realTA_D1:null);
+  try{renderNearestLevelCard(k);}catch(e){} // v20.33
   const row=(c,lab,col)=>c?`<div style="display:flex;justify-content:space-between;gap:8px;font-size:10.5px;padding:3px 0;"><span style="color:${col};font-weight:700;">${lab}</span><span style="color:var(--t2);text-align:right;">${_escH(c.name)} · ${c.level.toFixed(2)} · ±${c.dist.toFixed(1)}${c.atrDist!=null?' ('+c.atrDist.toFixed(1)+' ATR)':''}</span></div>`:'';
   let hint='';
   if(k.res&&k.res.atrDist!=null&&k.res.atrDist<1)hint='แนวต้านใกล้สุดอยู่ห่าง <1 ATR — ฝั่ง BUY มีที่วิ่งจำกัด';
