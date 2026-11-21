@@ -2097,7 +2097,7 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
      Lock พลิกทิศไปเลย — เข้าเมื่อ HTF Lock (D1×3+H4×2+H1×1) ล็อกทิศชัดเจน + ADX H4 แข็งแรงพอ (ไม่ sideways) ── -->
 <div class="section-card" style="border-color:rgba(244,180,0,.2);">
   <div class="sh">
-    <div><div class="sh-title">🚀 Trend Rider</div><div class="sh-sub">Chandelier ATR Trailing (3×ATR H4) · ไม่มี TP ตายตัว ปล่อยกำไรวิ่งจนกว่า trend จะหัก · จับ trend ยาวหลายวันที่การ์ดอื่นออกเร็วเกินไป</div></div>
+    <div><div class="sh-title">🚀 Trend Rider</div><div class="sh-sub">Chandelier ATR Trailing (3×ATR H4) + เป้า TP1/TP2 (1R/2R) · ทยอยปิดที่เป้า ที่เหลือปล่อยวิ่งจนกว่า trend จะหัก · จับ trend ยาวหลายวัน</div></div>
     <span class="sh-badge" id="trBadge" style="font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;">—</span>
   </div>
   <div id="trEmpty" style="font-size:11.5px;color:var(--t3);text-align:center;padding:16px 0;">ยังไม่มี trend ที่แข็งแรงพอ — รอ HTF Lock ล็อกทิศชัดเจน + ADX H4 แข็งแรงก่อน</div>
@@ -2105,7 +2105,9 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
     <div id="trDir" class="sr-dir" style="font-size:19px;margin-bottom:6px;"></div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;">
       <div class="ds-stat"><div class="ds-stat-lbl">Entry</div><div class="ds-stat-val" id="trEntry" style="color:var(--t2);">—</div></div>
-      <div class="ds-stat"><div class="ds-stat-lbl">Trailing SL</div><div class="ds-stat-val" id="trSL" style="color:var(--red);">—</div></div>
+      <div class="ds-stat"><div class="ds-stat-lbl">SL (Trailing)</div><div class="ds-stat-val" id="trSL" style="color:var(--red);">—</div></div>
+      <div class="ds-stat"><div class="ds-stat-lbl">TP1 (1R)</div><div class="ds-stat-val" id="trTP1" style="color:var(--green);">—</div></div>
+      <div class="ds-stat"><div class="ds-stat-lbl">TP2 (2R)</div><div class="ds-stat-val" id="trTP2" style="color:var(--green);">—</div></div>
       <div class="ds-stat"><div class="ds-stat-lbl">จุดสูงสุด/ต่ำสุด</div><div class="ds-stat-val" id="trExtreme" style="color:var(--green);">—</div></div>
       <div class="ds-stat"><div class="ds-stat-lbl">ถืออยู่</div><div class="ds-stat-val" id="trDays" style="color:var(--t2);">—</div></div>
     </div>
@@ -11999,6 +12001,57 @@ const TR_CHANDELIER_MULT=3;
 const TR_MAX_EXT_ATR=4;
 const TR_RSI_MAX_OVERBOUGHT=75;
 const TR_RSI_MIN_OVERSOLD=25;
+// ═══ v20.37 — Strong-trend continuation: เดิม overextension filter (ห่าง EMA50 >4×ATR หรือ RSI H4 สุดขั้ว) บล็อกการเข้า
+// "ตลอด" ตอนตลาดวิ่งยาวทางเดียว (เช่น ทองลงต่อเนื่อง 2 สัปดาห์ ราคาไม่เคยย่อกลับเข้าใกล้ EMA50 ให้เข้าได้เลย) → ผ่อนให้เข้าได้
+// เมื่อ trend แรงมาก (ADX H4 ≥ TR_STRONG_ADX) + ระยะห่างไม่เกิน TR_STRONG_MAX_EXT_ATR + ราคา "ทำ high/low ใหม่" เกินช่วง
+// TR_BREAK_LOOKBACK แท่ง H4 ล่าสุด (ยืนยันว่า trend ยังเดินต่อ ไม่ใช่แค่เด้งกลับ) ตัวเลขชุดนี้ "ยังไม่ผ่านการ backtest ยืนยัน" —
+// กดการ์ด Trend Rider Backtest จะเทียบ "เข้มงวด(เดิม)" กับ "ผ่อน(ใหม่)" ให้เห็นข้างกัน · ตั้ง TR_STRONG_MODE=false เพื่อกลับไปเดิม
+const TR_STRONG_MODE=true;
+const TR_STRONG_ADX=28;
+const TR_STRONG_MAX_EXT_ATR=7;
+const TR_BREAK_LOOKBACK=6;
+// เป้ากำไรแนะนำ (แสดงอย่างเดียว ไม่ปิดไม้อัตโนมัติ — ที่เหลือปล่อยวิ่งตาม Trailing Stop เดิม) = ทวีคูณของ SL เริ่มต้น (3×ATR H4)
+const TR_TP1_R=1;
+const TR_TP2_R=2;
+function trTargets(dir,entry,atr){
+  const risk=atr*TR_CHANDELIER_MULT,sgn=dir==='BUY'?1:-1;
+  return{risk,sl0:entry-sgn*risk,tp1:entry+sgn*risk*TR_TP1_R,tp2:entry+sgn*risk*TR_TP2_R};
+}
+// ราคาปัจจุบันทำ high/low ใหม่เกินช่วง N แท่ง H4 ล่าสุดหรือยัง (BUY: สูงกว่า high สูงสุด / SELL: ต่ำกว่า low ต่ำสุด)
+function trBreakoutInfo(dir,cur,highs,lows){
+  const arr=dir==='BUY'?highs:lows;
+  if(!arr||arr.length<TR_BREAK_LOOKBACK||cur==null)return{ok:false,level:null};
+  const w=arr.slice(-TR_BREAK_LOOKBACK).filter(x=>x!=null);
+  if(!w.length)return{ok:false,level:null};
+  const level=dir==='BUY'?Math.max(...w):Math.min(...w);
+  return{ok:dir==='BUY'?cur>level:cur<level,level};
+}
+// ตารางสถานะเงื่อนไขเข้าไม้ที่โชว์ในการ์ดตอนยังไม่มีไม้ (แทนข้อความบรรทัดเดียวเดิม) — ทุกค่าเป็นตัวเลข/ข้อความของระบบเอง
+function trDiagHTML(c){
+  const ok=v=>v?'<span style="color:var(--green);">✅</span>':'<span style="color:var(--red);">❌</span>';
+  const row=(lbl,val,pass,note)=>`<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);"><span style="width:16px;flex-shrink:0;">${ok(pass)}</span><span style="flex:1;color:var(--t2);">${lbl}</span><span style="text-align:right;color:var(--t1);font-weight:600;">${val}</span></div>${note?`<div style="font-size:9px;color:var(--t3);padding:0 0 3px 22px;line-height:1.5;">${note}</div>`:''}`;
+  const f=(v,d)=>v==null?'—':Number(v).toFixed(d==null?1:d);
+  const rows=[];
+  rows.push(row('HTF Lock (D1+H4+H1)',c.locked?_escH(String(c.bias||'')):'ยังไม่ล็อก',!!c.locked,''));
+  rows.push(row('ADX H4 ≥ '+TR_ADX_MIN,f(c.adx),c.adx!=null&&c.adx>=TR_ADX_MIN,''));
+  const distPass=c.distAtr!=null&&c.distAtr<=TR_MAX_EXT_ATR;
+  rows.push(row('ห่าง EMA50(H4) ≤ '+TR_MAX_EXT_ATR+'×ATR',c.distAtr!=null?f(c.distAtr)+'×ATR':'—',distPass,(!distPass&&c.distAtr!=null&&TR_STRONG_MODE)?'เกินเกณฑ์ปกติ — เข้าได้ผ่านโหมด Strong ถ้า ADX ≥ '+TR_STRONG_ADX+', ห่างไม่เกิน '+TR_STRONG_MAX_EXT_ATR+'×ATR และทำ '+(c.dir==='BUY'?'high':'low')+' ใหม่':''));
+  const rsiPass=c.rsi!=null&&!c.overRsi;
+  rows.push(row('RSI H4 ไม่สุดขั้ว ('+TR_RSI_MIN_OVERSOLD+'–'+TR_RSI_MAX_OVERBOUGHT+')',f(c.rsi),rsiPass,''));
+  if(c.overBase&&TR_STRONG_MODE&&c.locked){
+    rows.push(row('โหมด Strong: ADX ≥ '+TR_STRONG_ADX,f(c.adx),c.adx!=null&&c.adx>=TR_STRONG_ADX,''));
+    rows.push(row('โหมด Strong: ห่าง ≤ '+TR_STRONG_MAX_EXT_ATR+'×ATR',c.distAtr!=null?f(c.distAtr)+'×ATR':'—',c.distAtr!=null&&c.distAtr<=TR_STRONG_MAX_EXT_ATR,''));
+    rows.push(row('โหมด Strong: '+(c.dir==='BUY'?'ทะลุ high':'หลุด low')+' '+TR_BREAK_LOOKBACK+' แท่ง H4',c.brk&&c.brk.level!=null?(c.dir==='BUY'?'> ':'< ')+f(c.brk.level,2):'—',!!(c.brk&&c.brk.ok),c.brk&&!c.brk.ok&&c.brk.level!=null?'รอราคา'+(c.dir==='BUY'?'ขึ้นเหนือ ':'ลงต่ำกว่า ')+f(c.brk.level,2)+' (ตอนนี้ '+f(c.cur,2)+') ถึงจะเข้าได้':''));
+  }
+  rows.push(row('ไม่อยู่ช่วงข่าวแรง',c.newsBlocked?'Blackout':'ปกติ',!c.newsBlocked,''));
+  let preview='';
+  if(c.cur!=null&&c.atr){
+    const t=trTargets(c.dir,c.cur,c.atr);
+    preview=`<div style="margin-top:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.03);font-size:10px;color:var(--t2);line-height:1.7;">📍 ถ้าเข้า <b style="color:${c.dir==='BUY'?'var(--green)':'var(--red)'};">${c.dir}</b> ตอนนี้ (ตัวอย่าง ยังไม่ใช่สัญญาณ) · Entry ${f(c.cur,2)} · SL ${f(t.sl0,2)} · TP1 ${f(t.tp1,2)} · TP2 ${f(t.tp2,2)}</div>`;
+  }
+  const head=c.headline?`<div style="font-size:11px;color:var(--t1);margin-bottom:6px;line-height:1.6;">${c.headline}</div>`:'';
+  return `<div style="text-align:left;font-size:10.5px;">${head}${rows.join('')}${preview}</div>`;
+}
 // ═══ FIX (v10) — Entry confirm + cooldown กันเข้าไม้ตรงจุดที่ HTF Lock เพิ่งพลิกทิศพอดี (มักเป็นจุดกลับตัว/
 // whipsaw ชั่วคราว ไม่ใช่ trend จริงเสมอไป) เดิม entry เข้าทันทีบาร์เดียวที่เงื่อนไขผ่าน ไม่มี confirm เลย ต่างจาก
 // ฝั่งออกที่มี anti-noise 3-confirm (confirmTrendExit) — ไม่สมดุลกัน ทำให้ "ระวังตอนออก แต่ไม่ระวังตอนเข้า" ตอนนี้
@@ -12046,6 +12099,11 @@ function generateTrendRider(cur){
     const candidateSl=locked.dir==='BUY'?locked.extreme-atr*TR_CHANDELIER_MULT:locked.extreme+atr*TR_CHANDELIER_MULT;
     const better=locked.dir==='BUY'?candidateSl>locked.sl:candidateSl<locked.sl;
     if(better)locked.sl=candidateSl;
+    // v20.37 — เป้า TP1/TP2 (ไม้เก่าที่ยังไม่มีค่า คำนวณจาก entry/ATR เดิม) + ธงว่าเคยถึงเป้าแล้ว (ใช้ extreme = จุดไกลสุดที่เคยไปถึง)
+    if(locked.tp1==null||locked.tp2==null){const t0=trTargets(locked.dir,locked.entry,locked.atr);locked.tp1=t0.tp1;locked.tp2=t0.tp2;}
+    const reached=x=>locked.dir==='BUY'?locked.extreme>=x:locked.extreme<=x;
+    if(!locked.tp1Hit&&reached(locked.tp1)){locked.tp1Hit=true;showToast(`🎯 Trend Rider (${locked.dir}): ถึง TP1 ${locked.tp1.toFixed(2)} — แนะนำทยอยปิดบางส่วน/เลื่อน SL เข้าเนื้อ ที่เหลือปล่อยวิ่งตาม Trailing`);}
+    if(!locked.tp2Hit&&reached(locked.tp2)){locked.tp2Hit=true;showToast(`🎯🎯 Trend Rider (${locked.dir}): ถึง TP2 ${locked.tp2.toFixed(2)} — แนะนำปิดเพิ่ม ที่เหลือตาม Trailing`);}
 
     // ═══ เช็คหลุด trailing stop (anti-noise 3-confirm) ═══
     const rawHit=locked.dir==='BUY'?cur<=locked.sl:cur>=locked.sl;
@@ -12082,17 +12140,22 @@ function generateTrendRider(cur){
     const newsStatus=getNewsBlackoutStatus();
     const newsBlocked=!!(newsStatus&&newsStatus.blackout);
     const baseReady=!!(htfState&&htfState.locked&&htfState.bias&&realTA_H4&&atr&&adxH4!=null&&adxH4>=TR_ADX_MIN);
-    const ready=baseReady&&!overextendedByDist&&!overextendedByRsi&&!newsBlocked;
+    const overBase=overextendedByDist||overextendedByRsi;
+    const brk=trBreakoutInfo(dir,cur,realTA_H4?realTA_H4.highs:null,realTA_H4?realTA_H4.lows:null);
+    const strongOk=!!(TR_STRONG_MODE&&baseReady&&overBase&&adxH4>=TR_STRONG_ADX&&distFromEma50!=null&&distFromEma50<=atr*TR_STRONG_MAX_EXT_ATR&&brk.ok);
+    const ready=baseReady&&(!overBase||strongOk)&&!newsBlocked;
+    const entryMode=strongOk?'STRONG':'NORMAL';
     if(!ready){
       clearTRPendingEntry(); // เงื่อนไขหลุด — รีเซ็ต streak/cooldown ทิ้ง ต้องเริ่มนับใหม่รอบหน้า
       resEl.style.display='none';emptyEl.style.display='block';
-      const reasons=[];
-      if(!htfState||!htfState.locked)reasons.push('HTF Lock ยังไม่ล็อกทิศ');
-      if(adxH4!=null&&adxH4<TR_ADX_MIN)reasons.push(`ADX H4 ยังไม่แข็งพอ (${adxH4.toFixed(1)} < ${TR_ADX_MIN})`);
-      if(baseReady&&overextendedByDist)reasons.push(`ราคาห่างจาก EMA50(H4) เกินไป (${distFromEma50.toFixed(1)} > ${(atr*TR_MAX_EXT_ATR).toFixed(1)} = ${TR_MAX_EXT_ATR}×ATR) — เสี่ยงไล่ราคาตอน trend ใกล้จบรอบ`);
-      if(baseReady&&overextendedByRsi)reasons.push(`RSI(H4) ${dir==='BUY'?'overbought':'oversold'}เกินไป (${rsiH4.toFixed(1)}) — รอย่อก่อน`);
-      if(baseReady&&newsBlocked)reasons.push('อยู่ในช่วง News Blackout — รอให้พ้นช่วงข่าวก่อนเข้าใหม่');
-      emptyEl.textContent='ยังไม่มี trend ที่แข็งแรงพอ · '+(reasons.length?reasons.join(' · '):'กำลังโหลดข้อมูล H4...');
+      let headline='กำลังโหลดข้อมูล H4...';
+      if(realTA_H4&&atr){
+        if(!htfState||!htfState.locked)headline='ยังไม่มีสัญญาณ — HTF Lock ยังไม่ล็อกทิศ';
+        else if(adxH4!=null&&adxH4<TR_ADX_MIN)headline=`ยังไม่มีสัญญาณ — ADX H4 ยังไม่แข็งพอ (${adxH4.toFixed(1)} < ${TR_ADX_MIN})`;
+        else if(overBase&&!strongOk)headline=`⏸ ทิศ ${dir} ชัดแล้ว แต่ราคาวิ่งไกลเกินเกณฑ์ปกติ — ${TR_STRONG_MODE?'รอราคาทำ '+(dir==='BUY'?'high':'low')+' ใหม่ (โหมด Strong) หรือรอย่อกลับ':'รอย่อกลับก่อน'}`;
+        else if(newsBlocked)headline='ยังไม่มีสัญญาณ — อยู่ในช่วง News Blackout';
+      }
+      emptyEl.innerHTML=trDiagHTML({locked:!!(htfState&&htfState.locked),bias:htfState?htfState.bias:null,adx:adxH4,distAtr:(distFromEma50!=null&&atr)?distFromEma50/atr:null,rsi:rsiH4,overRsi:overextendedByRsi,overBase,brk,dir,cur,atr,newsBlocked,headline});
       const badge=document.getElementById('trBadge');
       if(badge){badge.textContent='WATCHING';badge.style.color='var(--t3)';badge.style.background='rgba(255,255,255,.04)';badge.style.borderColor='var(--border)';}
       return;
@@ -12109,15 +12172,16 @@ function generateTrendRider(cur){
       saveTRPendingEntry(pending);
       resEl.style.display='none';emptyEl.style.display='block';
       const remainHrs=Math.max(0,(TR_ENTRY_MIN_HOLD_MS-holdMs)/3600000);
-      emptyEl.textContent=`⏳ เงื่อนไข ${dir} พร้อมแล้ว (HTF Lock + ADX H4 ${adxH4.toFixed(1)}) — กำลังรอยืนยันว่า trend นี้ "ยืนได้จริง" ก่อนเข้าไม้ (เหลืออีกประมาณ ${remainHrs.toFixed(1)} ชม. หรือจนกว่าจะเช็คครบ ${TR_ENTRY_CONFIRM_NEEDED} ครั้งติดกัน) — กันเข้าไม้ตรงจุดที่เพิ่งพลิกทิศซึ่งมักเป็นจุดกลับตัวชั่วคราว`;
+      emptyEl.innerHTML=trDiagHTML({locked:true,bias:htfState.bias,adx:adxH4,distAtr:(distFromEma50!=null&&atr)?distFromEma50/atr:null,rsi:rsiH4,overRsi:overextendedByRsi,overBase,brk,dir,cur,atr,newsBlocked,headline:`⏳ เงื่อนไข ${dir} พร้อมแล้ว${entryMode==='STRONG'?' (โหมด Strong)':''} — รอยืนยันว่า trend "ยืนได้จริง" ก่อนเข้าไม้ (เหลือประมาณ ${remainHrs.toFixed(1)} ชม. หรือเช็คครบ ${TR_ENTRY_CONFIRM_NEEDED} ครั้งติดกัน) กันเข้าตรงจุดที่เพิ่งพลิกทิศ`});
       const badge=document.getElementById('trBadge');
       if(badge){badge.textContent='⏳ CONFIRMING';badge.style.color='var(--amber)';badge.style.background='rgba(245,197,24,.08)';badge.style.borderColor='rgba(245,197,24,.2)';}
       return;
     }
     clearTRPendingEntry();
-    const newLock={dir,entry:cur,extreme:cur,atr,sl:dir==='BUY'?cur-atr*TR_CHANDELIER_MULT:cur+atr*TR_CHANDELIER_MULT,lockedAt:Date.now(),adxAtEntry:adxH4};
+    const tg=trTargets(dir,cur,atr);
+    const newLock={dir,entry:cur,extreme:cur,atr,sl:tg.sl0,sl0:tg.sl0,tp1:tg.tp1,tp2:tg.tp2,tp1Hit:false,tp2Hit:false,mode:entryMode,lockedAt:Date.now(),adxAtEntry:adxH4};
     saveTrendRiderLock(newLock);
-    showToast(`🚀 Trend Rider: เข้า ${dir} ที่ ${cur.toFixed(2)} (HTF Lock ${htfState.bias} + ADX H4 ${adxH4.toFixed(1)}) — ไม่มี TP ตายตัว จะถือไปจนกว่า trend จะหักจริง`);
+    showToast(`🚀 Trend Rider: เข้า ${dir} ที่ ${cur.toFixed(2)}${entryMode==='STRONG'?' (โหมด Strong)':''} · SL ${tg.sl0.toFixed(2)} · TP1 ${tg.tp1.toFixed(2)} · TP2 ${tg.tp2.toFixed(2)} — ที่เหลือถือตาม Trailing จนกว่า trend จะหัก`);
     locked=newLock;
   }
 
@@ -12128,6 +12192,9 @@ function generateTrendRider(cur){
   dEl.className='sr-dir '+(locked.dir==='BUY'?'sr-buy':'sr-sell');
   document.getElementById('trEntry').textContent=locked.entry.toFixed(2);
   document.getElementById('trSL').textContent=locked.sl.toFixed(2);
+  const tp1El=document.getElementById('trTP1'),tp2El=document.getElementById('trTP2');
+  if(tp1El)tp1El.textContent=(locked.tp1!=null?locked.tp1.toFixed(2):'—')+(locked.tp1Hit?' ✅':'');
+  if(tp2El)tp2El.textContent=(locked.tp2!=null?locked.tp2.toFixed(2):'—')+(locked.tp2Hit?' ✅':'');
   document.getElementById('trExtreme').textContent=locked.extreme.toFixed(2);
   const days=(Date.now()-locked.lockedAt)/86400000;
   document.getElementById('trDays').textContent=days<1?`${Math.round(days*24)} ชม.`:`${days.toFixed(1)} วัน`;
@@ -12145,7 +12212,8 @@ function generateTrendRider(cur){
     badge.style.borderColor=locked.dir==='BUY'?'rgba(34,211,153,.25)':'rgba(244,63,94,.25)';
   }
   const pendingTxt=locked.pendingExit?` · ⏳ กำลังยืนยันหลุด Trailing Stop (${locked.pendingExit.count}/3)...`:'';
-  document.getElementById('trReason').textContent=`🚀 ถือ ${locked.dir} มาตั้งแต่ ${new Date(locked.lockedAt).toLocaleString('th-TH',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} · ไม่มี TP ตายตัว — Trailing Stop รัดตาม${locked.dir==='BUY'?'จุดสูงสุด':'จุดต่ำสุด'}ที่เคยไปถึง (${TR_CHANDELIER_MULT}×ATR H4 = ${(locked.atr*TR_CHANDELIER_MULT).toFixed(2)} จุด) ออกเมื่อหลุด Trailing Stop จริง หรือ HTF Lock พลิกทิศตรงข้าม${pendingTxt}`;
+  const sl0Txt=locked.sl0!=null?` · SL เริ่มต้น ${locked.sl0.toFixed(2)}`:'';
+  document.getElementById('trReason').textContent=`🚀 ถือ ${locked.dir}${locked.mode==='STRONG'?' (โหมด Strong)':''} มาตั้งแต่ ${new Date(locked.lockedAt).toLocaleString('th-TH',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}${sl0Txt} · TP1/TP2 = ${TR_TP1_R}R/${TR_TP2_R}R ของ SL เริ่มต้น เป็นเป้าแนะนำให้ทยอยปิด (ระบบไม่ปิดให้อัตโนมัติ) — ส่วนที่เหลือใช้ Trailing Stop รัดตาม${locked.dir==='BUY'?'จุดสูงสุด':'จุดต่ำสุด'}ที่เคยไปถึง (${TR_CHANDELIER_MULT}×ATR H4 = ${(locked.atr*TR_CHANDELIER_MULT).toFixed(2)} จุด) ออกเมื่อหลุด Trailing Stop จริง หรือ HTF Lock พลิกทิศตรงข้าม${pendingTxt}`;
 }
 
 // ═══ TREND RIDER BACKTEST (ใหม่) — พิสูจน์เกณฑ์ ADX≥20/Chandelier 3×ATR/Overextension filter ด้วยข้อมูลจริง ~1 ปี
@@ -12187,7 +12255,8 @@ async function fetchTrendRiderH4OHLC(){
 }
 // จำลองไม้ Trend Rider ทั้งหมดในช่วงข้อมูล — ไม่ lookahead (ทุก index ใช้ข้อมูลถึงจุดนั้นเท่านั้น) HTF Lock ประมาณ
 // ด้วย D1×3+H4×2 เท่านั้น (ไม่มี H1 bias ระดับบาร์จริง — เกณฑ์เดียวกับที่ M15 Backtest ยอมรับไว้แล้ว)
-function simulateTrendRiderTrades(h4,d1){
+function simulateTrendRiderTrades(h4,d1,opts){
+  const strongOn=!!(opts&&opts.strong);
   const{c,h,l,t}=h4;
   const n=c.length;
   const series=computeBacktestSeries(c,h,l); // ema20/ema50/rsi/atr/adx ต่อบาร์
@@ -12221,7 +12290,8 @@ function simulateTrendRiderTrades(h4,d1){
       if(hit||htfFlipped){
         const exitPrice=hit?pos.sl:price;
         const pl=pos.dir==='BUY'?exitPrice-pos.entry:pos.entry-exitPrice;
-        trades.push({dir:pos.dir,entry:pos.entry,exit:exitPrice,pl,entryIdx:pos.entryIdx,exitIdx:i,barsHeld:i-pos.entryIdx,reason:hit?'SL':'HTF_FLIP'});
+        const mfe0=pos.dir==='BUY'?pos.extreme-pos.entry:pos.entry-pos.extreme,risk0=pos.atr*TR_CHANDELIER_MULT;
+        trades.push({dir:pos.dir,entry:pos.entry,exit:exitPrice,pl,entryIdx:pos.entryIdx,exitIdx:i,barsHeld:i-pos.entryIdx,reason:hit?'SL':'HTF_FLIP',mode:pos.mode,tp1Hit:mfe0>=risk0*TR_TP1_R,tp2Hit:mfe0>=risk0*TR_TP2_R});
         pos=null;
       }
       continue; // ถือ position อยู่แล้ว ไม่ประเมิน entry ใหม่ซ้อนในบาร์เดียวกัน
@@ -12232,13 +12302,24 @@ function simulateTrendRiderTrades(h4,d1){
     const adxNow=series.adx[i],atrNow=series.atr[i],ema50Now=series.ema50[i],rsiNow=series.rsi[i];
     if(adxNow==null||adxNow<TR_ADX_MIN){pendingDir=null;pendingSinceIdx=null;continue;}
     if(atrNow==null||ema50Now==null){pendingDir=null;pendingSinceIdx=null;continue;}
-    if(Math.abs(price-ema50Now)>atrNow*TR_MAX_EXT_ATR){pendingDir=null;pendingSinceIdx=null;continue;}
-    if(rsiNow!=null&&((dir==='BUY'&&rsiNow>=TR_RSI_MAX_OVERBOUGHT)||(dir==='SELL'&&rsiNow<=TR_RSI_MIN_OVERSOLD))){pendingDir=null;pendingSinceIdx=null;continue;}
+    const _distNow=Math.abs(price-ema50Now);
+    const _overDist=_distNow>atrNow*TR_MAX_EXT_ATR;
+    const _overRsi=!!(rsiNow!=null&&((dir==='BUY'&&rsiNow>=TR_RSI_MAX_OVERBOUGHT)||(dir==='SELL'&&rsiNow<=TR_RSI_MIN_OVERSOLD)));
+    let _entryMode='NORMAL';
+    if(_overDist||_overRsi){
+      // v20.37 — โหมด Strong (mirror generateTrendRider): ADX แรงมาก + ห่างไม่เกินเพดาน + ทำ high/low ใหม่เกิน TR_BREAK_LOOKBACK แท่งก่อนหน้า
+      let strongPass=false;
+      if(strongOn&&adxNow>=TR_STRONG_ADX&&_distNow<=atrNow*TR_STRONG_MAX_EXT_ATR&&i>=TR_BREAK_LOOKBACK){
+        strongPass=dir==='BUY'?price>Math.max(...h.slice(i-TR_BREAK_LOOKBACK,i)):price<Math.min(...l.slice(i-TR_BREAK_LOOKBACK,i));
+      }
+      if(!strongPass){pendingDir=null;pendingSinceIdx=null;continue;}
+      _entryMode='STRONG';
+    }
     // เงื่อนไขพร้อมหมดแล้วในบาร์นี้ — เช็ค entry confirm (ต้องพร้อมทิศเดียวกันติดต่อกัน ≥2 แท่ง ก่อนเข้าไม้จริง)
     if(pendingDir!==dir){pendingDir=dir;pendingSinceIdx=i;continue;}
     if(i-pendingSinceIdx<1)continue; // ยังไม่ครบ 2 แท่งติดกัน (แท่งนี้เป็นแท่งที่ 2 พอดีถึงจะเข้าได้)
     pendingDir=null;pendingSinceIdx=null;
-    pos={dir,entry:price,extreme:price,atr:atrNow,sl:dir==='BUY'?price-atrNow*TR_CHANDELIER_MULT:price+atrNow*TR_CHANDELIER_MULT,entryIdx:i};
+    pos={dir,entry:price,extreme:price,atr:atrNow,sl:dir==='BUY'?price-atrNow*TR_CHANDELIER_MULT:price+atrNow*TR_CHANDELIER_MULT,entryIdx:i,mode:_entryMode};
   }
   return trades; // position ที่ยังเปิดค้างตอนจบข้อมูลไม่นับ (เหมือน backtest อื่นๆ ที่ไม่นับไม้ pending)
 }
@@ -12254,14 +12335,15 @@ async function runTrendRiderBacktest(){
       if(btn){btn.disabled=false;btn.textContent='📐 Run Backtest (~1 ปี)';}
       return;
     }
-    const trades=simulateTrendRiderTrades(h4,d1);
-    renderTrendRiderBacktestResult(trades,h4.c.length);
+    const tStrict=simulateTrendRiderTrades(h4,d1,{strong:false});
+    const tStrong=simulateTrendRiderTrades(h4,d1,{strong:true});
+    renderTrendRiderBacktestResult(TR_STRONG_MODE?tStrong:tStrict,h4.c.length,{strict:tStrict,strong:tStrong});
   }catch(e){
     if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
   if(btn){btn.disabled=false;btn.textContent='📐 Run Backtest (~1 ปี)';}
 }
-function renderTrendRiderBacktestResult(trades,barCount){
+function _renderTrendRiderBacktestCore(trades,barCount){
   const el=document.getElementById('trbtResult');
   if(!el)return;
   if(trades.length===0){
@@ -12297,6 +12379,22 @@ function renderTrendRiderBacktestResult(trades,barCount){
       </div>`).join('')}
     </div>
   `;
+}
+
+// v20.37 — ห่อผลหลัก + กล่องเทียบ "เข้มงวด(เดิม)" vs "ผ่อน(ใหม่, โหมด Strong)" + สถิติถึง TP1/TP2
+function _trSumm(trades){
+  const n=trades.length;
+  if(!n)return{n:0,win:null,total:0,avg:0,days:0,tp1:0,tp2:0};
+  const wins=trades.filter(t=>t.pl>0).length,total=trades.reduce((a,t)=>a+t.pl,0);
+  return{n,win:Math.round(wins/n*100),total,avg:total/n,days:trades.reduce((a,t)=>a+t.barsHeld,0)/n*4/24,tp1:trades.filter(t=>t.tp1Hit).length,tp2:trades.filter(t=>t.tp2Hit).length};
+}
+function renderTrendRiderBacktestResult(trades,barCount,cmp){
+  _renderTrendRiderBacktestCore(trades,barCount);
+  const el=document.getElementById('trbtResult');
+  if(!el||!cmp)return;
+  const line=(lbl,t,active)=>{const q=_trSumm(t);return `<div style="display:flex;justify-content:space-between;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;${active?'color:var(--t1);font-weight:700;':'color:var(--t2);'}"><span>${lbl}${active?' ← ใช้อยู่':''}</span><span style="text-align:right;">${q.n} ไม้ · ${q.win==null?'—':q.win+'%'} · <span style="color:${q.total>=0?'var(--green)':'var(--red)'};">${q.total>=0?'+':''}${q.total.toFixed(0)} จุด</span> · TP1 ${q.tp1}/${q.n} · TP2 ${q.tp2}/${q.n}</span></div>`;};
+  const box=`<div style="padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:var(--t1);margin-bottom:4px;">⚖️ เทียบกฎเข้าไม้ (ข้อมูลชุดเดียวกัน)</div>${line('เข้มงวด (เดิม)',cmp.strict,!TR_STRONG_MODE)}${line('ผ่อน (Strong ใหม่)',cmp.strong,TR_STRONG_MODE)}<div style="font-size:9px;color:var(--t3);margin-top:5px;line-height:1.5;">ถ้า "ผ่อน" ไม่ดีกว่า "เข้มงวด" ชัดเจน (จุดรวม/ไม้เฉลี่ย) อย่าเพิ่งไว้ใจ — ไม้ที่ผ่านโหมด Strong มักเข้าใกล้ปลายรอบ · TP1/TP2 = จำนวนไม้ที่ราคาเคยวิ่งถึงเป้า 1R/2R ก่อนออก</div></div>`;
+  el.innerHTML=box+el.innerHTML;
 }
 
 // ── 4. FVG AUTO-DETECT ──
