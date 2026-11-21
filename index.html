@@ -1015,22 +1015,22 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
 /* ═══ v20.38 — GLASS 3D THEME (เปิด/ปิดได้ที่ปุ่ม 🧊 ข้างปุ่มธีม · จำค่าไว้ในเครื่อง) ═══
    เพิ่มมิติด้วยกระจกหลายชั้น + ไฮไลต์ขอบบน + เงาซ้อน + แสงม่วง/ฟ้า — เป็น CSS ล้วน ไม่แตะตรรกะ/ข้อมูล ปิดแล้วกลับเป็นหน้าตาเดิม */
 body.glass3d:not(.light-mode){
-  --bg:#04051a;--card:rgba(26,28,70,.50);--card2:rgba(30,32,78,.55);
-  --border:rgba(150,140,255,.16);--border2:rgba(175,165,255,.34);
+  --bg:#02030b;--card:rgba(16,18,44,.55);--card2:rgba(20,22,52,.6);
+  --border:rgba(130,140,255,.15);--border2:rgba(160,170,255,.32);
   --indigo:#8d7dff;--violet:#b9a0ff;--cyan:#38e1ff;
 }
 body.glass3d:not(.light-mode)::before{
   background:
-    radial-gradient(ellipse 70% 45% at 15% 5%,rgba(124,92,255,.30),transparent 62%),
-    radial-gradient(ellipse 55% 50% at 92% 18%,rgba(56,130,255,.24),transparent 62%),
-    radial-gradient(ellipse 80% 40% at 50% 100%,rgba(100,60,230,.22),transparent 70%),
-    linear-gradient(180deg,#05061c 0%,#070826 55%,#04051a 100%) !important;
+    radial-gradient(ellipse 60% 38% at 12% 2%,rgba(110,84,235,.16),transparent 62%),
+    radial-gradient(ellipse 50% 42% at 96% 14%,rgba(48,110,235,.12),transparent 62%),
+    radial-gradient(ellipse 70% 32% at 50% 100%,rgba(90,56,210,.12),transparent 70%),
+    linear-gradient(180deg,#02030a 0%,#03040f 55%,#02030a 100%) !important;
 }
 /* การ์ดหลัก: กระจกไล่เฉด + ขอบสว่างด้านบน + เงาซ้อนเป็นชั้น (เหมือนแผ่นกระจกวางซ้อนกัน) */
 body.glass3d:not(.light-mode) .section-card,
 body.glass3d:not(.light-mode) .kpi-card{
-  background:linear-gradient(150deg,rgba(62,58,140,.46) 0%,rgba(24,26,66,.62) 48%,rgba(12,14,40,.74) 100%);
-  border:1px solid rgba(160,150,255,.24);
+  background:linear-gradient(150deg,rgba(36,38,92,.44) 0%,rgba(11,13,34,.72) 50%,rgba(5,6,20,.86) 100%);
+  border:1px solid rgba(140,150,255,.20);
   border-radius:20px;
   -webkit-backdrop-filter:blur(16px) saturate(1.35);backdrop-filter:blur(16px) saturate(1.35);
   box-shadow:
@@ -1038,7 +1038,7 @@ body.glass3d:not(.light-mode) .kpi-card{
     inset 0 -1px 0 rgba(0,0,0,.45),
     inset 0 0 28px rgba(110,90,255,.07),
     0 16px 34px -14px rgba(0,0,0,.75),
-    0 0 30px -10px rgba(110,90,255,.45);
+    0 0 26px -12px rgba(110,90,255,.30);
 }
 body.glass3d:not(.light-mode) .section-card{
   margin-bottom:22px;
@@ -1046,10 +1046,10 @@ body.glass3d:not(.light-mode) .section-card{
     inset 0 1px 0 rgba(255,255,255,.16),
     inset 0 -1px 0 rgba(0,0,0,.45),
     inset 0 0 28px rgba(110,90,255,.07),
-    0 7px 0 -3px rgba(70,58,170,.34),
-    0 13px 0 -6px rgba(46,38,120,.26),
+    0 7px 0 -3px rgba(48,42,128,.30),
+    0 13px 0 -6px rgba(32,28,92,.24),
     0 22px 38px -14px rgba(0,0,0,.75),
-    0 0 30px -10px rgba(110,90,255,.45);
+    0 0 26px -12px rgba(110,90,255,.30);
 }
 body.glass3d:not(.light-mode) .desk-grid .section-card,
 body.glass3d:not(.light-mode) .desk-grid-3 .section-card{margin-bottom:0;}
@@ -1058,9 +1058,9 @@ body.glass3d:not(.light-mode) .kpi-card{
     inset 0 1px 0 rgba(255,255,255,.18),
     inset 0 -1px 0 rgba(0,0,0,.45),
     inset 0 0 24px rgba(110,90,255,.08),
-    0 5px 0 -2px rgba(70,58,170,.32),
+    0 5px 0 -2px rgba(48,42,128,.30),
     0 14px 26px -12px rgba(0,0,0,.8),
-    0 0 26px -10px rgba(110,90,255,.5);
+    0 0 22px -12px rgba(110,90,255,.34);
 }
 body.glass3d:not(.light-mode) .section-card::before,
 body.glass3d:not(.light-mode) .kpi-card::before{
@@ -1112,19 +1112,24 @@ body.glass3d:not(.light-mode) .cs-tf-active{
 }
 /* แถบบน/ไซด์บาร์: กระจกเช่นกัน */
 body.glass3d:not(.light-mode) .ticker{
-  background:linear-gradient(180deg,rgba(30,28,80,.72),rgba(8,9,30,.72));
+  background:linear-gradient(180deg,rgba(20,22,58,.78),rgba(3,4,16,.82));
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   border-bottom:1px solid rgba(160,150,255,.28);
   box-shadow:0 8px 24px -12px rgba(110,90,255,.55);
 }
 body.glass3d:not(.light-mode) .desk-sidebar{
-  background:linear-gradient(170deg,rgba(54,50,128,.5),rgba(12,14,40,.72));
+  background:linear-gradient(170deg,rgba(34,36,90,.5),rgba(5,6,22,.82));
   border-right:1px solid rgba(160,150,255,.26);
   box-shadow:inset -1px 0 0 rgba(255,255,255,.06),12px 0 30px -14px rgba(100,80,240,.45);
 }
 /* ปุ่มสลับธีมกระจก */
 #glassToggle{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;padding:5px 7px;cursor:pointer;font-size:14px;line-height:1;transition:all .2s;flex-shrink:0;}
 body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-color:rgba(190,175,255,.5);}
+/* ═══ v20.39 — Sparkline ในการ์ด KPI (SVG เส้นโค้งนุ่ม + พื้นไล่เฉด + จุดเรืองแสงปลายเส้น · ข้อมูลจริงทั้งหมด) ═══ */
+.kpi-spark{position:relative;height:38px;margin-top:8px;}
+.kpi-spark svg{display:block;width:100%;height:100%;overflow:visible;}
+.spark-dot{position:absolute;right:-1px;width:6px;height:6px;margin-top:-3px;border-radius:50%;pointer-events:none;}
+.spark-empty{font-size:9.5px;color:var(--t3);line-height:38px;text-align:left;}
 </style>
 <body>
 
@@ -1281,7 +1286,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
       <span class="delta d-up" id="kpiChg">—</span>
       <span class="kpi-sub"><div class="ls-wrap"><div class="ls-dot ls-loading" id="lsDot"></div><span id="lsTxt">Loading</span></div></span>
     </div>
-    <div class="kpi-spark"><canvas id="sparkChart" aria-label="spark"></canvas></div>
+    <div class="kpi-spark" id="sparkGold"></div>
   </div>
 
   <!-- DXY -->
@@ -1294,7 +1299,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
     </div>
     <div class="kpi-value" id="kpiDXY" style="color:var(--red);">103.42</div>
     <div class="kpi-foot"><span class="delta d-dn" id="kpiDXYChg">▼ -0.18%</span><span class="kpi-sub" id="kpiDXYSub">Bearish</span></div>
-    <div class="kpi-spark"><canvas id="sparkDXY" aria-label="dxy"></canvas></div>
+    <div class="kpi-spark" id="sparkDXY"></div>
   </div>
 
   <!-- 10Y Yield -->
@@ -1307,7 +1312,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
     </div>
     <div class="kpi-value" id="kpiUS10Y" style="color:var(--amber);">4.28%</div>
     <div class="kpi-foot"><span class="delta d-flat" id="kpiUS10YChg">▲ +0.03%</span><span class="kpi-sub" id="kpiUS10YSub">Pressure</span></div>
-    <div class="kpi-spark"><canvas id="sparkBond" aria-label="bond"></canvas></div>
+    <div class="kpi-spark" id="sparkBond"></div>
   </div>
 
   <!-- VIX · Risk Mood (v20.22 — แทน "Fear & Greed" ที่เป็นเลขคงที่ 62 + sparkline ปลอม; ใช้ VIX จริงจาก Yahoo ตัวเดียวกับ factor Risk Sentiment) -->
@@ -1320,6 +1325,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
     </div>
     <div class="kpi-value" id="kpiVIX" style="color:var(--indigo);">—</div>
     <div class="kpi-foot"><span class="delta d-flat" id="kpiVIXChg">—</span><span class="kpi-sub" id="kpiVIXSub">รอข้อมูล</span></div>
+    <div class="kpi-spark" id="sparkVIX"></div>
   </div>
 
 
@@ -1333,7 +1339,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
     </div>
     <div class="kpi-value" style="color:var(--green);" id="kpiConf">—</div>
     <div class="kpi-foot"><span class="delta d-up" id="kpiConfDelta">—</span><span class="kpi-sub">signal</span></div>
-    <div class="kpi-spark"><canvas id="sparkConf" aria-label="conf"></canvas></div>
+    <div class="kpi-spark" id="sparkConf"></div>
   </div>
 
   <!-- Silver -->
@@ -1346,7 +1352,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
     </div>
     <div class="kpi-value" style="color:var(--cyan);" id="kpiXAG">กำลังโหลด...</div>
     <div class="kpi-foot"><span class="delta d-up" id="kpiXAGChg">—</span><span class="kpi-sub" id="kpiXAGSub">Metal</span></div>
-    <div class="kpi-spark"><canvas id="sparkAg" aria-label="ag"></canvas></div>
+    <div class="kpi-spark" id="sparkAg"></div>
   </div>
 
   <!-- Volatility Regime (v20.32 — ให้เห็นว่า "ตอนนี้ตลาดผันผวนผิดปกติแค่ไหน" เทียบกับช่วงล่าสุดของ H1/M15 · แสดงข้อมูลเท่านั้น ไม่ปรับคะแนน/เกณฑ์สัญญาณ) -->
@@ -1359,6 +1365,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
     </div>
     <div class="kpi-value" id="kpiRegime" style="color:var(--indigo);">—</div>
     <div class="kpi-foot"><span class="delta d-flat" id="kpiRegimePct">—</span><span class="kpi-sub" id="kpiRegimeSub">รอข้อมูล</span></div>
+    <div class="kpi-spark" id="sparkReg"></div>
   </div>
 
   <!-- Nearest Level (v20.33 — แนวต้าน/รับ "ใกล้สุด" จาก Key Levels · แสดงข้อมูลเท่านั้น ไม่ปรับคะแนน/เกณฑ์สัญญาณ) -->
@@ -1371,6 +1378,7 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
     </div>
     <div class="kpi-value" id="kpiNearLv">—</div>
     <div class="kpi-foot"><span class="delta d-flat" id="kpiNearLvDist">—</span><span class="kpi-sub" id="kpiNearLvSub">รอข้อมูล</span></div>
+    <div class="kpi-spark" id="sparkNear"></div>
   </div>
 
 </div>
@@ -3606,7 +3614,7 @@ function updateDOM(cur,chg,prev,hi,lo){
   buildTicker(cur,real?chg:null);
   renderLiq(cur);
   sparkData.push(cur);if(sparkData.length>50)sparkData.shift();
-  if(sparkChart){sparkChart.data.datasets[0].data=[...sparkData];sparkChart.data.labels=sparkData.map((_,i)=>i);sparkChart.update('none');}
+  renderGoldSpark(); // v20.39
   checkAlerts(cur);
   // แบบ indicator ใน TradingView: โชว์เองอัตโนมัติ ไม่ต้องกด และจะ "นิ่ง" อยู่ที่ entry เดิม
   // จนกว่าจะมีเหตุผลจริงให้เปลี่ยน (ชน TP/SL แล้ว resolve ไป, ทิศทางกลับจริง, หรือ M15 พลิกสวนทาง)
@@ -3618,7 +3626,83 @@ function updateDOM(cur,chg,prev,hi,lo){
   updateAgreementSummary(); // ═══ H1 x M15 Agreement Summary ═══
 }
 
+// ═══ v20.39 — SPARKLINES จริง (แทนชุดเดิมที่ไม่เคยถูกเรียกใช้ และเคยมีข้อมูลตัวอย่างปลอมฝังไว้) ═══
+// ทอง = ราคาปิด H1 ล่าสุด · DXY/US10Y/VIX/เงิน = Yahoo รายชั่วโมง 5 วัน (แคช ~25 นาที) · Regime = ATR(H1) · แนวใกล้สุด = ราคาทอง + เส้นประที่ระดับแนว
+// AI Confidence = บันทึกค่าจริงสะสมในเครื่องนี้ทุก ~3 นาที (เริ่มว่างแล้วค่อยๆ มีเส้น) · ไม่มีข้อมูลพอ = แสดงข้อความ ไม่วาดเส้นปลอม
+const SPARK_COL={gold:'#f5c518',dxy:'#ff4d7a',bond:'#ffc940',vix:'#9a8bff',conf:'#22e0a0',ag:'#38e1ff',reg:'#b79cff',near:'#6aa8ff'};
+let _sparkHist={},_sparkHistT=0,_sparkHistBusy=false;
+function renderSpark(id,vals,color,ref){
+  const el=document.getElementById(id);if(!el)return;
+  let v=(vals||[]).filter(x=>typeof x==='number'&&isFinite(x));
+  if(v.length<3){el.innerHTML='<div class="spark-empty">กำลังสะสมข้อมูล…</div>';return;}
+  if(v.length>60){const st=(v.length-1)/59;v=Array.from({length:60},(_,i)=>v[Math.round(i*st)]);}
+  let lo=Math.min(...v),hi=Math.max(...v);
+  const spread=hi-lo;
+  const refOk=typeof ref==='number'&&isFinite(ref)&&spread>0&&ref>lo-spread*1.5&&ref<hi+spread*1.5;
+  if(refOk){lo=Math.min(lo,ref);hi=Math.max(hi,ref);}
+  const rng=(hi-lo)||Math.abs(hi)*0.001||1,W=120,H=36,pad=4;
+  const Y=x=>pad+(1-(x-lo)/rng)*(H-pad*2);
+  const pts=v.map((x,i)=>[i/(v.length-1)*W,Y(x)]);
+  const f=n=>n.toFixed(1);
+  let d='M'+f(pts[0][0])+' '+f(pts[0][1]);
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
+    d+='C'+f(p1[0]+(p2[0]-p0[0])/6)+' '+f(p1[1]+(p2[1]-p0[1])/6)+' '+f(p2[0]-(p3[0]-p1[0])/6)+' '+f(p2[1]-(p3[1]-p1[1])/6)+' '+f(p2[0])+' '+f(p2[1]);
+  }
+  const gid='sg_'+id,last=pts[pts.length-1];
+  const refLine=refOk?`<line x1="0" x2="${W}" y1="${f(Y(ref))}" y2="${f(Y(ref))}" stroke="${color}" stroke-opacity=".55" stroke-width="1" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>`:'';
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".38"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="${d}L${W} ${H}L0 ${H}Z" fill="url(#${gid})"/>${refLine}<path d="${d}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" style="filter:drop-shadow(0 0 3px ${color})"/></svg><i class="spark-dot" style="top:${(last[1]/H*100).toFixed(1)}%;background:${color};box-shadow:0 0 8px ${color}"></i>`;
+}
+function _goldSparkSeries(){
+  return (typeof realTA!=='undefined'&&realTA&&realTA.closes&&realTA.closes.length>=10)?realTA.closes.slice(-48):sparkData;
+}
+function renderGoldSpark(){ try{renderSpark('sparkGold',_goldSparkSeries(),SPARK_COL.gold);}catch(e){} }
+function renderRegimeSpark(){
+  try{
+    const src=(_regimeHist&&_regimeHist.closes.length>=60)?_regimeHist:((typeof realTA!=='undefined'&&realTA&&realTA.highs&&realTA.closes)?realTA:null);
+    if(!src){renderSpark('sparkReg',null,SPARK_COL.reg);return;}
+    renderSpark('sparkReg',calcATRSeries(src.closes,src.highs,src.lows).filter(x=>x!=null).slice(-120),SPARK_COL.reg);
+  }catch(e){}
+}
+function renderNearSpark(level){ try{renderSpark('sparkNear',_goldSparkSeries(),SPARK_COL.near,level);}catch(e){} }
+function pushConfHist(conf){
+  try{
+    const now=Date.now();let a=[];
+    try{a=JSON.parse(localStorage.getItem('gtConfHist')||'[]');if(!Array.isArray(a))a=[];}catch(e){a=[];}
+    if(typeof conf==='number'&&isFinite(conf)&&(!a.length||now-a[a.length-1][0]>=180000)){
+      a.push([now,conf]);if(a.length>80)a=a.slice(-80);
+      try{localStorage.setItem('gtConfHist',JSON.stringify(a));}catch(e){}
+    }
+    renderSpark('sparkConf',a.map(x=>x[1]),SPARK_COL.conf);
+  }catch(e){}
+}
+async function loadSparkHistories(){
+  if(_sparkHistBusy||Date.now()-_sparkHistT<1500000)return;
+  _sparkHistBusy=true;
+  const defs=[['dxy',['DX-Y.NYB','DX=F'],'sparkDXY'],['bond',['^TNX'],'sparkBond'],['vix',['^VIX'],'sparkVIX'],['ag',['SI=F'],'sparkAg']];
+  let okAny=false;
+  try{
+    await Promise.all(defs.map(async([k,syms,id])=>{
+      for(const sym of syms){
+        const tgt='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=60m&range=5d';
+        const urls=['https://gold-data-proxy.jarukit11223344.workers.dev/?url='+encodeURIComponent(tgt),'https://api.allorigins.win/raw?url='+encodeURIComponent(tgt)];
+        for(const u of urls){
+          try{
+            const r=await fetch(u,{signal:AbortSignal.timeout(10000)});
+            if(!r.ok)continue;
+            const txt=await r.text();const m=txt.match(/\{[\s\S]*\}/);if(!m)continue;
+            const cl=(JSON.parse(m[0])?.chart?.result?.[0]?.indicators?.quote?.[0]?.close||[]).filter(x=>x!=null&&isFinite(x));
+            if(cl.length>=10){_sparkHist[k]=cl;renderSpark(id,cl.slice(-60),SPARK_COL[k]);okAny=true;return;}
+          }catch(e){}
+        }
+      }
+    }));
+    _sparkHistT=okAny?Date.now():Date.now()-1200000; // ล้มเหลวทั้งหมด → ลองใหม่ใน ~5 นาที
+  }finally{_sparkHistBusy=false;}
+}
 fetchGoldPrice();setInterval(fetchGoldPrice,30000);
+['sparkDXY','sparkBond','sparkVIX','sparkAg','sparkConf','sparkReg','sparkNear','sparkGold'].forEach(i=>renderSpark(i,null));
+loadSparkHistories();setInterval(loadSparkHistories,600000);
 fetchMacroData();setInterval(fetchMacroData,300000);
 fetchSilverPrice();setInterval(fetchSilverPrice,45000);
 
@@ -3722,6 +3806,7 @@ function renderNearestLevelCard(k){
   vEl.textContent=n.arrow+' '+fmt(n.c.level);
   vEl.style.color=n.col;
   dEl.textContent=(n.c.atrDist!=null?n.c.atrDist.toFixed(1)+' ATR · ':'')+'$'+n.c.dist.toFixed(1);
+  renderNearSpark(n.c.level); // v20.39 — เส้นประ = ระดับแนวที่ใกล้สุด
   sEl.textContent=n.c.name+(o?' · '+o.arrow+' '+o.c.dist.toFixed(1)+(o.c.atrDist!=null?' ('+o.c.atrDist.toFixed(1)+' ATR)':''):'');
 }
 function renderKeyLevels(price){
@@ -9424,6 +9509,7 @@ async function loadRegimeH1History(){
 function renderVolRegime(){
   const vEl=document.getElementById('kpiRegime'),pEl=document.getElementById('kpiRegimePct'),sEl=document.getElementById('kpiRegimeSub');
   if(!vEl)return;
+  try{renderGoldSpark();renderRegimeSpark();}catch(e){} // v20.39
   try{loadRegimeH1History();}catch(e){}
   const hist=_regimeHist?volRegimeInfo(_regimeHist.closes,_regimeHist.highs,_regimeHist.lows,480):null;
   const h1=hist||(realTA?volRegimeInfo(realTA.closes,realTA.highs,realTA.lows):null);
@@ -11151,6 +11237,7 @@ function updateAITrendCard(){
     // KPI card บนสุด (AI Confidence) — เดิมเลข 78% ตายตัวเหมือนกัน ผูกกับตัวเดียวกันนี้แล้ว
     const kpiConfEl=document.getElementById('kpiConf'),kpiConfDeltaEl=document.getElementById('kpiConfDelta');
     if(kpiConfEl)kpiConfEl.textContent=conf+'%';
+    pushConfHist(conf); // v20.39 — สะสมค่าจริงไว้วาด sparkline
     if(kpiConfDeltaEl){
       const dir=(cf.chg||0)>=0?'BULLISH':'BEARISH';
       kpiConfDeltaEl.textContent=dir;
