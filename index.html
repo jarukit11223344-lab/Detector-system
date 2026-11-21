@@ -1130,6 +1130,9 @@ body.glass3d #glassToggle{box-shadow:0 0 14px -2px rgba(130,110,255,.8);border-c
 .kpi-spark svg{display:block;width:100%;height:100%;overflow:visible;}
 .spark-dot{position:absolute;right:-1px;width:6px;height:6px;margin-top:-3px;border-radius:50%;pointer-events:none;}
 .spark-empty{font-size:9.5px;color:var(--t3);line-height:38px;text-align:left;}
+.ls-closed{background:var(--amber,#ffca28);box-shadow:0 0 7px var(--amber,#ffca28);}
+body.mkt-closed .kpi-spark svg,body.mkt-closed .spark-dot{opacity:.5;}
+body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่เส้นเครือข่ายจุดพื้นหลังที่พาดผ่านตัวหนังสือ */
 </style>
 <body>
 
@@ -2885,7 +2888,24 @@ function buildTicker(p,chg){
 }
 
 // ═══ PRICE FETCH ═══
+// v20.40 — ตลาดปิด: เดิมการ์ดราคาเขียน "Live · แหล่งข้อมูล" ทั้งที่ราคาค้างตั้งแต่ปิดตลาด → แสดง "ตลาดปิด · เปิดอีก ~N ชม." แทน และหรี่ sparkline
+function marketReopenText(){
+  try{
+    const t0=Date.now(),step=15*60000;
+    for(let k=1;k<=24*4*3;k++){ // มองไปข้างหน้าสูงสุด 72 ชม. ทีละ 15 นาที
+      if(!isMarketClosed(new Date(t0+k*step))){
+        const h=(k*step)/3600000;
+        return h<1?'เปิดอีก <1 ชม.':'เปิดอีก ~'+Math.round(h)+' ชม.';
+      }
+    }
+  }catch(e){}
+  return 'รอตลาดเปิด';
+}
 function setStatus(cls,txt){
+  let closed=false;
+  try{closed=(typeof isMarketClosed==='function')&&isMarketClosed();}catch(e){}
+  try{document.body.classList.toggle('mkt-closed',closed);}catch(e){}
+  if(closed&&cls==='ls-live'){cls='ls-closed';txt='🌙 ตลาดปิด · '+marketReopenText();}
   ['lsDot','lsDot2'].forEach(id=>{const e=document.getElementById(id);if(e)e.className='ls-dot '+cls;});
   ['lsTxt','lsTxt2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=txt;});
 }
