@@ -8546,9 +8546,9 @@ async function runHistoricalBacktest(){
   if(btn){btn.disabled=false;btn.textContent='🔁 Run Backtest (3 เดือนย้อนหลัง)';}
 }
 
-// v20.33 — แบนเนอร์เตือน: Backtest/Sweep คำนวณจาก 16 ปัจจัย ส่วนคะแนนสดใช้ปัจจัยมากกว่า (บางตัวไม่มีข้อมูลย้อนหลัง เช่น COT, ข่าว, MTF) ผลจึงเป็นค่าประมาณ ไม่ใช่ผลของสัญญาณสดเป๊ะ
+// v20.33 — แบนเนอร์เตือน: Backtest/Sweep คำนวณจาก 16 ปัจจัย ส่วนคะแนนสดใช้ปัจจัยมากกว่า (ขาด MTF Alignment, News Window, COT) ผลจึงเป็นค่าประมาณ ไม่ใช่ผลของสัญญาณสดเป๊ะ
 function _btFactorWarnHTML(){
-  return '<div style="font-size:9.5px;line-height:1.5;color:var(--amber);background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:6px 8px;margin-bottom:8px;">⚠️ ผลทดสอบนี้ใช้ <b>16 ปัจจัย</b> ส่วนคะแนนสดในแอปใช้มากกว่านี้ (ปัจจัยที่ไม่มีข้อมูลย้อนหลัง เช่น COT, ข่าว, MTF จะไม่ถูกนับ) — ใช้เป็นแนวโน้มเปรียบเทียบเกณฑ์ ไม่ใช่ตัวเลขที่จะได้จริงกับสัญญาณสด</div>';
+  return '<div style="font-size:9.5px;line-height:1.5;color:var(--amber);background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:6px 8px;margin-bottom:8px;">⚠️ ผลทดสอบนี้ใช้ <b>16 ปัจจัย</b> ส่วนคะแนนสดใช้ 19 ปัจจัย — ที่ขาดไปคือ <b>MTF Alignment, News Window, COT</b> (ไม่มีข้อมูลย้อนหลังให้ทดสอบ) คะแนนสดจึงอาจต่างจากคะแนนในการทดสอบได้ราว ±1 จุด ณ เกณฑ์เดียวกัน — ใช้เป็นแนวโน้มเปรียบเทียบเกณฑ์ ไม่ใช่ตัวเลขที่จะได้จริงกับสัญญาณสด</div>';
 }
 function renderBacktestResult(trades,barCount,htfIncluded){
   const resultEl=document.getElementById('btResult');
