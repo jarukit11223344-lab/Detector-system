@@ -9268,26 +9268,55 @@ function calcADX(closes,highs,lows,period=14){
 // ═══ v20.32 — Volatility Regime: ATR ปัจจุบันอยู่ที่ percentile เท่าไรของ ATR ย้อนหลัง (สูงสุด 240 แท่ง) ═══
 // แสดงข้อมูลอย่างเดียว — ไม่เปลี่ยนคะแนน/เกณฑ์ (ยังไม่มีหลักฐานจาก holdout ว่าการกรองตาม regime ทำให้ผลดีขึ้น · ถ้าจะนำไปใช้กรองสัญญาณ ต้องทดสอบใน Validation Lab ก่อน)
 // ตัวคูณ SL/TP ตาม VIX (computeVolAdjustMultiplier) ที่ระบบใช้อยู่แล้วแสดงกำกับไว้ให้เห็นว่าตอนนี้ขยายเท่าไร
-function volRegimeInfo(closes,highs,lows,vix){
+function volRegimeInfo(closes,highs,lows,winMax){
   if(!closes||!highs||!lows||closes.length<60)return null;
   const ser=calcATRSeries(closes,highs,lows).filter(v=>v!=null&&isFinite(v)&&v>0);
   if(ser.length<30)return null;
-  const win=ser.slice(-240),cur=win[win.length-1];
+  const win=ser.slice(-(winMax||240)),cur=win[win.length-1];
   const pct=Math.round(win.filter(v=>v<=cur).length/win.length*100);
   const label=pct>=90?'Extreme':pct>=75?'High':pct>=25?'Normal':'Quiet';
   const col=pct>=90?'var(--red)':pct>=75?'var(--amber)':pct>=25?'var(--indigo)':'var(--t2)';
   return{pct,atr:cur,n:win.length,label,col};
 }
+// v20.34 — ประวัติ H1 ยาว ~1 เดือน (แยกจาก realTA ที่ใช้ 5 วัน เพื่อไม่กระทบอินดิเคเตอร์/คะแนนสัญญาณ) ใช้เฉพาะคำนวณ percentile ของ Regime · แคช 30 นาที · ดึงไม่ได้ → ใช้ข้อมูล 5 วันเดิม
+let _regimeHist=null,_regimeHistT=0,_regimeHistBusy=false;
+async function loadRegimeH1History(){
+  if(_regimeHistBusy||Date.now()-_regimeHistT<1800000)return;
+  _regimeHistBusy=true;
+  try{
+    const tgt='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent('GC=F')+'?interval=1h&range=1mo';
+    const urls=['https://gold-data-proxy.jarukit11223344.workers.dev/?url='+encodeURIComponent(tgt),'https://api.allorigins.win/raw?url='+encodeURIComponent(tgt)];
+    let ok=false;
+    for(const u of urls){
+      try{
+        const r=await fetch(u,{signal:AbortSignal.timeout(12000)});
+        if(!r.ok)continue;
+        const txt=await r.text();const m=txt.match(/\{[\s\S]*\}/);if(!m)continue;
+        const res=JSON.parse(m[0])?.chart?.result?.[0],q=res?.indicators?.quote?.[0];
+        if(!q||!q.close)continue;
+        const n=usableBarCount(q.close.length,res.timestamp,3600);
+        const closes=[],highs=[],lows=[];
+        for(let i=0;i<n;i++){if(q.close[i]!=null&&q.high&&q.high[i]!=null&&q.low&&q.low[i]!=null){closes.push(q.close[i]);highs.push(q.high[i]);lows.push(q.low[i]);}}
+        if(closes.length<120)continue;
+        _regimeHist={closes,highs,lows};ok=true;break;
+      }catch(e){}
+    }
+    _regimeHistT=ok?Date.now():Date.now()-1500000; // ล้มเหลว → ลองใหม่ใน 5 นาที
+    if(ok)renderVolRegime();
+  }finally{_regimeHistBusy=false;}
+}
 function renderVolRegime(){
   const vEl=document.getElementById('kpiRegime'),pEl=document.getElementById('kpiRegimePct'),sEl=document.getElementById('kpiRegimeSub');
   if(!vEl)return;
-  const h1=realTA?volRegimeInfo(realTA.closes,realTA.highs,realTA.lows):null;
+  try{loadRegimeH1History();}catch(e){}
+  const hist=_regimeHist?volRegimeInfo(_regimeHist.closes,_regimeHist.highs,_regimeHist.lows,480):null;
+  const h1=hist||(realTA?volRegimeInfo(realTA.closes,realTA.highs,realTA.lows):null);
   const m15=(typeof realTA_M15!=='undefined'&&realTA_M15&&realTA_M15.closes)?volRegimeInfo(realTA_M15.closes,realTA_M15.highs,realTA_M15.lows):null;
   if(!h1){vEl.textContent='—';vEl.style.color='var(--indigo)';if(pEl)pEl.textContent='—';if(sEl)sEl.textContent='รอข้อมูล H1';return;}
   vEl.textContent=h1.label;vEl.style.color=h1.col;
   if(pEl){pEl.className='delta d-flat';pEl.textContent=h1.pct+'%';}
   const mult=computeVolAdjustMultiplier();
-  const parts=['ATR H1 สูงกว่า '+h1.pct+'% ของ '+h1.n+' แท่งล่าสุด'];
+  const parts=['ATR H1 สูงกว่า '+h1.pct+'% ของ '+h1.n+' แท่งล่าสุด'+(hist?' (~'+Math.round(h1.n/23)+' วันทำการ)':'')];
   if(m15)parts.push('M15 '+m15.pct+'%');
   if(mult>1)parts.push('SL/TP ×'+mult+' (ตาม VIX)');
   if(sEl)sEl.textContent=parts.join(' · ');
@@ -12661,12 +12690,16 @@ function updateVolumeHeatmap(price){
   if(!el)return;
   const curH=new Date().getUTCHours();
   const HOURS=24,ROWS=8;
+  // v20.33 — ช่วงคึกคักตาม session จริง (ขยับตาม DST ของ London/New York) แทนชั่วโมง UTC ตายตัว
+  const _sb=sessionBoundsUTC(Date.now());
+  const _inWin=(h,start,len)=>((h-start+24)%24)<len;
+  const _isLonOpen=h=>_inWin(h,_sb.lonOpen,3),_isOverlap=h=>_inWin(h,_sb.nyOpen,(_sb.lonClose-_sb.nyOpen+24)%24||3),_isNyPost=h=>_inWin(h,_sb.lonClose,2);
   const hourAct=Array.from({length:HOURS},(_,h)=>{
     let b=0.2;
-    if(h>=7&&h<=9)b=0.75;
-    if(h>=13&&h<=15)b=0.9;
-    if(h>=16&&h<=17)b=0.55;
-    if(h>=21||h<=2)b=0.35;
+    if(_isLonOpen(h))b=0.75;
+    if(_isOverlap(h))b=0.9;
+    if(_isNyPost(h))b=0.55;
+    if(_inWin(h,_sb.nyClose-1,5)&&b===0.2)b=0.35; // ช่วงปิดตลาด NY → เอเชียเปิด
     if(h===curH)b=Math.min(1,b+0.2);
     return b;
   });
@@ -12688,7 +12721,7 @@ function updateVolumeHeatmap(price){
   el.innerHTML=html;
   if(advEl){
     const peakH=hourAct.indexOf(Math.max(...hourAct));
-    const peakLbl=peakH>=7&&peakH<=9?'London Open':peakH>=13&&peakH<=15?'NY Open':`${peakH}:00 UTC`;
+    const peakLbl=_isLonOpen(peakH)?'London Open':_isOverlap(peakH)?'London/NY Overlap':`${peakH}:00 UTC`;
     const curAct=hourAct[curH];
     const lvl=curAct>0.7?'สูงมาก 🔥':curAct>0.45?'ปานกลาง':'ต่ำ 💤';
     const lvlCol=curAct>0.7?'var(--red)':curAct>0.45?'var(--amber)':'var(--t3)';
