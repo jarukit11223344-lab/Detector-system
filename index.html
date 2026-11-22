@@ -2257,6 +2257,22 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
   <div style="font-size:8.5px;color:var(--t3);line-height:1.5;">* ประมาณ HTF Lock ด้วย D1×3+H4×2 เท่านั้น (ไม่มี H1 bias ระดับบาร์จริงให้ใช้ในข้อมูลย้อนหลัง — เกณฑ์เดียวกับที่ M15 Backtest ใช้) · ไม่รวม News Blackout gate (ข้อมูลปฏิทินย้อนหลังไม่พอ 1 ปี) · exit ที่ trailing stop ถือว่าปิดที่ราคา SL พอดี (ไม่หัก slippage) · position ที่ยังเปิดอยู่ตอนจบข้อมูลไม่นับเป็นไม้ที่ resolve แล้ว</div>
 </div>
 
+<!-- ── v20.42 PERFORMANCE MONITOR — ผลวันนี้ (R) · ไม้จริง vs Backtest · Shadow Tracking (สัญญาณ Watchlist ที่ระบบไม่เปิดไม้) · แจ้งเตือนแนวสำคัญ ── -->
+<div class="section-card" id="pmCard" style="border-color:rgba(99,102,241,.25);">
+  <div class="sh">
+    <div><div class="sh-title">📊 Performance Monitor</div><div class="sh-sub">ผลวันนี้ · ไม้จริงเทียบ Backtest · ติดตามสัญญาณ Watchlist (Shadow) · แจ้งเตือนแนวสำคัญ</div></div>
+    <span class="sh-badge" id="pmBadge" style="font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;">—</span>
+  </div>
+  <div id="pmToday"></div>
+  <div class="hdiv"></div>
+  <div id="pmLive"></div>
+  <div class="hdiv"></div>
+  <div id="pmShadow"><div style="font-size:11px;color:var(--t3);text-align:center;padding:10px 0;">⏳ กำลังดึงข้อมูล Shadow จาก Worker...</div></div>
+  <div class="hdiv"></div>
+  <div id="pmLevels"></div>
+  <div style="display:flex;justify-content:flex-end;margin-top:8px;"><button onclick="loadPerfMonitorServer(true)" style="font-size:9.5px;padding:4px 10px;border-radius:7px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:var(--indigo);cursor:pointer;">🔄 รีเฟรช</button></div>
+</div>
+
 <!-- ── COT REPORT (Commitment of Traders) ── -->
 <div class="section-card" style="border-color:rgba(167,139,250,.18);">
   <div class="sh">
@@ -6246,6 +6262,7 @@ function renderLastSync(){
 setInterval(renderLastSync,10000); // อัปเดตตัวเลขนับถอยหลังทุก 10 วิ แม้ข้อมูลจะไม่เปลี่ยนก็ตาม
 function renderSignalHistory(){
   renderLastSync();
+  try{renderPerfMonitor();}catch(e){} // v20.42
   renderFactorAttribution(); // item 3
   const arr=loadSignalHistory();
   const wins=arr.filter(s=>SIG_WIN_STATUSES.includes(s.status)).length;
@@ -8786,6 +8803,8 @@ function renderBacktestResult(trades,barCount,htfIncluded){
   const points=[0];
   trades.forEach(t=>{cum+=t.r;points.push(Math.round(cum*100)/100);if(cum>peak)peak=cum;const dd=peak-cum;if(dd>maxDD)maxDD=dd;});
 
+  try{localStorage.setItem('gtBtSummary',JSON.stringify({n:trades.length,winRate,avgR:Math.round(avgR*1000)/1000,maxDD:Math.round(maxDD*100)/100,thr:QS_THRESHOLD,at:Date.now()}));}catch(e){} // v20.42 — ใช้เทียบกับไม้จริงใน Performance Monitor
+  try{renderPerfMonitor();}catch(e){}
   resultEl.innerHTML=_btFactorWarnHTML()+`
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
       <div class="ds-stat"><div class="ds-stat-lbl">Win Rate</div><div class="ds-stat-val" style="color:${winRate>=50?'var(--green)':'var(--red)'};">${winRate}%</div></div>
@@ -10112,6 +10131,135 @@ async function renderDiagnostics(){
     el.innerHTML='<div style="padding:10px 0;color:var(--amber);">⚠️ วิเคราะห์ไม่สำเร็จ ลองใหม่อีกครั้ง</div>';
   }
 }
+// ═══ v20.42 — PERFORMANCE MONITOR ═══
+// 4 ส่วนในการ์ดเดียว: (1) Today R + เตือนก่อนถึงเพดาน Circuit Breaker (2) ไม้จริงเทียบ Backtest (3) Shadow Tracking ของสัญญาณ Watchlist
+// (ข้อมูลจาก Worker /perf-monitor) (4) สถานะแจ้งเตือนแนวสำคัญทาง Telegram — ส่วน 1–2 คำนวณในเครื่องจาก Signal History/ผล Backtest ล่าสุด
+// ส่วน 3–4 ต้องมี cron worker v20.42 · ทั้งหมดเป็นการแสดงผล ไม่แก้คะแนน/เกณฑ์/Signal History
+const PM_WARN_R=2; // เตือนเมื่อขาดทุนวันนี้ถึง −2R (ถ้าเพดาน CB ตั้งต่ำกว่า 3R จะเตือนที่ ~2/3 ของเพดานแทน)
+const PM_MIN_LIVE_N=20,PM_MIN_BAND_N=15;
+let _pmServer=null,_pmServerErr=null,_pmServerAt=0,_pmFetching=false;
+function _pmWin(){try{const v=parseInt(localStorage.getItem('gtPmWin')||'0',10);return[0,7,14,30].includes(v)?v:0;}catch(e){return 0;}}
+function pmSetWin(v){try{localStorage.setItem('gtPmWin',String(v));}catch(e){}renderPerfMonitor();}
+function _pmLoadBt(){try{const o=JSON.parse(localStorage.getItem('gtBtSummary')||'null');return o&&typeof o.n==='number'?o:null;}catch(e){return null;}}
+function _pmWilson(w,n){if(!n)return null;const z=1.96,p=w/n,d=1+z*z/n,c=p+z*z/(2*n),a=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n));return{lo:(c-a)/d*100,hi:(c+a)/d*100};}
+const _pmFmtR=v=>v==null||!isFinite(v)?'—':(v>=0?'+':'')+v.toFixed(2)+'R';
+function _pmTodayHTML(){
+  let cb;try{cb=getCircuitBreakerStatus();}catch(e){return '';}
+  const lim=CB_MAX_DAILY_LOSS_R,warn=Math.min(PM_WARN_R,lim*0.66);
+  const r=cb.todayR,loss=Math.max(0,-r),pct=Math.min(100,loss/lim*100);
+  let col='var(--green)',msg='',lvl=0;
+  if(cb.dailyTripped||r<=-lim||cb.streak>=CB_MAX_CONSECUTIVE_LOSSES){col='var(--red)';lvl=2;msg=`🛑 ถึงเพดานแล้ว (${r<=-lim?`ขาดทุน ${r.toFixed(1)}R ≥ ${lim}R`:`แพ้ติด ${cb.streak} ไม้`}) — Circuit Breaker หยุดสัญญาณใหม่วันนี้ · แนะนำพัก อย่าไล่แก้มือ`;}
+  else if(r<=-warn){col='var(--amber)';lvl=1;msg=`⚠️ ขาดทุนวันนี้ ${r.toFixed(1)}R ใกล้เพดาน ${lim}R (เหลืออีก ${(lim+r).toFixed(1)}R) — ลดขนาดไม้ หรือพักก่อนจะดีกว่าเข้าเพิ่ม`;}
+  else if(cb.streak>=CB_MAX_CONSECUTIVE_LOSSES-1&&cb.streak>0){col='var(--amber)';lvl=1;msg=`⚠️ แพ้ติดกัน ${cb.streak} ไม้ (เพดาน ${CB_MAX_CONSECUTIVE_LOSSES}) — ไม้ถัดไปแพ้อีกระบบจะหยุดสัญญาณวันนี้`;}
+  else if(r>0)col='var(--green)';else col='var(--t2)';
+  const wk=cb.weeklyR,wkLim=CB_MAX_WEEKLY_LOSS_R,wkCol=cb.weeklyTripped?'var(--red)':(wk<=-wkLim*0.66?'var(--amber)':'var(--t2)');
+  window._pmLevel=lvl;
+  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
+    <div class="ds-stat"><div class="ds-stat-lbl">Today R</div><div class="ds-stat-val" style="color:${col};">${_pmFmtR(r)}</div></div>
+    <div class="ds-stat"><div class="ds-stat-lbl">ไม้ปิดวันนี้</div><div class="ds-stat-val" style="color:var(--t2);">${cb.todayClosedCount}${cb.streak?` · แพ้ติด ${cb.streak}`:''}</div></div>
+    <div class="ds-stat"><div class="ds-stat-lbl">สัปดาห์นี้</div><div class="ds-stat-val" style="color:${wkCol};">${_pmFmtR(wk)}</div></div>
+  </div>
+  <div style="height:6px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:4px;"><div style="height:100%;width:${pct.toFixed(0)}%;background:${lvl===2?'var(--red)':lvl===1?'var(--amber)':'var(--green)'};border-radius:4px;"></div></div>
+  <div style="display:flex;justify-content:space-between;font-size:8.5px;color:var(--t3);margin-bottom:${msg?'6px':'0'};"><span>0R</span><span>เตือนที่ −${warn.toFixed(1)}R</span><span>เพดาน −${lim}R</span></div>
+  ${msg?`<div style="font-size:10.5px;color:${col};line-height:1.55;">${msg}</div>`:''}
+  <div style="font-size:8.5px;color:var(--t3);margin-top:4px;">นับตามวัน UTC (รีเซ็ต 07:00 น. เวลาไทย) ให้ตรงกับ Circuit Breaker · สัปดาห์: เพดาน −${wkLim}R</div>`;
+}
+function _pmLiveHTML(){
+  const win=_pmWin(),arr=loadSignalHistory().filter(s=>s.closedAt&&SIG_CLOSED_STATUSES.includes(s.status));
+  const cut=win?Date.now()-win*86400000:0;
+  const rows=arr.filter(s=>!win||new Date(s.closedAt).getTime()>=cut).map(s=>computeRMultiple(s));
+  const n=rows.length,w=rows.filter(x=>x>0).length,tot=rows.reduce((a,b)=>a+b,0),avg=n?tot/n:null,wr=n?w/n*100:null;
+  const bt=_pmLoadBt();
+  const sel=`<select onchange="pmSetWin(parseInt(this.value,10))" style="font-size:9.5px;background:rgba(255,255,255,.05);color:var(--t2);border:1px solid var(--border);border-radius:6px;padding:2px 4px;">${[[0,'ทั้งหมด'],[30,'30 วัน'],[14,'14 วัน'],[7,'7 วัน']].map(([v,l])=>`<option value="${v}"${v===win?' selected':''}>${l}</option>`).join('')}</select>`;
+  const cell=(v,c)=>`<div style="text-align:center;font-weight:700;color:${c||'var(--t1)'};">${v}</div>`;
+  const hd=t=>`<div style="text-align:center;font-size:8.5px;color:var(--t3);text-transform:uppercase;">${t}</div>`;
+  const lbl=t=>`<div style="font-size:10px;color:var(--t2);">${t}</div>`;
+  const wc=v=>v==null?'var(--t3)':v>=50?'var(--green)':'var(--red)',rc=v=>v==null?'var(--t3)':v>=0?'var(--green)':'var(--red)';
+  let verdict='';
+  if(!bt)verdict=`<span style="color:var(--t3);">ยังไม่มีผล Backtest — ไปที่การ์ด Historical Backtest กด Run Backtest หนึ่งครั้งเพื่อใช้เทียบ</span>`;
+  else if(n<PM_MIN_LIVE_N)verdict=`<span style="color:var(--amber);">ไม้จริงยังน้อย (${n}/${PM_MIN_LIVE_N}) — ยังสรุปไม่ได้ว่าสอดคล้อง Backtest หรือไม่</span>`;
+  else{
+    const ci=_pmWilson(w,n),inCi=ci&&bt.winRate>=ci.lo&&bt.winRate<=ci.hi,dAvg=avg-bt.avgR;
+    if(inCi&&Math.abs(dAvg)<=0.25)verdict=`<span style="color:var(--green);">✅ สอดคล้อง — Win Rate Backtest (${bt.winRate}%) อยู่ในช่วงที่ไม้จริงเป็นไปได้ (${ci.lo.toFixed(0)}–${ci.hi.toFixed(0)}%) และ Avg R ห่างไม่เกิน 0.25R</span>`;
+    else if(wr<bt.winRate-(inCi?0:1)&&dAvg<0)verdict=`<span style="color:var(--red);">⚠️ ไม้จริงแย่กว่า Backtest (Avg R ต่างกัน ${dAvg.toFixed(2)}R${inCi?'':' · Win Rate ต่ำกว่าช่วงปกติ'}) — Backtest อาจเกินจริง (ขาด MTF/News/COT, ไม่มี slippage) อย่าเชื่อตัวเลข Backtest เกินไป</span>`;
+    else verdict=`<span style="color:var(--amber);">ไม้จริงดีกว่า Backtest (Avg R +${dAvg.toFixed(2)}R) — อาจเป็นช่วงตลาดเอื้อ อย่าเพิ่งใช้เป็นเหตุผลลดเกณฑ์</span>`;
+  }
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;">ไม้จริง vs Backtest · ไม้ที่ปิดแล้ว</span>${sel}</div>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:6px 8px;align-items:center;font-size:12px;margin-bottom:6px;">
+    <div></div>${hd('ไม้จริง')}${hd('Backtest')}
+    ${lbl('จำนวนไม้')}${cell(n)}${cell(bt?bt.n:'—')}
+    ${lbl('Win Rate (R>0)')}${cell(wr==null?'—':wr.toFixed(0)+'%',wc(wr))}${cell(bt?bt.winRate+'%':'—',bt?wc(bt.winRate):'var(--t3)')}
+    ${lbl('Avg R / ไม้')}${cell(_pmFmtR(avg),rc(avg))}${cell(bt?_pmFmtR(bt.avgR):'—',bt?rc(bt.avgR):'var(--t3)')}
+    ${lbl('รวม R')}${cell(n?_pmFmtR(tot):'—',rc(n?tot:null))}${cell(bt?_pmFmtR(bt.avgR*bt.n):'—',bt?rc(bt.avgR):'var(--t3)')}
+  </div>
+  <div style="font-size:10.5px;line-height:1.55;">${verdict}</div>
+  <div style="font-size:8.5px;color:var(--t3);margin-top:4px;">${bt?`Backtest รันเมื่อ ${new Date(bt.at).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} · เกณฑ์ ${Number(bt.thr).toFixed(1)}`:''} · สถิติไม้จริงยังปนกฎก่อน/หลัง v20.26 — เลือกช่วงเวลาเพื่อตัดไม้เก่าออก</div>`;
+}
+function _pmShadowHTML(){
+  if(_pmServerErr&&!_pmServer)return `<div style="font-size:10.5px;color:var(--amber);line-height:1.55;">⚠️ ดึง Shadow Tracking ไม่ได้ (${_escH(_pmServerErr)}) — ต้อง deploy cron worker v20.42 และตั้ง Auth Key ในแอปให้ตรงกับ Worker</div>`;
+  if(!_pmServer)return `<div style="font-size:11px;color:var(--t3);text-align:center;padding:10px 0;">⏳ กำลังดึงข้อมูล Shadow จาก Worker...</div>`;
+  const sh=_pmServer.shadow||{},bands=sh.bands||[];
+  const bandRows=bands.filter(b=>b.hi<=6.5||b.n>0).map(b=>{
+    const lbl=b.lo<=0?'< 5.0':b.hi>=99?'≥ 6.5':`${b.lo.toFixed(1)}–${b.hi.toFixed(1)}`;
+    const star=(b.lo===6&&b.hi===6.5)?' ⭐':'';
+    return `<div style="display:grid;grid-template-columns:1.1fr .6fr .8fr .9fr;gap:6px;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);"><span style="color:var(--t2);">${lbl}${star}</span><span style="text-align:center;color:var(--t2);">${b.n}</span><span style="text-align:center;font-weight:700;color:${b.winRate==null?'var(--t3)':b.winRate>=50?'var(--green)':'var(--red)'};">${b.winRate==null?'—':b.winRate.toFixed(0)+'%'}</span><span style="text-align:right;font-weight:700;color:${b.avgR==null?'var(--t3)':b.avgR>=0?'var(--green)':'var(--red)'};">${_pmFmtR(b.avgR)}</span></div>`;
+  }).join('');
+  const b6=bands.find(b=>b.lo===6&&b.hi===6.5)||{n:0};
+  let verdict;
+  if(b6.n<PM_MIN_BAND_N)verdict=`<span style="color:var(--t3);">ช่วง 6.0–6.5 ยังมีตัวอย่าง ${b6.n}/${PM_MIN_BAND_N} ไม้ — ยังไม่พอจะตัดสินว่าควรลดเกณฑ์ Quick Signal จาก 6.5 หรือไม่</span>`;
+  else if(b6.avgR>0.1)verdict=`<span style="color:var(--green);">ช่วง 6.0–6.5 ให้ผลสมมติเป็นบวก (${b6.n} ไม้ · Avg ${_pmFmtR(b6.avgR)}) — เข้าข่ายพิจารณาลดเกณฑ์เป็น 6.0 แต่ควรยืนยันซ้ำด้วย Threshold Sweep หลายวันก่อน</span>`;
+  else verdict=`<span style="color:var(--red);">ช่วง 6.0–6.5 ไม่คุ้ม (${b6.n} ไม้ · Avg ${_pmFmtR(b6.avgR)}) — คงเกณฑ์ 6.5 ไว้</span>`;
+  const open=(sh.openList||[]).map(o=>`<span style="font-size:9.5px;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.05);color:${o.dir==='BUY'?'var(--green)':'var(--red)'};">${o.dir} ${Number(o.score).toFixed(1)}${o.tp1Hit?' ✅TP1':''}</span>`).join(' ');
+  const recent=(sh.recent||[]).slice(0,5).map(x=>`<div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;color:var(--t2);"><span><span style="color:${x.dir==='BUY'?'var(--green)':'var(--red)'};font-weight:700;">${x.dir}</span> · คะแนน ${Number(x.score).toFixed(1)} · ${new Date(x.closedAt).toLocaleDateString('th-TH',{day:'numeric',month:'short'})}</span><span style="font-weight:700;color:${typeof x.exitR!=='number'?'var(--t3)':x.exitR>=0?'var(--green)':'var(--red)'};">${typeof x.exitR==='number'?_pmFmtR(x.exitR):'หมดอายุ'}</span></div>`).join('');
+  const stale=_pmServerErr?`<div style="font-size:9.5px;color:var(--amber);margin-bottom:6px;">⚠️ รีเฟรชล่าสุดไม่สำเร็จ (${_escH(_pmServerErr)}) — กำลังแสดงข้อมูลที่ดึงไว้ก่อนหน้า</div>`:'';
+  return stale+`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;">👀 Shadow — สัญญาณ Watchlist ที่ระบบไม่เปิดไม้</span><span style="font-size:9px;color:var(--t3);">ปิดแล้ว ${sh.all?sh.all.n:0} · เปิดอยู่ ${sh.open||0}${sh.expired?` · หมดอายุ ${sh.expired}`:''}</span></div>
+  <div style="display:grid;grid-template-columns:1.1fr .6fr .8fr .9fr;gap:6px;font-size:8.5px;color:var(--t3);text-transform:uppercase;padding-bottom:3px;"><span>คะแนน</span><span style="text-align:center;">ไม้</span><span style="text-align:center;">Win</span><span style="text-align:right;">Avg R</span></div>
+  ${bandRows||'<div style="font-size:11px;color:var(--t3);padding:8px 0;">ยังไม่มีไม้สมมติที่ปิดผล — ระบบเริ่มบันทึกเมื่อเจอสัญญาณระดับ Watchlist ระหว่างตลาดเปิด</div>'}
+  ${open?`<div style="margin:6px 0 2px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;"><span style="font-size:9px;color:var(--t3);">กำลังติดตาม:</span>${open}</div>`:''}
+  <div style="font-size:10.5px;line-height:1.55;margin-top:6px;">${verdict}</div>
+  ${recent?`<details style="margin-top:6px;"><summary style="font-size:9.5px;color:var(--t3);cursor:pointer;">ผลล่าสุด</summary>${recent}</details>`:''}
+  <div style="font-size:8.5px;color:var(--t3);margin-top:4px;">ไม้สมมติใช้ SL 1.5×ATR · TP 1R/2R เหมือนไม้ AUTO และตัดสินด้วยแท่ง M15 · ไม่ส่ง Telegram ไม่กระทบไม้จริง · เริ่มสะสมตั้งแต่ deploy v20.42</div>`;
+}
+function _pmLevelsHTML(){
+  const la=_pmServer&&_pmServer.levelAlerts;
+  let st='เปิดอัตโนมัติ';
+  if(la){st=`วันนี้ส่งแล้ว ${la.today}/${la.max}`;}
+  const last=la&&la.last?` · ล่าสุด: ${_escH(la.last.name)} ${Number(la.last.lv).toFixed(2)} (${new Date(la.last.at).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})})`:'';
+  return `<div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;">📍 แจ้งเตือนแนวสำคัญ (Telegram)</div>
+  <div style="font-size:10.5px;color:var(--t2);line-height:1.6;">${st}${last}<br><span style="color:var(--t3);font-size:9.5px;">แจ้งเมื่อราคา spot แตะ High/Low เมื่อวาน · High/Low 5 วัน · เลขกลมทุก $50 (ห่างไม่เกิน 0.15×ATR) · กันซ้ำ 6 ชม./แนว · ไม่เกิน 4 ข้อความ/วัน · ทำงานเฉพาะตอนไม่มีไม้ Quick Signal เปิดอยู่ · เป็นข้อมูลประกอบ ไม่ใช่สัญญาณเข้าไม้</span></div>`;
+}
+function renderPerfMonitor(){
+  const t=document.getElementById('pmToday');if(!t)return;
+  try{
+    t.innerHTML=_pmTodayHTML();
+    document.getElementById('pmLive').innerHTML=_pmLiveHTML();
+    document.getElementById('pmShadow').innerHTML=_pmShadowHTML();
+    document.getElementById('pmLevels').innerHTML=_pmLevelsHTML();
+    const b=document.getElementById('pmBadge'),l=window._pmLevel||0;
+    if(b){
+      b.textContent=l===2?'🛑 ถึงเพดาน':l===1?'⚠️ ระวัง':'✓ ปกติ';
+      b.style.color=l===2?'var(--red)':l===1?'var(--amber)':'var(--green)';
+      b.style.background=l===2?'rgba(244,63,94,.1)':l===1?'rgba(245,197,24,.08)':'rgba(34,211,153,.08)';
+      b.style.borderColor=l===2?'rgba(244,63,94,.25)':l===1?'rgba(245,197,24,.2)':'rgba(34,211,153,.2)';
+    }
+  }catch(e){console.warn('renderPerfMonitor',e);}
+}
+async function loadPerfMonitorServer(force){
+  if(_pmFetching)return;
+  if(!force&&Date.now()-_pmServerAt<300000)return;
+  if(!WORKER_AUTH_KEY){_pmServerErr='ยังไม่ได้ตั้ง Auth Key';renderPerfMonitor();return;}
+  _pmFetching=true;
+  try{
+    const r=await fetch(`${CRON_WORKER_URL}/perf-monitor`,{headers:{'X-Auth-Key':WORKER_AUTH_KEY},signal:AbortSignal.timeout(10000)});
+    if(!r.ok)throw new Error(r.status===404?'HTTP 404 — Worker ยังเป็นเวอร์ชันเก่า':'HTTP '+r.status);
+    _pmServer=await r.json();_pmServerErr=null;_pmServerAt=Date.now();
+  }catch(e){_pmServerErr=String((e&&e.message)||e).slice(0,80);}
+  _pmFetching=false;
+  renderPerfMonitor();
+}
+setTimeout(()=>{renderPerfMonitor();loadPerfMonitorServer(true);},2500);
+setInterval(()=>{renderPerfMonitor();loadPerfMonitorServer(false);},60000);
+
 // ═══ v20.21 — Validation Lab ═══
 // หลักการ: (1) ข้อมูลยาวพอให้มีไม้หลักร้อย (Backtest เดิมใช้ 3 เดือน → holdout เหลือไม่กี่ไม้ ไม่มีนัยสำคัญ) (2) ตัดสินแบบ "เทรดจริงขั้นต่ำ":
 // แท่งเดียวแตะทั้ง SL และ TP1 = SL ก่อน + หักต้นทุน (3) สมมติฐานทั้งหมดกำหนดล่วงหน้า (13 ข้อ) ไม่ไล่หาค่าที่ดูดี (4) เทียบกับ baseline เดียวกัน
