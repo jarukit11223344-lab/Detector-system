@@ -1140,24 +1140,24 @@ body.glass3d:not(.light-mode) .desk-sidebar{
 }
 /* ปุ่มสลับธีมกระจก */
 /* v20.45 — Pattern Lab: การ์ดสไตล์ HUD นีออน (พื้นดำทั้งสองโหมด) */
-.pl-card{--c:#ff7a1a;position:relative;margin-bottom:12px;padding:12px 12px 10px;border-radius:14px;background:linear-gradient(160deg,#010204,#04050a);border:1.5px solid color-mix(in srgb,var(--c) 85%,transparent);box-shadow:0 0 18px -3px var(--c),0 0 36px -14px var(--c),inset 0 0 30px -16px var(--c);overflow:hidden;}
-.pl-card::before,.pl-card::after{content:'';position:absolute;width:22px;height:22px;border:3px solid var(--c);filter:drop-shadow(0 0 6px var(--c));pointer-events:none;}
+.pl-card{--c:#ff7a1a;position:relative;margin-bottom:12px;padding:12px 12px 10px;border-radius:14px;background:linear-gradient(160deg,#010204,#04050a);border:1.5px solid color-mix(in srgb,var(--c) 60%,#000);box-shadow:0 0 14px -6px var(--c),inset 0 0 26px -20px var(--c);overflow:hidden;}
+.pl-card::before,.pl-card::after{content:'';position:absolute;width:22px;height:22px;border:2px solid color-mix(in srgb,var(--c) 82%,#000);filter:drop-shadow(0 0 3px color-mix(in srgb,var(--c) 70%,transparent));pointer-events:none;}
 .pl-card::before{left:-1px;top:-1px;border-right:0;border-bottom:0;border-top-left-radius:14px;}
 .pl-card::after{right:-1px;bottom:-1px;border-left:0;border-top:0;border-bottom-right-radius:14px;}
 .pl-orange{--c:#ff7a1a}.pl-cyan{--c:#22d3ee}.pl-gold{--c:#facc15}.pl-purple{--c:#a78bfa}.pl-green{--c:#34d399}
 .pl-top{display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center;}
 .pl-id{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;}
 .pl-num{position:absolute;left:12px;top:6px;font-size:20px;font-weight:800;color:var(--c);text-shadow:0 0 8px var(--c);}
-.pl-ring{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--c);background:radial-gradient(circle at 35% 28%,color-mix(in srgb,var(--c) 55%,#fff) 0,color-mix(in srgb,var(--c) 30%,#05060a) 14%,color-mix(in srgb,var(--c) 14%,#03040a) 55%,#02030a 100%);box-shadow:0 0 22px -1px var(--c),0 0 40px -10px var(--c),inset 0 0 18px -3px var(--c);border:1.5px solid var(--c);margin-top:12px;}
-.pl-ring svg{width:38px;height:38px;stroke-width:2.2;filter:drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 8px var(--c));}
-.pl-title{font-size:12.5px;font-weight:900;color:var(--c);line-height:1.1;text-shadow:0 0 12px var(--c),0 0 3px color-mix(in srgb,var(--c) 80%,transparent);letter-spacing:.1px;text-transform:uppercase;}
+.pl-ring{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--c);background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 22%,#02030a) 0,color-mix(in srgb,var(--c) 10%,#02030a) 60%,#02030a 100%);box-shadow:0 0 12px -3px var(--c),inset 0 0 14px -6px var(--c);border:1.5px solid color-mix(in srgb,var(--c) 70%,#000);margin-top:12px;}
+.pl-ring svg{width:38px;height:38px;stroke-width:2;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--c) 75%,transparent));}
+.pl-title{font-size:12.5px;font-weight:900;color:color-mix(in srgb,var(--c) 88%,#000);line-height:1.1;text-shadow:0 0 8px color-mix(in srgb,var(--c) 45%,transparent);letter-spacing:.1px;text-transform:uppercase;}
 .pl-sub{font-size:9px;color:#aab3c5;line-height:1.35;}
 .pl-chart svg{display:block;width:100%;height:auto;}
-.pl-stats{display:grid;grid-template-columns:repeat(5,1fr);margin-top:8px;border:1.5px solid color-mix(in srgb,var(--c) 70%,transparent);border-radius:8px;background:rgba(0,0,0,.45);box-shadow:0 0 10px -4px var(--c);}
-.pl-stats>div{padding:5px 4px;border-right:1px solid color-mix(in srgb,var(--c) 45%,transparent);min-width:0;}
+.pl-stats{display:grid;grid-template-columns:repeat(5,1fr);margin-top:8px;border:1.5px solid color-mix(in srgb,var(--c) 50%,#000);border-radius:8px;background:rgba(0,0,0,.45);}
+.pl-stats>div{padding:5px 4px;border-right:1px solid color-mix(in srgb,var(--c) 30%,transparent);min-width:0;}
 .pl-stats>div:last-child{border-right:0;}
-.pl-stats .l{font-size:7px;white-space:nowrap;color:var(--c);opacity:.9;letter-spacing:.6px;text-transform:uppercase;font-weight:700;}
-.pl-stats .v{font-family:var(--mono);font-size:10px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pl-stats .l{font-size:7px;white-space:nowrap;color:color-mix(in srgb,var(--c) 85%,#000);letter-spacing:.6px;text-transform:uppercase;font-weight:700;}
+.pl-stats .v{font-family:var(--mono);font-size:10px;font-weight:700;color:#e6eaf3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .pl-note{font-size:9.5px;color:#9aa4b8;line-height:1.5;margin-top:6px;}
 .pl-badge{display:inline-block;font-size:8.5px;font-weight:800;padding:1px 7px;border-radius:5px;letter-spacing:.5px;}
 /* v20.43 — สวิตช์ pill นีออน (ธีมกระจก 3D / มืด-สว่าง) */
@@ -10203,8 +10203,8 @@ async function renderDiagnostics(){
 // ตัวตรวจแบบง่ายเพื่อ "แสดงผล" จากข้อมูลทองจริง (GC=F ผ่าน gold-data-proxy: H1 ~1 เดือน · D1 ~2 ปี) ไม่ได้ใช้ตัดสินสัญญาณ/คะแนน Confluence
 // ราคาใช้กติกา offset เดียวกับ fetchCandles* ของแอป (ลบ 22 เมื่อข้อมูลไม่ได้มาจาก TwelveData) ให้ตัวเลขใกล้ spot เหมือนการ์ดอื่น
 const _PLI={
-  cross:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 24l8-8 5 4 11-12"/><path d="M4 10l8 6 5-2 11 8"/><circle cx="12.5" cy="16" r="2.6" fill="currentColor" fill-opacity=".25"/></svg>',
-  sr:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9h24M4 23h24"/><path d="M9 19l4-5 4 3 6-7"/></svg>',
+  cross:'<svg viewBox="0 0 32 32" fill="currentColor" fill-opacity=".9" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><path d="M13.2 2h5.6v6.6H25v5.4h-6.2V30h-5.6V14H7V8.6h6.2z"/></svg>',
+  sr:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 9h22M8 16h16M5 23h22"/></svg>',
   rr:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5v21M9 26h14M6 11h20"/><path d="M6 11l-3 7a3 3 0 006 0zM26 11l-3 7a3 3 0 006 0z"/></svg>'
 };
 let _plH1=null,_plD1=null,_plH1T=0,_plD1T=0,_plBusy=false;
@@ -10247,7 +10247,7 @@ function _plChart(o){
   let lo=Math.min(...pool),hi=Math.max(...pool);const sp=(hi-lo)||1;lo-=sp*.05;hi+=sp*.05;
   const step=(W-PL-PR)/(n+ex),X=i=>PL+(i+.5)*step,Y=v=>PT+(1-(v-lo)/(hi-lo))*(H-PT-PB),f=x=>x.toFixed(1),col=o.color;
   const lastY=Y(K.c[n-1]);
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img"><defs><filter id="plf_${o.id}" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img"><defs><filter id="plf_${o.id}" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur stdDeviation=".8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
   for(let k=0;k<5;k++){const y=PT+k/4*(H-PT-PB);s+=`<line x1="${PL}" x2="${W-PR}" y1="${f(y)}" y2="${f(y)}" stroke="#fff" stroke-opacity=".09"/>`;if(Math.abs(y-lastY)>9)s+=`<text x="${W-PR+4}" y="${f(y+3)}" fill="#aab3c5" font-size="7.5" font-family="monospace">${_plF(hi-(hi-lo)*k/4,0)}</text>`;}
   for(let k=1;k<6;k++){const x=PL+k/6*(W-PL-PR);s+=`<line x1="${f(x)}" x2="${f(x)}" y1="${PT}" y2="${H-PB}" stroke="#fff" stroke-opacity=".035"/>`;}
   (o.zones||[]).forEach(z=>{const x0=X(n-1)+step/2,y1=Y(z.v1),y2=Y(z.v2);s+=`<rect x="${f(x0)}" y="${f(Math.min(y1,y2))}" width="${f(W-PR-x0)}" height="${f(Math.abs(y2-y1))}" fill="${z.color}" fill-opacity=".16" stroke="${z.color}" stroke-opacity=".55" stroke-width=".8"/>`;});
