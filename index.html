@@ -1080,6 +1080,28 @@ body.glass3d:not(.light-mode) .section-card::after{
     border-color:rgba(190,175,255,.42);
   }
 }
+/* v20.47 — การ์ดทุกใบสไตล์ HUD เดียวกับ Pattern Lab (เฉพาะธีมกระจกเปิด · ปิดสวิตช์ 🧊 = กลับเป็นแบบเดิม): พื้นดำเข้ม + ขอบนีออนตามสีการ์ด + มุมกรอบเรืองแสง
+   สีขอบ --hc อ่านจากสีเดิมของแต่ละการ์ด (inline border-color / คลาส sc-*) จาก JS ตอนโหลด ทำให้การ์ดแดง/เขียว/ม่วงยังคงสีของมัน */
+body.glass3d:not(.light-mode) .section-card,
+body.glass3d:not(.light-mode) .kpi-card{
+  --hc:rgb(120,110,250);
+  background:linear-gradient(160deg,#07080f 0%,#0a0c18 55%,#080a14 100%) !important;
+  border:1px solid color-mix(in srgb,var(--hc) 42%,transparent) !important;
+  border-radius:16px !important;
+  box-shadow:0 0 22px -9px var(--hc),inset 0 0 30px -20px var(--hc),0 14px 28px -16px rgba(0,0,0,.85) !important;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+body.glass3d:not(.light-mode) .section-card::before,
+body.glass3d:not(.light-mode) .section-card::after{
+  content:'';position:absolute;width:22px;height:22px;background:none;border:2px solid var(--hc);
+  filter:drop-shadow(0 0 5px var(--hc));pointer-events:none;opacity:1;transform:none;margin:0;
+}
+body.glass3d:not(.light-mode) .section-card::before{left:-1px;top:-1px;right:auto;bottom:auto;height:22px;border-right:0;border-bottom:0;border-top-left-radius:16px;}
+body.glass3d:not(.light-mode) .section-card::after{right:-1px;bottom:-1px;left:auto;top:auto;border-left:0;border-top:0;border-bottom-right-radius:16px;}
+body.glass3d:not(.light-mode) .kpi-card::before{background:linear-gradient(90deg,transparent,var(--hc),transparent);opacity:.7;}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  body.glass3d:not(.light-mode) .section-card:hover,body.glass3d:not(.light-mode) .kpi-card:hover{border-color:color-mix(in srgb,var(--hc) 75%,transparent) !important;}
+}
 /* ตัวเลข KPI เรืองแสงอ่อน · ไอคอนเป็นแผ่นกระจกนูน */
 body.glass3d:not(.light-mode) .kpi-value{text-shadow:0 0 18px rgba(140,120,255,.38),0 2px 0 rgba(0,0,0,.35);}
 body.glass3d:not(.light-mode) .kpi-ico{
@@ -13373,6 +13395,16 @@ function toggleGlass3D(){
   try{localStorage.setItem('gtGlass3D',on?'1':'0');}catch(e){}
 }
 (function(){ let on=true; try{ if(localStorage.getItem('gtGlass3D')==='0')on=false; }catch(e){} _applyGlass3D(on); })();
+// v20.47 — กำหนดสีนีออนของแต่ละการ์ด (--hc) จากสีเดิม: inline border-color หรือคลาส sc-*
+(function(){
+  const map={'sc-gold':'245,197,24','sc-indigo':'124,108,240','sc-green':'34,211,153','sc-violet':'167,139,250','sc-orange':'251,146,60'};
+  document.querySelectorAll('.section-card,.kpi-card').forEach(el=>{
+    let rgb=null;const m=(el.getAttribute('style')||'').match(/border-color:\s*rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if(m)rgb=m[1]+','+m[2]+','+m[3];else for(const k in map){if(el.classList.contains(k)){rgb=map[k];break;}}
+    el.style.setProperty('--hc','rgb('+(rgb||'120,110,250')+')');
+  });
+})();
+
 function toggleTheme() {
   applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
   showToast(currentTheme === 'light' ? '☀️ Light Mode' : '🌙 Dark Mode');
