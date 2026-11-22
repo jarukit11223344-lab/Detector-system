@@ -661,7 +661,7 @@ body{font-variant-numeric:tabular-nums;font-family:var(--sans);color:var(--t1);b
 .grid-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;
   background-image:linear-gradient(rgba(0,229,255,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.3) 1px,transparent 1px);background-size:60px 60px}
 .ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.amb-orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orbFloat 12s ease-in-out infinite}
+.amb-orb{position:absolute;border-radius:50%;filter:none;animation:none;-webkit-mask-image:radial-gradient(circle,#000 0,transparent 70%);mask-image:radial-gradient(circle,#000 0,transparent 70%)} /* v20.48 ลดความร้อน: เดิม blur(100px)+animate 4 ก้อนตลอดเวลา → ก้อนนิ่ง ขอบฟุ้งด้วย mask แทน */
 .amb-orb:nth-child(1){width:500px;height:500px;background:rgba(124,108,240,.12);top:-10%;left:-5%}
 .amb-orb:nth-child(2){width:400px;height:400px;background:rgba(0,229,255,.08);top:20%;right:-8%;animation-delay:-4s;animation-duration:15s}
 .amb-orb:nth-child(3){width:350px;height:350px;background:rgba(255,213,79,.06);bottom:-5%;left:30%;animation-delay:-8s;animation-duration:18s}
@@ -1011,6 +1011,11 @@ body{font-variant-numeric:tabular-nums;font-family:var(--sans);color:var(--t1);b
 .desk-main::-webkit-scrollbar{width:4px}.desk-main::-webkit-scrollbar-track{background:transparent}.desk-main::-webkit-scrollbar-thumb{background:rgba(0,229,255,.12);border-radius:2px}.desk-main::-webkit-scrollbar-thumb:hover{background:rgba(0,229,255,.25)}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .skel{background:linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.03) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;color:transparent!important;min-height:14px}
+@media(max-width:767px){
+  /* v20.48 ลดความร้อนบนมือถือ: backdrop-filter ทุกการ์ด (80+ ใบ) เป็นงานหนักของ GPU ขณะเลื่อน — พื้นหลังหลังการ์ดเรียบอยู่แล้ว ไม่เห็นความต่าง */
+  body .section-card,body .kpi-card,body.glass3d:not(.light-mode) .section-card,body.glass3d:not(.light-mode) .kpi-card,body.glass3d:not(.light-mode) .pl-card,.sig-res,.chg-pill,.sbst{-webkit-backdrop-filter:none !important;backdrop-filter:none !important;}
+  .brand-ico,.dsb-logo{animation:none;}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 /* ═══ v20.38 — GLASS 3D THEME (เปิด/ปิดได้ที่ปุ่ม 🧊 ข้างปุ่มธีม · จำค่าไว้ในเครื่อง) ═══
    เพิ่มมิติด้วยกระจกหลายชั้น + ไฮไลต์ขอบบน + เงาซ้อน + แสงม่วง/ฟ้า — เป็น CSS ล้วน ไม่แตะตรรกะ/ข้อมูล ปิดแล้วกลับเป็นหน้าตาเดิม */
@@ -1720,7 +1725,8 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
   </div>
   <div style="font-size:9px;color:var(--t3);margin-top:8px;">อัปเดตทุก 5 นาที · กด "รีเฟรชตอนนี้" เพื่อเช็คทันที</div>
   <button onclick="checkSystemStatus()" style="margin-top:6px;width:100%;padding:8px;border-radius:9px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:var(--indigo);font-size:11px;font-weight:700;cursor:pointer;">🔄 รีเฟรชตอนนี้</button>
-  <div style="margin-top:10px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
+  <button type="button" id="authKeyToggle" onclick="toggleAuthKeyPanel()" style="margin-top:10px;width:100%;padding:6px;border-radius:9px;background:transparent;border:1px dashed var(--border);color:var(--t3);font-size:10px;cursor:pointer;">🔑 ตั้งค่า Auth Key (ซ่อนอยู่ — กดเพื่อแสดง)</button>
+  <div id="authKeyPanel" style="display:none;margin-top:8px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
       <span style="font-size:11.5px;font-weight:700;color:var(--t1);">🔑 Worker Auth Key</span>
       <span id="authKeyState" style="font-size:10px;color:var(--t3);">—</span>
@@ -2108,19 +2114,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
   <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">💧 Liquidity Zones <span style="text-transform:none;letter-spacing:0;">(swing high/low จริงจาก candle H1)</span></div>
   <div id="liqList"></div>
   <div id="liqKey"></div>
-  <div class="hdiv"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;">🔔 Price Alerts</div>
-    <span class="sh-badge sb-i" id="alCt">0 Active</span>
-  </div>
-  <div style="display:flex;gap:6px;margin-bottom:8px;">
-    <input class="cinp" type="number" id="alInp" placeholder="เช่น 3450.00" style="flex:1;" onkeydown="if(event.key==='Enter')addAl();"/>
-    <button class="sig-btn btn-green" style="width:auto;padding:0 16px;margin:0;" onclick="addAl()">+ ตั้งเตือน</button>
-  </div>
-  <div style="font-size:9px;color:var(--t3);margin-bottom:6px;">⚡ ตั้งเตือนไวจากแนวสำคัญที่ระบบตรวจเจอ:</div>
-  <div id="alQuickAdd" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;"></div>
-  <div id="alList" style="display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto;"></div>
-  <div style="font-size:9px;color:var(--t3);margin-top:6px;">🔔 เปิดแท็บค้างไว้ = เช็คทุกครั้งที่ราคาอัปเดต (~30 วิ) + pop-up ในเบราว์เซอร์ · ปิดแท็บแล้ว = Cloudflare Worker เช็คให้ทุก 15 นาทีแล้วส่ง <strong>Telegram</strong> (ต้องตั้งค่า Telegram ไว้แล้ว · ละเอียดน้อยกว่า: เช็คจากราคา ณ ตอนนั้น ถ้าราคาแตะแล้วกลับภายในรอบเดียวอาจพลาด)</div>
+  <!-- v20.48 — ลบส่วน Price Alerts ออกจาก UI (renderAlerts ข้ามเองเมื่อไม่มี #alList) -->
 </div>
 
 <!-- ── MARKET DATA + EVENTS (merged) ── -->
@@ -2870,6 +2864,8 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 </div><!-- /wrap -->
 
 <script>
+// v20.48 — ลดความร้อน/แบต: interval ที่ถี่ ≤ 60 วิ ไม่ทำงานตอนแท็บ/แอปอยู่เบื้องหลัง (ตัวที่ช้ากว่า 1 นาทีทำงานตามเดิม)
+(function(){const _si=window.setInterval.bind(window);window.setInterval=function(f,ms,...a){if(typeof f==='function'&&(ms||0)<=60000)return _si(function(){if(document.hidden)return;return f.apply(this,arguments);},ms,...a);return _si(f,ms,...a);};})();
 // ═══ CONFIG ═══
 // 🔐 v20.11 — WORKER_AUTH_KEY ไม่ฝังในซอร์สอีกต่อไป (เดิมใครกด View Source บนเว็บสาธารณะก็เห็น)
 // เก็บใน localStorage ของแต่ละอุปกรณ์ ('gtAuthKey') — เปิดแอปครั้งแรกจะมี prompt ให้กรอกครั้งเดียว
@@ -2884,6 +2880,7 @@ function promptAuthKey(force){
     try{ localStorage.setItem('gtAuthKey', WORKER_AUTH_KEY); }catch(e){}
   }
 }
+function toggleAuthKeyPanel(){const p=document.getElementById('authKeyPanel'),b=document.getElementById('authKeyToggle');if(!p)return;const show=p.style.display==='none';p.style.display=show?'block':'none';if(b)b.textContent=show?'🔒 ซ่อน Auth Key':'🔑 ตั้งค่า Auth Key (ซ่อนอยู่ — กดเพื่อแสดง)';}
 function resetAuthKey(){ try{ localStorage.removeItem('gtAuthKey'); }catch(e){} WORKER_AUTH_KEY=''; promptAuthKey(true); }
 (function(){
   const _origFetch = window.fetch.bind(window);
@@ -13599,13 +13596,13 @@ function initScrollSpy(){
 
 /* ═══ PARTICLE BACKGROUND (from V2 UI) — ปรับให้เบาลง: ลดจุดบนมือถือ, cap ~30fps, หยุดอัตโนมัติเมื่อสลับแท็บ ═══ */
 (function(){const c=document.getElementById('bgCanvas');if(!c)return;const x=c.getContext('2d');let W,H,ps=[],m={x:-1e3,y:-1e3};
-const isMobile=innerWidth<768;const N=isMobile?28:70;const CD=140,MD=180;
+const isMobile=innerWidth<768;const N=isMobile?18:60;const CD=140,MD=180;
 function rz(){W=c.width=innerWidth;H=c.height=innerHeight}rz();addEventListener('resize',rz);
 document.addEventListener('mousemove',e=>{m.x=e.clientX;m.y=e.clientY});
 document.addEventListener('mouseleave',()=>{m.x=-1e3;m.y=-1e3});
 const cols=['rgba(0,229,255,','rgba(124,108,240,','rgba(0,240,160,','rgba(255,213,79,'];
 for(let i=0;i<N;i++)ps.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.4+.5,c:cols[Math.floor(Math.random()*4)]});
-let rafId=null,running=true,lastT=0;const FRAME_MS=1000/30; // cap ~30fps แทน 60fps ลดงานลงครึ่งหนึ่ง
+let rafId=null,running=true,lastT=0;const FRAME_MS=1000/24; // cap ~30fps แทน 60fps ลดงานลงครึ่งหนึ่ง
 function draw(){x.clearRect(0,0,W,H);
 for(let i=0;i<ps.length;i++){const p=ps[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
 const dx=m.x-p.x,dy=m.y-p.y,d=Math.sqrt(dx*dx+dy*dy);if(d<MD){const f=(MD-d)/MD*.007;p.vx+=dx*f;p.vy+=dy*f}p.vx*=.996;p.vy*=.996;
