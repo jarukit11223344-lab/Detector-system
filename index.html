@@ -1123,6 +1123,27 @@ body.glass3d:not(.light-mode) .desk-sidebar{
   box-shadow:inset -1px 0 0 rgba(255,255,255,.06),12px 0 30px -14px rgba(100,80,240,.45);
 }
 /* ปุ่มสลับธีมกระจก */
+/* v20.45 — Pattern Lab: การ์ดสไตล์ HUD นีออน (พื้นดำทั้งสองโหมด) */
+.pl-card{--c:#ff7a1a;position:relative;margin-bottom:12px;padding:12px 12px 10px;border-radius:14px;background:linear-gradient(160deg,#07080f,#0b0d18);border:1px solid color-mix(in srgb,var(--c) 38%,transparent);box-shadow:0 0 22px -8px var(--c),inset 0 0 28px -18px var(--c);overflow:hidden;}
+.pl-card::before,.pl-card::after{content:'';position:absolute;width:22px;height:22px;border:2px solid var(--c);filter:drop-shadow(0 0 5px var(--c));pointer-events:none;}
+.pl-card::before{left:-1px;top:-1px;border-right:0;border-bottom:0;border-top-left-radius:14px;}
+.pl-card::after{right:-1px;bottom:-1px;border-left:0;border-top:0;border-bottom-right-radius:14px;}
+.pl-orange{--c:#ff7a1a}.pl-cyan{--c:#22d3ee}.pl-gold{--c:#facc15}.pl-purple{--c:#a78bfa}.pl-green{--c:#34d399}
+.pl-top{display:grid;grid-template-columns:92px 1fr;gap:8px;align-items:center;}
+.pl-id{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;}
+.pl-num{position:absolute;left:12px;top:6px;font-size:20px;font-weight:800;color:var(--c);text-shadow:0 0 8px var(--c);}
+.pl-ring{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--c);background:radial-gradient(circle,color-mix(in srgb,var(--c) 22%,#05060a),#05060a 72%);box-shadow:0 0 16px -2px var(--c),inset 0 0 12px -4px var(--c);border:1px solid color-mix(in srgb,var(--c) 55%,transparent);margin-top:12px;}
+.pl-ring svg{width:28px;height:28px;filter:drop-shadow(0 0 4px var(--c));}
+.pl-title{font-size:13.5px;font-weight:800;color:var(--c);line-height:1.1;text-shadow:0 0 10px color-mix(in srgb,var(--c) 70%,transparent);letter-spacing:.3px;text-transform:uppercase;}
+.pl-sub{font-size:9px;color:#aab3c5;line-height:1.35;}
+.pl-chart svg{display:block;width:100%;height:auto;}
+.pl-stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:8px;border:1px solid color-mix(in srgb,var(--c) 28%,transparent);border-radius:8px;background:rgba(255,255,255,.02);}
+.pl-stats>div{padding:5px 6px;border-right:1px solid color-mix(in srgb,var(--c) 18%,transparent);min-width:0;}
+.pl-stats>div:last-child{border-right:0;}
+.pl-stats .l{font-size:7.5px;color:#7d879b;letter-spacing:.6px;text-transform:uppercase;}
+.pl-stats .v{font-family:var(--mono);font-size:11px;font-weight:700;color:#e6eaf3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pl-note{font-size:9.5px;color:#9aa4b8;line-height:1.5;margin-top:6px;}
+.pl-badge{display:inline-block;font-size:8.5px;font-weight:800;padding:1px 7px;border-radius:5px;letter-spacing:.5px;}
 /* v20.43 — สวิตช์ pill นีออน (ธีมกระจก 3D / มืด-สว่าง) */
 .sw{position:relative;width:62px;height:32px;border-radius:999px;padding:0;cursor:pointer;flex-shrink:0;border:2px solid transparent;
   background:linear-gradient(#0a0c1d,#10132b) padding-box,linear-gradient(100deg,#ff9f1c,#a855f7 55%,#38bdf8) border-box;
@@ -2804,6 +2825,19 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
   </div>
 </div>
 </div><!-- /desk-grid-3: corr+news+position -->
+
+<!-- ── v20.45 PATTERN LAB — 5 การ์ดตรวจรูปแบบราคาจากข้อมูลทองจริง (แสดงผลอย่างเดียว ไม่ใช่สัญญาณเข้าไม้ ไม่แตะคะแนน) ── -->
+<div id="plSection" style="margin:14px 0 8px;">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 2px 10px;">
+    <div style="font-size:14px;font-weight:700;color:var(--t1);">🧪 Pattern Lab</div>
+    <div style="font-size:9.5px;color:var(--t3);text-align:right;line-height:1.4;">ตรวจรูปแบบจากข้อมูลทองสด · ไม่ใช่สัญญาณเข้าไม้</div>
+  </div>
+  <div class="pl-card pl-orange" id="plBull"></div>
+  <div class="pl-card pl-cyan" id="plTrap"></div>
+  <div class="pl-card pl-gold" id="plCross"></div>
+  <div class="pl-card pl-purple" id="plSR"></div>
+  <div class="pl-card pl-green" id="plRR"></div>
+</div>
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
@@ -10151,6 +10185,145 @@ async function renderDiagnostics(){
     el.innerHTML='<div style="padding:10px 0;color:var(--amber);">⚠️ วิเคราะห์ไม่สำเร็จ ลองใหม่อีกครั้ง</div>';
   }
 }
+// ═══ v20.45 — PATTERN LAB ═══
+// 5 การ์ดตรวจรูปแบบจากข้อมูลทองจริง (H1 ~1 เดือนจาก _regimeHist/realTA · D1 1 ปีจาก fetchCandlesD1) — "ตัวตรวจแบบง่ายเพื่อแสดงผล"
+// ไม่ได้ใช้ตัดสินสัญญาณ/คะแนน Confluence (ระบบจริงใช้ปัจจัยในตัวเอง) · เงื่อนไขแต่ละรูปแบบเขียนไว้ใต้การ์ดให้ตรวจสอบได้
+const _PLI={
+  bull:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c-.5 5 2.500 8 7 8.500M28 5c.5 5-2.500 8-7 8.500"/><path d="M11 13.500h10l-1.200 8c-.3 3-1.800 5-3.800 5s-3.500-2-3.800-5z"/><path d="M14 22.500v.5M18 22.500v.5M13.500 17.500v.5M18.500 17.500v.5"/></svg>',
+  bear:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="24" cy="9" r="3"/><path d="M8 12c-2 3-2 8 2 12 2 2 4 3 6 3s4-1 6-3c4-4 4-9 2-12-2-3-5-4-8-4s-6 1-8 4z"/><path d="M13 20c1 1 5 1 6 0M13.5 15.5v.5M18.5 15.5v.5"/></svg>',
+  cross:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 24l8-8 5 4 11-12"/><path d="M4 10l8 6 5-2 11 8"/><circle cx="12.5" cy="16" r="2.6" fill="currentColor" fill-opacity=".25"/></svg>',
+  sr:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9h24M4 23h24"/><path d="M9 19l4-5 4 3 6-7"/></svg>',
+  rr:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5v21M9 26h14M6 11h20"/><path d="M6 11l-3 7a3 3 0 006 0zM26 11l-3 7a3 3 0 006 0z"/></svg>'
+};
+function _plSeries(){
+  const src=(_regimeHist&&_regimeHist.closes.length>=120)?_regimeHist:((typeof realTA!=='undefined'&&realTA&&realTA.closes&&realTA.closes.length>=60)?realTA:null);
+  return src?{c:src.closes,h:src.highs,l:src.lows}:null;
+}
+const _plF=(v,d=2)=>Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const _plPct=v=>(v>=0?'+':'')+v.toFixed(2)+'%';
+// กราฟ SVG: opts{vals,color,id,extras:[{vals,color,w,dash}],hlines:[{v,label,color}],marks:[{i,label,color}],zones:[{i0,v1,v2,color}],pad}
+function _plChart(o){
+  const W=300,H=118,PL=4,PR=54,PT=8,PB=8,vals=o.vals,n=vals.length;
+  if(n<5)return '<div class="spark-empty" style="height:100px;">กำลังโหลดข้อมูล…</div>';
+  let pool=vals.slice();(o.extras||[]).forEach(e=>e.vals.forEach(x=>{if(x!=null)pool.push(x);}));(o.hlines||[]).forEach(x=>pool.push(x.v));(o.zones||[]).forEach(z=>{pool.push(z.v1,z.v2);});
+  let lo=Math.min(...pool),hi=Math.max(...pool);const sp=(hi-lo)||1;lo-=sp*.06;hi+=sp*.06;
+  const X=i=>PL+i/(n-1+(o.extraX||0))*(W-PL-PR),Y=v=>PT+(1-(v-lo)/(hi-lo))*(H-PT-PB),f=x=>x.toFixed(1);
+  const path=a=>{let d='';a.forEach((v,i)=>{if(v==null)return;d+=(d?'L':'M')+f(X(i))+' '+f(Y(v));});return d;};
+  const col=o.color,gid='plg_'+o.id;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".28"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient><filter id="${gid}f" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+  for(let k=0;k<5;k++){const y=PT+k/4*(H-PT-PB);s+=`<line x1="${PL}" x2="${W-PR}" y1="${f(y)}" y2="${f(y)}" stroke="#fff" stroke-opacity=".06"/>`;const v=hi-(hi-lo)*k/4;if(Math.abs(y-Y(vals[n-1]))>9)s+=`<text x="${W-PR+4}" y="${f(y+3)}" fill="#7d879b" font-size="7.5" font-family="monospace">${_plF(v,0)}</text>`;}
+  (o.zones||[]).forEach(z=>{const x0=X(z.i0),y1=Y(z.v1),y2=Y(z.v2);s+=`<rect x="${f(x0)}" y="${f(Math.min(y1,y2))}" width="${f(W-PR-x0)}" height="${f(Math.abs(y2-y1))}" fill="${z.color}" fill-opacity=".16" stroke="${z.color}" stroke-opacity=".5" stroke-width=".8"/>`;});
+  (o.hlines||[]).forEach(hl=>{const y=Y(hl.v);s+=`<line x1="${PL}" x2="${W-PR}" y1="${f(y)}" y2="${f(y)}" stroke="${hl.color}" stroke-width="1" stroke-dasharray="4 3" stroke-opacity=".8"/>`;if(hl.label)s+=`<text x="${PL+4}" y="${f(y+(hl.below?10:-3))}" fill="${hl.color}" font-size="7.5" font-weight="700" font-family="sans-serif">${hl.label}</text>`;});
+  (o.extras||[]).forEach(e=>{s+=`<path d="${path(e.vals)}" fill="none" stroke="${e.color}" stroke-width="${e.w||1.2}" ${e.dash?`stroke-dasharray="${e.dash}"`:''} stroke-linejoin="round"/>`;});
+  const d=path(vals);
+  if(o.area!==false)s+=`<path d="${d}L${f(X(n-1))} ${H-PB}L${f(X(0))} ${H-PB}Z" fill="url(#${gid})"/>`;
+  s+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" filter="url(#${gid}f)"/>`;
+  (o.marks||[]).forEach(m=>{const x=X(m.i),y=Y(m.y!=null?m.y:vals[m.i]);s+=`<circle cx="${f(x)}" cy="${f(y)}" r="6" fill="none" stroke="${m.color||col}" stroke-width="1.2"/><circle cx="${f(x)}" cy="${f(y)}" r="1.8" fill="${m.color||col}"/>`;if(m.label)s+=`<text x="${f(Math.min(Math.max(x,22),W-PR-22))}" y="${f(y+(m.up?-10:17))}" fill="${m.color||col}" font-size="7.5" font-weight="700" text-anchor="middle" font-family="sans-serif">${m.label}</text>`;});
+  const ly=Y(vals[n-1]);
+  s+=`<circle cx="${f(X(n-1))}" cy="${f(ly)}" r="2.4" fill="${col}"/><rect x="${W-PR+1}" y="${f(ly-6.5)}" width="${PR-2}" height="13" rx="2.5" fill="${col}"/><text x="${W-PR/2}" y="${f(ly+3)}" fill="#05060a" font-size="8" font-weight="800" text-anchor="middle" font-family="monospace">${_plF(vals[n-1],1)}</text>`;
+  return s+'</svg>';
+}
+function _plCard(id,num,icon,title,sub,chart,stats,note){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=`<div class="pl-num">${num}</div><div class="pl-top"><div class="pl-id"><div class="pl-ring">${icon}</div><div class="pl-title">${title}</div><div class="pl-sub">${sub}</div></div><div class="pl-chart">${chart}</div></div>
+  <div class="pl-stats">${stats.map(s=>`<div><div class="l">${s[0]}</div><div class="v" style="${s[2]?'color:'+s[2]:''}">${s[1]}</div></div>`).join('')}</div>${note?`<div class="pl-note">${note}</div>`:''}`;
+}
+const _plG='#34d399',_plR='#fb7185',_plA='#fbbf24';
+function renderPatternLab(){
+  if(!document.getElementById('plBull'))return;
+  const S=_plSeries();
+  if(!S){['plBull','plTrap','plSR','plRR'].forEach((id,k)=>_plCard(id,[1,2,4,5][k],_PLI[['bull','bear','sr','rr'][k]],['Bull Run','Bear Trap','Support &amp; Resistance','Risk/Reward 1:3'][k],'รอข้อมูล H1…','<div class="spark-empty" style="height:100px;">กำลังโหลดข้อมูล…</div>',[['PRICE','—'],['24H','—'],['RSI','—'],['STATUS','—']],''));}
+  else{try{_plBull(S);}catch(e){console.warn('plBull',e);}try{_plTrap(S);}catch(e){console.warn('plTrap',e);}try{_plSR(S);}catch(e){console.warn('plSR',e);}try{_plRR(S);}catch(e){console.warn('plRR',e);}}
+  try{_plCross();}catch(e){console.warn('plCross',e);}
+}
+function _plCommon(S){
+  const c=S.c,n=c.length,px=c[n-1],ch=n>24?(px-c[n-25])/c[n-25]*100:0,rsi=calcRSI(c);
+  return{px,ch,rsi,n};
+}
+// 1) BULL RUN — เทรนด์ขาขึ้นแรง: ราคา > EMA20 > EMA50 · ADX ≥ 25 · RSI 55–78 · 24 ชม. เป็นบวก (ครบ ≥ 3 จาก 4 = ACTIVE)
+function _plBull(S){
+  const{c,h,l}=S,{px,ch,rsi,n}=_plCommon(S);
+  const e20=calcEMA(c,20),e50=calcEMA(c,50),adx=calcADX(c,h,l);
+  const conds=[[px>e20&&e20>e50,'ราคา>EMA20>EMA50'],[adx!=null&&adx>=25,'ADX≥25'],[rsi>=55&&rsi<=78,'RSI 55–78'],[ch>0,'24ชม.เป็นบวก']];
+  const k=conds.filter(x=>x[0]).length,act=k>=3;
+  const e20s=calcEMASeries(c,20),e50s=calcEMASeries(c,50),m=Math.min(96,n);
+  const stat=act?'STRONG ↗':k===2?'MIXED':'WEAK';
+  _plCard('plBull',1,_PLI.bull,'Bull Run',act?'โมเมนตัมขาขึ้นแรง':'ยังไม่เป็น Bull Run',
+    _plChart({id:'bull',vals:c.slice(-m),color:'#ff7a1a',extras:[{vals:e50s.slice(-m),color:'#ffffff55',w:1,dash:'3 3'}]}),
+    [['PRICE',_plF(px,1)],['24H',_plPct(ch),ch>=0?_plG:_plR],['RSI (14)',rsi==null?'—':rsi.toFixed(1)],['TREND',stat,act?_plG:k===2?_plA:_plR]],
+    `เงื่อนไข ${k}/4: `+conds.map(x=>(x[0]?'✅':'▫️')+x[1]).join(' · ')+' · เส้นประ = EMA50');
+}
+// 2) BEAR TRAP — ฟลัดเบรกลงแล้วดีดกลับ: ใน 36 แท่งล่าสุด แท่งใดแท่งหนึ่ง Low หลุด Low ต่ำสุด 24 แท่งก่อนหน้า แต่ปิดกลับเหนือระดับนั้นภายใน ≤3 แท่ง และราคาปัจจุบันยังอยู่เหนือระดับ
+function _plTrap(S){
+  const{c,h,l}=S,{px,ch,rsi,n}=_plCommon(S);
+  let hit=null;
+  for(let i=n-1;i>=Math.max(30,n-36);i--){
+    const lvl=Math.min(...l.slice(i-24,i));
+    if(l[i]<lvl-1e-9){
+      let rec=null;for(let j=i;j<=Math.min(n-1,i+3);j++){if(c[j]>lvl){rec=j;break;}}
+      if(rec!=null&&px>lvl){hit={i,lvl,rec};break;}
+    }
+  }
+  const m=Math.min(96,n),off=n-m;
+  const marks=hit&&hit.i>=off?[{i:hit.i-off,y:l[hit.i],label:'TRAP',color:'#22d3ee',up:false}]:[];
+  const hl=hit?[{v:hit.lvl,label:'SUPPORT ที่ถูกหลุด',color:'#22d3ee66',below:true}]:[];
+  _plCard('plTrap',2,_PLI.bear,'Bear Trap',hit?'หลุดแนวรับหลอก แล้วดีดกลับ':'ยังไม่พบ Bear Trap',
+    _plChart({id:'trap',vals:c.slice(-m),color:'#22d3ee',marks,hlines:hl}),
+    [['PRICE',_plF(px,1)],['24H',_plPct(ch),ch>=0?_plG:_plR],['RSI (14)',rsi==null?'—':rsi.toFixed(1)],['SIGNAL',hit?'REVERSAL ↗':'NONE',hit?_plG:'#94a3b8']],
+    hit?`พบเมื่อ ${n-1-hit.i} แท่ง H1 ก่อน: Low ${_plF(l[hit.i],1)} หลุดแนว ${_plF(hit.lvl,1)} แล้วปิดกลับเหนือแนว${hit.rec===hit.i?'ในแท่งเดียวกัน':'ภายใน '+(hit.rec-hit.i)+' แท่ง'} · ตอนนี้ราคาอยู่เหนือแนว ${_plF(px-hit.lvl,1)} จุด`:'เงื่อนไข: Low หลุด Low ต่ำสุด 24 แท่งก่อนหน้า แต่ปิดกลับเหนือแนวภายใน ≤3 แท่ง (ภายใน 36 แท่งล่าสุด) และราคายังอยู่เหนือแนว');
+}
+// 3) GOLDEN CROSS — EMA50 vs EMA200 รายวัน (D1 1 ปี)
+let _plD1=null,_plD1Busy=false;
+function _plCross(){
+  const el=document.getElementById('plCross');if(!el)return;
+  if(!_plD1){
+    _plCard('plCross',3,_PLI.cross,'Golden Cross','EMA50 ตัด EMA200 (D1)','<div class="spark-empty" style="height:100px;">กำลังโหลดข้อมูล D1…</div>',[['PRICE','—'],['24H','—'],['RSI (14)','—'],['TREND','—']],'');
+    if(!_plD1Busy){_plD1Busy=true;fetchCandlesD1().then(d=>{_plD1=d||null;_plD1Busy=false;if(d)_plCross();else setTimeout(()=>{_plD1Busy=false;},0);}).catch(()=>{_plD1Busy=false;});}
+    return;
+  }
+  const c=_plD1.closes,n=c.length;
+  const e50=calcEMASeries(c,50),e200=calcEMASeries(c,200);
+  if(n<210||e200[n-1]==null){_plCard('plCross',3,_PLI.cross,'Golden Cross','ข้อมูล D1 ไม่พอสำหรับ EMA200','<div class="spark-empty" style="height:100px;">ข้อมูลไม่พอ</div>',[['PRICE',_plF(c[n-1],1)],['24H','—'],['RSI (14)','—'],['TREND','—']],`มีแค่ ${n} แท่ง D1 (ต้อง ≥ 210)`);return;}
+  const px=c[n-1],ch=(px-c[n-2])/c[n-2]*100,rsi=calcRSI(c);
+  const bull=e50[n-1]>e200[n-1];
+  let ci=null;for(let i=n-1;i>=200;i--){if((e50[i]>e200[i])!==(e50[i-1]>e200[i-1])){ci=i;break;}}
+  const m=Math.min(120,n),off=n-m;
+  const marks=ci!=null&&ci>=off?[{i:ci-off,y:(e50[ci]+e200[ci])/2,label:bull?'GOLDEN CROSS':'DEATH CROSS',color:'#facc15',up:false}]:[];
+  const gap=(e50[n-1]-e200[n-1]);
+  _plCard('plCross',3,_PLI.cross,'Golden Cross',bull?'EMA50 อยู่เหนือ EMA200 (D1)':'EMA50 อยู่ใต้ EMA200 (Death Cross)',
+    _plChart({id:'cross',vals:c.slice(-m),color:'#facc15',area:false,extras:[{vals:e50.slice(-m),color:'#fb923c',w:1.4},{vals:e200.slice(-m),color:'#e5e7eb',w:1.2}],marks}),
+    [['PRICE',_plF(px,1)],['1D',_plPct(ch),ch>=0?_plG:_plR],['RSI (14)',rsi==null?'—':rsi.toFixed(1)],['TREND',bull?'BULLISH ↗':'BEARISH ↘',bull?_plG:_plR]],
+    `EMA50 ${_plF(e50[n-1],1)} ${bull?'>':'<'} EMA200 ${_plF(e200[n-1],1)} (ห่าง ${_plF(Math.abs(gap),1)} จุด)`+(ci!=null?` · ตัดล่าสุด ${n-1-ci} วันทำการก่อน${bull?' (Golden)':' (Death)'}`:' · ไม่พบการตัดใน 1 ปี')+' · เส้นเหลือง=ราคา ส้ม=EMA50 ขาว=EMA200 · D1 ย้อนหลัง 1 ปี');
+}
+// 4) SUPPORT & RESISTANCE — กรอบราคา H1 ~1 เดือน: แนวต้าน=High สูงสุดของ 120 แท่งก่อนแท่งล่าสุด 6 แท่ง · แนวรับ=Low ต่ำสุดช่วงเดียวกัน
+function _plSR(S){
+  const{c,h,l}=S,{px,ch,rsi,n}=_plCommon(S);
+  const w0=Math.max(0,n-126),w1=n-6;
+  const res=Math.max(...h.slice(w0,w1)),sup=Math.min(...l.slice(w0,w1));
+  let st,sc;
+  if(px>res){st='BREAKOUT ↗';sc=_plG;}else if(px<sup){st='BREAKDOWN ↘';sc=_plR;}else{const p=(px-sup)/(res-sup)*100;st=`RANGE ${p.toFixed(0)}%`;sc=_plA;}
+  const m=Math.min(126,n);
+  _plCard('plSR',4,_PLI.sr,'Support &amp; Resistance','แนวที่กำหนดเทรนด์',
+    _plChart({id:'sr',vals:c.slice(-m),color:'#a78bfa',hlines:[{v:res,label:'RESISTANCE',color:'#c4b5fd'},{v:sup,label:'SUPPORT',color:'#c4b5fd',below:true}]}),
+    [['PRICE',_plF(px,1)],['24H',_plPct(ch),ch>=0?_plG:_plR],['RSI (14)',rsi==null?'—':rsi.toFixed(1)],['STATUS',st,sc]],
+    `ต้าน ${_plF(res,1)} (${px>res?'+':'−'}${_plF(Math.abs(px-res),1)}) · รับ ${_plF(sup,1)} (${px<sup?'−':'+'}${_plF(Math.abs(px-sup),1)}) · คำนวณจาก H1 ${m>=126?'~1 เดือน':m+' แท่ง'} ไม่นับ 6 แท่งล่าสุด · แนวละเอียดกว่านี้ดูการ์ด Nearest Level`);
+}
+// 5) RISK/REWARD 1:3 — ตัวอย่างคำนวณตามกติกา AUTO (SL 1.5×ATR H1, TP = 3R) ทิศตามราคา vs EMA50 H1 · ไม่ใช่สัญญาณ
+function _plRR(S){
+  const{c,h,l}=S,{px,ch,rsi,n}=_plCommon(S);
+  const atr=calcATR(c,h,l),e50=calcEMA(c,50);
+  if(!atr||!e50){_plCard('plRR',5,_PLI.rr,'Risk/Reward 1:3','รอข้อมูล ATR','<div class="spark-empty" style="height:100px;">กำลังโหลดข้อมูล…</div>',[['PRICE',_plF(px,1)],['ATR','—'],['RISK','1R'],['R/R','1:3']],'');return;}
+  const buy=px>=e50,risk=Math.max(atr*1.5,Math.max(px*0.0012,1.5)),sl=buy?px-risk:px+risk,tp=buy?px+3*risk:px-3*risk;
+  const m=Math.min(72,n),vals=c.slice(-m),off=2;
+  const zones=[{i0:m-1,v1:px,v2:tp,color:'#34d399'},{i0:m-1,v1:px,v2:sl,color:'#fb7185'}];
+  _plCard('plRR',5,_PLI.rr,'Risk/Reward 1:3','ตัวอย่างคำนวณ '+(buy?'BUY':'SELL'),
+    _plChart({id:'rr',vals,color:'#34d399',zones,extraX:16,hlines:[{v:tp,label:'TARGET +3R',color:'#6ee7b7'},{v:sl,label:'STOP LOSS',color:'#fda4af',below:true}]}),
+    [['PRICE',_plF(px,1)],['ATR H1',_plF(atr,1)],['RISK 1R','$'+_plF(risk,1)],['R/R','1 : 3 ✓',_plG]],
+    `${buy?'BUY':'SELL'} @ ${_plF(px,1)} · SL ${_plF(sl,1)} · TP ${_plF(tp,1)} · เสมอตัวที่ Win Rate 25% (1/(1+3)) · ทิศสมมติตามราคาเทียบ EMA50 H1 · ใช้ดูสัดส่วนเท่านั้น ไม่ใช่สัญญาณ — ไม้จริงใช้ TP 1R/2R ตามระบบ`);
+}
+setTimeout(()=>{try{loadRegimeH1History();}catch(e){}renderPatternLab();},3000);
+setInterval(()=>{try{loadRegimeH1History();}catch(e){}renderPatternLab();},120000);
+
 // ═══ v20.42 — PERFORMANCE MONITOR ═══
 // 4 ส่วนในการ์ดเดียว: (1) Today R + เตือนก่อนถึงเพดาน Circuit Breaker (2) ไม้จริงเทียบ Backtest (3) Shadow Tracking ของสัญญาณ Watchlist
 // (ข้อมูลจาก Worker /perf-monitor) (4) สถานะแจ้งเตือนแนวสำคัญทาง Telegram — ส่วน 1–2 คำนวณในเครื่องจาก Signal History/ผล Backtest ล่าสุด
