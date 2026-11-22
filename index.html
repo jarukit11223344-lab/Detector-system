@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 
@@ -38,12 +38,12 @@
   --t1:#ffffff;
   --t2:#94a3b8;
   --t3:#475569;
-  --display:'Space Grotesk','Noto Sans Thai',sans-serif;
+  --display:'Inter','Noto Sans Thai',sans-serif;
   --sans:'Inter','Noto Sans Thai',sans-serif;
   --mono:'JetBrains Mono','Noto Sans Thai',monospace;
 }
 html,body{height:100%;overflow-x:hidden;}
-body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100vh;}
+body{font-variant-numeric:tabular-nums;font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
     radial-gradient(ellipse 60% 50% at 20% 10%,rgba(99,102,241,0.15),transparent 60%),
@@ -154,7 +154,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   border:1px solid rgba(34,211,238,0.2);
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 0 16px rgba(34,211,238,0.12),inset 0 0 12px rgba(34,211,238,0.04);}
-.brand-name{font-family:var(--display);font-size:20px;font-weight:800;color:var(--t1);}
+.brand-name{font-family:'Space Grotesk','Inter',sans-serif;font-size:20px;font-weight:800;color:var(--t1);}
 .brand-sub{font-size:10.5px;color:var(--t3);font-weight:600;letter-spacing:0.6px;margin-top:1px;}
 .topbar-r{display:flex;align-items:center;gap:8px;}
 .tf-pills{display:flex;background:rgba(255,255,255,0.06);border:1px solid var(--border);
@@ -651,10 +651,10 @@ body.light-mode .cs-tf-active{background:rgba(79,70,229,.12);color:var(--indigo)
   --indigo:#7c6cf0;--cyan:#00e5ff;--green:#00f0a0;--red:#ff3b6a;
   --gold:#ffd54f;--orange:#ff8a3d;--violet:#b48cfc;--amber:#ffca28;
   --t1:#eaf0ff;--t2:#7a8baa;--t3:#3a4a6a;
-  --display:'Space Grotesk','Noto Sans Thai',sans-serif;--sans:'Inter','Noto Sans Thai',sans-serif;--mono:'JetBrains Mono','Noto Sans Thai',monospace;
+  --display:'Inter','Noto Sans Thai',sans-serif;--sans:'Inter','Noto Sans Thai',sans-serif;--mono:'JetBrains Mono','Noto Sans Thai',monospace;
 }
 html,body{height:100%;overflow-x:hidden}
-body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100vh}
+body{font-variant-numeric:tabular-nums;font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100vh}
 
 /* ═══ FUTURISTIC BACKGROUND ═══ */
 #bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
@@ -716,7 +716,7 @@ body{font-family:var(--sans);color:var(--t1);background:var(--bg);min-height:100
 .brand{display:flex;align-items:center;gap:14px}
 .brand-ico{width:48px;height:48px;border-radius:16px;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);display:flex;align-items:center;justify-content:center;position:relative}
 .brand-ico::after{content:'';position:absolute;inset:-2px;border-radius:18px;border:1px solid rgba(0,229,255,.12);animation:logoRing 3s ease-in-out infinite}
-.brand-name{font-family:var(--display);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--t1),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-name{font-family:'Space Grotesk','Inter',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--t1),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .brand-sub{font-size:10px;color:var(--t3);font-weight:700;letter-spacing:2px;margin-top:2px;text-transform:uppercase}
 .topbar-r{display:flex;align-items:center;gap:10px}
 .tf-pills{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px;backdrop-filter:blur(8px)}
@@ -2034,7 +2034,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
       <defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#22d3a0"/>
       </linearGradient></defs>
-      <text x="44" y="49" text-anchor="middle" font-size="15" font-weight="800" fill="#22d3a0" font-family="Space Grotesk" id="ringTxt">—</text>
+      <text x="44" y="49" text-anchor="middle" font-size="15" font-weight="800" fill="#22d3a0" font-family="Inter" id="ringTxt">—</text>
     </svg>
   </div>
   <!-- Structure badges — เดิมเป็น "CHoCH H1 / BOS ✓ / SSL Sweep" ตายตัว ไม่เคยเปลี่ยน ตอนนี้ดึงจากสถานะจริง -->
@@ -2425,7 +2425,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
         <text x="4" y="72" font-size="8" fill="#f43f5e" font-family="JetBrains Mono">0</text>
         <text x="48" y="16" font-size="8" fill="#fbbf24" font-family="JetBrains Mono">5</text>
         <text x="98" y="72" font-size="8" fill="#22d3a0" font-family="JetBrains Mono" text-anchor="end">10</text>
-        <text id="csScoreText" x="55" y="56" font-size="18" font-weight="900" text-anchor="middle" font-family="Space Grotesk" fill="white">—</text>
+        <text id="csScoreText" x="55" y="56" font-size="18" font-weight="900" text-anchor="middle" font-family="Inter" fill="white">—</text>
       </svg>
     </div>
     <div style="flex:1;">
@@ -2519,7 +2519,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
       <text x="14"  y="98" font-size="8.5" fill="#22d3a0" font-family="JetBrains Mono">LOW</text>
       <text x="75"  y="20" font-size="8.5" fill="#fbbf24" font-family="JetBrains Mono">MED</text>
       <text x="148" y="98" font-size="8.5" fill="#f43f5e" font-family="JetBrains Mono" text-anchor="end">HIGH</text>
-      <text id="atrVal" x="90" y="80" font-size="15" font-weight="800" fill="var(--gold)" font-family="Space Grotesk" text-anchor="middle">—</text>
+      <text id="atrVal" x="90" y="80" font-size="15" font-weight="800" fill="var(--gold)" font-family="Inter" text-anchor="middle">—</text>
     </svg>
     <div style="font-size:11px;color:var(--t2);margin-top:-6px;">ATR(14) · pips</div>
   </div>
