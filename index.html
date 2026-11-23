@@ -12559,7 +12559,7 @@ const TR_RSI_MIN_OVERSOLD=25;
 // เมื่อ trend แรงมาก (ADX H4 ≥ TR_STRONG_ADX) + ระยะห่างไม่เกิน TR_STRONG_MAX_EXT_ATR + ราคา "ทำ high/low ใหม่" เกินช่วง
 // TR_BREAK_LOOKBACK แท่ง H4 ล่าสุด (ยืนยันว่า trend ยังเดินต่อ ไม่ใช่แค่เด้งกลับ) ตัวเลขชุดนี้ "ยังไม่ผ่านการ backtest ยืนยัน" —
 // กดการ์ด Trend Rider Backtest จะเทียบ "เข้มงวด(เดิม)" กับ "ผ่อน(ใหม่)" ให้เห็นข้างกัน · ตั้ง TR_STRONG_MODE=false เพื่อกลับไปเดิม
-const TR_STRONG_MODE=true;
+const TR_STRONG_MODE=false; // v20.48 — ปิดโหมด Strong: Backtest ~1 ปี Strong 21 ไม้ 43% +52 จุด แพ้เข้มงวดเดิม 20 ไม้ 50% +397 จุด
 const TR_STRONG_ADX=28;
 const TR_STRONG_MAX_EXT_ATR=7;
 const TR_BREAK_LOOKBACK=6;
