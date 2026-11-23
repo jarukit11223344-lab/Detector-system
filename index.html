@@ -1083,6 +1083,14 @@ body.glass3d:not(.light-mode) .section-card::after{
     border-color:rgba(190,175,255,.42);
   }
 }
+/* v20.48 — กลุ่ม Lab (การ์ดวิจัย/ทดสอบ) หุบไว้ตอนเปิดแอป: ลดความยาวหน้า + งาน layout/paint */
+#labBar{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+#labBar .lab-t{font-size:14px;font-weight:800;color:var(--t1);}
+#labBar .lab-s{font-size:10.5px;color:var(--t3);margin-top:2px;}
+#labBar .lab-caret{font-size:12px;color:var(--t3);transition:transform .2s;}
+#labBar.open .lab-caret{transform:rotate(90deg);}
+#labBody{display:none;}
+#labBody.open{display:block;}
 /* v20.47 — การ์ดทุกใบสไตล์ HUD เดียวกับ Pattern Lab (เฉพาะโหมดกระจก 🧊 · โหมดปกติ/สว่างใช้ธีมเดิม): พื้นดำเข้ม + ขอบนีออนตามสีการ์ด + มุมกรอบเรืองแสง
    สีขอบ --hc อ่านจากสีเดิมของแต่ละการ์ด (inline border-color / คลาส sc-*) จาก JS ตอนโหลด ทำให้การ์ดแดง/เขียว/ม่วงยังคงสีของมัน */
 body.glass3d:not(.light-mode) .section-card,
@@ -2111,8 +2119,8 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
   <!-- Structure badges — เดิมเป็น "CHoCH H1 / BOS ✓ / SSL Sweep" ตายตัว ไม่เคยเปลี่ยน ตอนนี้ดึงจากสถานะจริง -->
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="aiTrendTags"></div>
   <!-- Liquidity as product-row style -->
-  <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">💧 Liquidity Zones <span style="text-transform:none;letter-spacing:0;">(swing high/low จริงจาก candle H1)</span></div>
-  <div id="liqList"></div>
+  <div id="liqHdr" onclick="toggleLiqList()" style="cursor:pointer;font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span id="liqCaret" style="font-size:9px;">▶</span><span>💧 Liquidity Zones <span style="text-transform:none;letter-spacing:0;">(swing high/low จริงจาก candle H1 — กดเพื่อดูรายการ · สรุปแนวใกล้สุดอยู่ใน Key Levels ด้านล่าง)</span></span></div>
+  <div id="liqList" style="display:none;"></div>
   <div id="liqKey"></div>
   <!-- v20.48 — ลบส่วน Price Alerts ออกจาก UI (renderAlerts ข้ามเองเมื่อไม่มี #alList) -->
 </div>
@@ -2284,6 +2292,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
     <div><div class="sh-title">🚀 Trend Rider</div><div class="sh-sub">Chandelier ATR Trailing (3×ATR H4) + เป้า TP1/TP2 (1R/2R) · ทยอยปิดที่เป้า ที่เหลือปล่อยวิ่งจนกว่า trend จะหัก · จับ trend ยาวหลายวัน</div></div>
     <span class="sh-badge" id="trBadge" style="font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;">—</span>
   </div>
+  <div id="trStrip" style="display:none;margin:0 0 10px;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);font-size:10.5px;line-height:1.65;color:var(--t2);"></div>
   <div id="trEmpty" style="font-size:11.5px;color:var(--t3);text-align:center;padding:16px 0;">ยังไม่มี trend ที่แข็งแรงพอ — รอ HTF Lock ล็อกทิศชัดเจน + ADX H4 แข็งแรงก่อน</div>
   <div id="trRes" style="display:none;">
     <div id="trDir" class="sr-dir" style="font-size:19px;margin-bottom:6px;"></div>
@@ -2856,7 +2865,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.48 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.49 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -3943,6 +3952,9 @@ function renderKeyLevels(price){
     ${row(k.res,'▲ ต้าน','var(--red)')}${row(k.sup,'▼ รับ','var(--green)')}
     ${hint?`<div style="font-size:10px;color:var(--t3);margin-top:3px;">${hint}</div>`:''}</div>`:'';
 }
+// v20.48 — Liquidity Zones หุบไว้เป็นค่าเริ่มต้น (Key Levels ด้านล่างสรุปแนวใกล้สุดจากทุกแหล่งอยู่แล้ว) · ลดข้อมูลซ้ำซ้อน
+function toggleLiqList(){const l=document.getElementById('liqList'),c=document.getElementById('liqCaret');if(!l)return;const o=l.style.display==='none';l.style.display=o?'block':'none';if(c)c.textContent=o?'▼':'▶';try{localStorage.setItem('gtLiqOpen',o?'1':'0');}catch(_){}}
+(function(){try{if(localStorage.getItem('gtLiqOpen')==='1'){const l=document.getElementById('liqList'),c=document.getElementById('liqCaret');if(l)l.style.display='block';if(c)c.textContent='▼';}}catch(_){}})();
 function renderLiq(price){
   _renderLiqList(price);
   try{renderKeyLevels(price||livePrice||4300);}catch(e){} // v20.32
@@ -4181,6 +4193,7 @@ function saveQSThreshold(){
   generateQuickSignal(false);
 }
 function resetQSThreshold(){
+  if(!confirm('รีเซ็ตเกณฑ์คะแนน Quick Signal กลับเป็นค่าเริ่มต้น? (จะทับค่าที่ตั้งไว้ เช่น 6.0)'))return; // v20.48 กันกดพลาด
   QS_THRESHOLD=QS_THRESHOLD_DEFAULT;
   try{localStorage.removeItem('gtQSThreshold');}catch(e){}
   const inp=document.getElementById('qsThresholdInp');
@@ -4659,6 +4672,7 @@ function saveWatchlistThresholds(){
   generateWatchlistSignal();
 }
 function resetWatchlistThresholds(){
+  if(!confirm('รีเซ็ตเกณฑ์ Watchlist กลับเป็นค่าเริ่มต้น?'))return; // v20.48 กันกดพลาด
   WATCHLIST_MIN_SCORE=WATCHLIST_MIN_DEFAULT;WATCHLIST_MAX_SCORE=WATCHLIST_MAX_DEFAULT;
   try{localStorage.removeItem('gtWLThresholds');}catch(e){}
   document.getElementById('wlSetMin').value=WATCHLIST_MIN_DEFAULT;
@@ -10941,6 +10955,27 @@ function saveSpreadPref(){
     showToast(`💾 บันทึก Spread = ${v.toFixed(2)} แล้ว — sync เข้า cron worker ด้วย`);
   }
 }
+// v20.48 — จำ Balance/Risk% ไว้ในเครื่อง (ใช้กับแถบความเสี่ยงของ Trend Rider)
+(function(){const sv=(id,k)=>{const e=document.getElementById(id);if(!e)return;try{const v=localStorage.getItem(k);if(v&&!e.value)e.value=v;}catch(_){}e.addEventListener('input',()=>{try{localStorage.setItem(k,e.value);}catch(_){}});};sv('psBalance','gtPsBalance');sv('psRisk','gtPsRisk');})();
+// v20.48 — กลุ่ม Lab: ย้ายการ์ดวิจัย/ทดสอบเข้ากล่องเดียว หุบไว้ตอนเปิดแอป (กดแถบเพื่อเปิด) — ย้าย DOM อย่างเดียว id/ฟังก์ชันเดิมทำงานเหมือนเดิม
+(function initLabGroup(){
+  try{
+    const names=['Accuracy Diagnostics','Validation Lab','Historical Backtest','Trend Rider Backtest','Factor Win-Rate Attribution','Auto-tune Confluence Weights','ปรับน้ำหนัก Confluence'];
+    const all=[...document.querySelectorAll('.section-card')];
+    const picked=all.filter(c=>{const t=c.querySelector('.sh-title');return t&&names.some(n=>t.textContent.includes(n));});
+    if(picked.length<2||document.getElementById('labBar'))return;
+    const bar=document.createElement('div');bar.className='section-card';bar.id='labBar';
+    bar.innerHTML='<div><div class="lab-t">🔬 Lab · ห้องทดลอง</div><div class="lab-s">Backtest · Validation · ปรับน้ำหนัก ('+picked.length+' การ์ด) — ไม่ได้ใช้ทุกวัน หุบไว้</div></div><div class="lab-caret">▶</div>';
+    const body=document.createElement('div');body.id='labBody';
+    picked[0].parentNode.insertBefore(bar,picked[0]);
+    bar.parentNode.insertBefore(body,bar.nextSibling);
+    picked.forEach(c=>body.appendChild(c));
+    const set=o=>{bar.classList.toggle('open',o);body.classList.toggle('open',o);try{localStorage.setItem('gtLabOpen',o?'1':'0');}catch(_){}};
+    bar.addEventListener('click',()=>set(!body.classList.contains('open')));
+    let o=false;try{o=localStorage.getItem('gtLabOpen')==='1';}catch(_){}
+    set(o);
+  }catch(e){console.warn('lab group',e);}
+})();
 function calcPositionSize(){
   const balance=parseFloat(document.getElementById('psBalance').value);
   const riskPct=parseFloat(document.getElementById('psRisk').value)||1;
@@ -11376,6 +11411,7 @@ function saveCSWeight(id,val){
   scheduleCSWeightsPush();
 }
 function resetCSWeights(){
+  if(!confirm('รีเซ็ตน้ำหนัก Confluence ทั้งหมดกลับเป็นค่าเริ่มต้น? (ค่าที่ปรับไว้จะหาย)'))return; // v20.48 กันกดพลาด
   try{localStorage.removeItem('gtCSWeights');}catch(e){}
   window._csWeights={...CS_WEIGHTS_DEFAULT};
   window._csWeightsResetPending=true;scheduleCSWeightsPush();
@@ -12690,7 +12726,48 @@ async function syncTRServer(cur){
   }catch(e){window._trSrv={t:Date.now(),ok:false,open:null};}
   finally{_trSrvBusy=false;}
 }
-function generateTrendRider(cur){
+// v20.48 — แถบ "ความเสี่ยง + ระยะจาก Entry ระบบ + M15 พร้อมเข้าไหม" ใต้หัวการ์ด Trend Rider (ทุกสถานะ)
+function renderTRStrip(cur){
+  const el=document.getElementById('trStrip');if(!el)return;
+  const lock=loadTrendRiderLock();
+  const htf=window.htfLockState;
+  let dir=null,ref=null,sl=null,r0=null;
+  if(lock&&lock.dir){dir=lock.dir;ref=lock.entry;sl=lock.sl;r0=(lock.sl0!=null?Math.abs(lock.entry-lock.sl0):(lock.atr?lock.atr*TR_CHANDELIER_MULT:null));}
+  else if(htf&&htf.locked&&htf.bias&&realTA_H4&&realTA_H4.atr){dir=htf.bias==='BULLISH'?'BUY':'SELL';r0=realTA_H4.atr*TR_CHANDELIER_MULT;sl=dir==='BUY'?cur-r0:cur+r0;}
+  if(!dir||!cur||!(r0>0)){el.style.display='none';return;}
+  const col=dir==='BUY'?'var(--green)':'var(--red)';
+  const dist=Math.abs(cur-sl); // ระยะ SL จากราคาตอนนี้ (จุด = $1)
+  const perPt=loadPipValuePref()*10; // USD ต่อ $1 ของราคา ต่อ 1 lot (pip $0.10 × pip value)
+  const risk01=dist*perPt*0.1;
+  let sizeTxt='';
+  const bal=parseFloat((document.getElementById('psBalance')||{}).value),rp=parseFloat((document.getElementById('psRisk')||{}).value)||1;
+  if(bal>0){const lot=Math.floor((bal*rp/100)/(dist*perPt)*100)/100;sizeTxt=` · เสี่ยง ${rp}% ของพอร์ต $${bal.toFixed(0)} → ${lot<0.01?'<b style="color:var(--t1)">ต่ำกว่า 0.01 lot</b> (SL กว้างเกินพอร์ตนี้ — ลดความเสี่ยงหรือรอจุดเข้าใกล้ SL)':'ไม่เกิน <b style="color:var(--t1)">'+lot.toFixed(2)+' lot</b>'}`;}
+  else sizeTxt=' · <span style="color:var(--t3)">กรอก Balance ในการ์ด Position Size เพื่อดูขนาดไม้ที่เหมาะ</span>';
+  let rows=`<div><b style="color:${col}">${dir}</b> · SL ห่างจากราคาตอนนี้ <b style="color:var(--t1)">${dist.toFixed(1)} จุด</b> → ถ้าหลุด SL เสีย ≈ <b style="color:var(--t1)">$${risk01.toFixed(0)}</b> ต่อ 0.10 lot${sizeTxt}</div>`;
+  if(ref!=null){
+    const better=dir==='SELL'?cur-ref:ref-cur; // ราคาตอนนี้ได้เปรียบกว่า Entry ระบบกี่จุด (+ = ได้เปรียบ)
+    const rr=better/r0;
+    const warn=rr<=-0.5;
+    const t=Math.abs(better)<0.05?'เท่ากับ Entry ระบบ':(better>0?`ดีกว่า Entry ระบบ ${better.toFixed(1)} จุด`:`แย่กว่า Entry ระบบ ${Math.abs(better).toFixed(1)} จุด`);
+    rows+=`<div>📏 ราคาตอนนี้ ${t} (${rr>=0?'+':''}${rr.toFixed(2)}R)${warn?' · <span style="color:var(--amber)">⚠️ แย่กว่า 0.5R — ควรข้ามไม้นี้ ไม่ไล่ราคา</span>':''}</div>`;
+  }
+  // M15 พร้อมเข้าไหม
+  const m=realTA_M15;
+  if(m&&m.lastClose!=null&&m.ema20!=null){
+    const b=getBiasFromTA(m);
+    const aligned=b&&((dir==='SELL'&&b.dir==='BEARISH')||(dir==='BUY'&&b.dir==='BULLISH'));
+    const counter=b&&((dir==='SELL'&&b.dir==='BULLISH')||(dir==='BUY'&&b.dir==='BEARISH'));
+    const side=dir==='SELL'?(m.lastClose<m.ema20):(m.lastClose>m.ema20);
+    let ic,txt,c2;
+    if(aligned&&side){ic='🟢';txt=`M15 พร้อมเข้า ${dir} — M15 หันไปทางเดียวกับเทรนด์แล้ว`;c2='var(--green)';}
+    else if(counter){ic='🔴';txt=`M15 ยังสวนเทรนด์ (${dir==='SELL'?'เด้งขึ้น':'ย่อลง'}) — รอแท่ง M15 ปิดกลับทิศก่อน`;c2='var(--red)';}
+    else{ic='🟡';txt='M15 เป็นกลาง — รอแท่ง M15 ปิดยืนยันทิศ';c2='var(--amber)';}
+    rows+=`<div>${ic} <span style="color:${c2}">${txt}</span>${m.rsi!=null?` · RSI M15 ${m.rsi.toFixed(0)}`:''}</div>`;
+  }
+  el.innerHTML=rows;el.style.display='block';
+}
+function generateTrendRider(cur){try{_generateTrendRiderCore(cur);}finally{try{renderTRStrip(cur);}catch(e){}}}
+function _generateTrendRiderCore(cur){
   const emptyEl=document.getElementById('trEmpty'),resEl=document.getElementById('trRes');
   if(!emptyEl||!resEl)return;
   if(!cur)return;
