@@ -3033,11 +3033,21 @@ function medianOf(nums){
   const mid=Math.floor(s.length/2);
   return s.length%2?s[mid]:(s[mid-1]+s[mid])/2;
 }
+// v20.48 — แหล่งที่ล้มติดกัน ≥3 ครั้ง (เช่น metals.live HTTP 525 / GoldPrice.org 403) พักการเรียก 30 นาทีแล้วลองใหม่ — ลดคำขอเปล่าทุก 30 วิ (ช่วยแบต/ความร้อนด้วย)
+const _spotCB={};
+async function _spotBreaker(name,fn){
+  const st=_spotCB[name]||(_spotCB[name]={fails:0,until:0});
+  if(Date.now()<st.until)return null;
+  const r=await fn();
+  if(r){st.fails=0;st.until=0;}
+  else{st.fails++;if(st.fails>=3){st.until=Date.now()+30*60000;st.fails=0;}}
+  return r;
+}
 async function fetchGoldPrice(){
   setStatus('ls-loading','Fetching...');
   // ดึง 3 แหล่ง direct พร้อมกัน (ของเดิมดึงทีละแหล่งตามลำดับ พึ่งแหล่งแรกที่ตอบสำเร็จเพียงแหล่งเดียว
   // ถ้าแหล่งนั้นราคาหลุด/ค้าง สัญญาณทั้งระบบจะเพี้ยนตาม — median ของหลายแหล่งช่วยกรอง outlier ออกได้)
-  const settled=await Promise.allSettled([fetchFromGoldApi(),fetchFromMetalsLive(),fetchFromGoldPriceOrg()]);
+  const settled=await Promise.allSettled([fetchFromGoldApi(),_spotBreaker('metals.live',fetchFromMetalsLive),_spotBreaker('GoldPrice.org',fetchFromGoldPriceOrg)]);
   const results=settled.filter(r=>r.status==='fulfilled'&&r.value).map(r=>r.value);
 
   if(results.length>=2){
@@ -5630,9 +5640,28 @@ function updateM15EarlyWarning(locked,freshScoreSameDir){
     }
   }
 }
+// v20.48 — cron เปิดไม้ M15 Entry ของตัวเอง (KV m15EntryLock) แยกจากล็อกในหน้าเว็บ → เดิมการ์ดไม่รู้ว่า cron เปิดไม้แล้ว (Telegram แจ้งแต่การ์ดยังว่าง/นับเอง)
+// ตอนนี้ดึงล็อกของ cron จาก /m15-history (ฟิลด์ lock) ทุก 60 วิ: ถ้าเครื่องนี้ยังไม่มีล็อกและ cron มี → การ์ดแสดงไม้ของ cron แบบอ่านอย่างเดียว
+// (ไม่สร้างล็อกซ้ำในหน้าเว็บ กันไม้ซ้ำสองชุด/ประวัติซ้ำ) · cron เป็นคนติดตาม TP/SL และปิดไม้เอง
+window._m15Srv=window._m15Srv||null;let _m15SrvBusy=false;
+async function syncM15ServerLock(){
+  if(_m15SrvBusy||!WORKER_AUTH_KEY)return;
+  if(window._m15Srv&&Date.now()-window._m15Srv.t<60000)return;
+  _m15SrvBusy=true;
+  try{
+    const r=await fetch(M15_HISTORY_API,{headers:{'X-Auth-Key':WORKER_AUTH_KEY},signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const prev=window._m15Srv;
+    window._m15Srv={t:Date.now(),ok:true,lock:d.lock||null};
+    if(!prev||!prev.ok||JSON.stringify(prev.lock)!==JSON.stringify(window._m15Srv.lock)){try{generateM15EntrySignal();}catch(e){}}
+  }catch(e){window._m15Srv={t:Date.now(),ok:false,lock:null};}
+  finally{_m15SrvBusy=false;}
+}
 function generateM15EntrySignal(){
   const resEl=document.getElementById('m15eRes'),emptyEl=document.getElementById('m15eEmpty');
   if(!resEl||!emptyEl)return; // การ์ดนี้อาจยังไม่ถูก render ในบาง build
+  syncM15ServerLock();
   if(isMarketClosed()){
     resEl.style.display='none';emptyEl.style.display='block';
     emptyEl.textContent='🌙 ตลาดปิดช่วงสุดสัปดาห์ — งดวิเคราะห์จนกว่าตลาดจะเปิด';
@@ -5642,6 +5671,14 @@ function generateM15EntrySignal(){
 
   // ═══ เช็คสัญญาณที่ล็อกไว้ก่อน — ถ้ายังไม่ถึง TP2/SL ให้โชว์ค่าล็อกเดิม ไม่ประเมินใหม่ ═══
   let locked=loadM15Lock(M15_ENTRY_LOCK_KEY);
+  {const sv=window._m15Srv;
+   if(!locked&&sv&&sv.ok&&Date.now()-sv.t<10*60000&&sv.lock&&sv.lock.dir&&sv.lock.entry!=null){
+     const L=sv.lock,col=L.dir==='BUY'?'var(--green)':'var(--red)',f=x=>(x!=null&&isFinite(x))?Number(x).toFixed(2):'—';
+     const mins=L.lockedAt?Math.max(0,Math.round((Date.now()-L.lockedAt)/60000)):null;
+     resEl.style.display='none';emptyEl.style.display='block';
+     emptyEl.innerHTML=`<div style="text-align:left;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid ${col};"><div style="font-size:12px;font-weight:800;color:${col};">${L.dir==='BUY'?'🟢':'🔴'} ${L.dir} — cron เปิดไม้แล้ว${mins!=null?` (${mins<60?mins+' นาที':Math.round(mins/60*10)/10+' ชม.'}ที่แล้ว)`:''}</div><div style="font-size:11px;color:var(--t1);margin-top:6px;line-height:1.7;">Entry ${f(L.entry)} · SL ${f(L.sl)}${L.tp1Hit?' (เลื่อนแล้ว)':''}<br>TP1 ${f(L.tp1)}${L.tp1Hit?' ✅':''} · TP2 ${f(L.tp2)}</div><div style="font-size:9.5px;color:var(--t3);margin-top:6px;">ไม้นี้ถูกติดตามและปิดโดย cron (แจ้ง Telegram) · หน้านี้แสดงอย่างเดียว ไม่เปิดไม้ซ้ำ</div></div>`;
+     return;
+   }}
   if(!locked)updateM15EarlyWarning(null,null); // ═══ item — ไม่มีไม้ล็อกอยู่ ซ่อน warning banner (ถ้ามีค้างจาก tick ก่อนหน้า) ═══
   // ═══ migration — โครงสร้าง lock เปลี่ยนไปมาก (เพิ่ม origSl/entryScore/beSl สำหรับ partial-exit+trailing)
   // lock เก่าจากเวอร์ชันก่อนหน้า (ไม่มี origSl) reconstruct ย้อนหลังไม่แม่นพอ — ล้างแล้วประเมินใหม่ปลอดภัยกว่า
