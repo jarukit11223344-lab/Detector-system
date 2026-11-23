@@ -12635,11 +12635,44 @@ function confirmTrendExit(locked,hit){
   locked.pendingExit={count:1};
   return null;
 }
+// v20.48 — ซิงก์สถานะไม้ Trend Rider จาก cron (KV trendRiderState ผ่าน /trend-rider-history → open)
+// เดิมหน้าเว็บนับ confirm เอง (เฉพาะตอนเปิดหน้า) ส่วน cron นับของตัวเอง → cron เข้าไม้+ส่ง Telegram แล้ว แต่การ์ดยังขึ้น CONFIRMING
+// ตอนนี้ถ้า cron มีไม้เปิดอยู่ การ์ดจะแสดงไม้นั้น (SL/TP/ธง TP ตาม cron) · ถ้า cron ปิดไม้แล้ว ไม้ที่รับมาจาก cron จะถูกเคลียร์
+window._trSrv=window._trSrv||null;let _trSrvBusy=false;
+async function syncTRServer(cur){
+  if(_trSrvBusy||!WORKER_AUTH_KEY)return;
+  if(window._trSrv&&Date.now()-window._trSrv.t<60000)return;
+  _trSrvBusy=true;
+  try{
+    const r=await fetch(`${CRON_WORKER_URL}/trend-rider-history`,{headers:{'X-Auth-Key':WORKER_AUTH_KEY},signal:AbortSignal.timeout(10000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    const prev=window._trSrv;
+    window._trSrv={t:Date.now(),ok:true,open:j.open||null};
+    if(!prev||!prev.ok||JSON.stringify(prev.open)!==JSON.stringify(window._trSrv.open)){try{generateTrendRider(cur);}catch(e){}}
+  }catch(e){window._trSrv={t:Date.now(),ok:false,open:null};}
+  finally{_trSrvBusy=false;}
+}
 function generateTrendRider(cur){
   const emptyEl=document.getElementById('trEmpty'),resEl=document.getElementById('trRes');
   if(!emptyEl||!resEl)return;
   if(!cur)return;
+  syncTRServer(cur);
   let locked=loadTrendRiderLock();
+  const _srv=window._trSrv;
+  if(_srv&&_srv.ok&&Date.now()-_srv.t<10*60000){
+    const so=_srv.open;
+    if(so&&so.dir&&so.entry!=null){
+      if(!locked||locked.dir!==so.dir||locked.lockedAt!==so.lockedAt){
+        locked=Object.assign({},so,{fromServer:true});saveTrendRiderLock(locked);clearTRPendingEntry();
+      }else{
+        const buy=locked.dir==='BUY';
+        if(so.sl!=null)locked.sl=locked.sl!=null?(buy?Math.max(locked.sl,so.sl):Math.min(locked.sl,so.sl)):so.sl;
+        if(so.extreme!=null)locked.extreme=locked.extreme!=null?(buy?Math.max(locked.extreme,so.extreme):Math.min(locked.extreme,so.extreme)):so.extreme;
+        locked.tp1Hit=!!(locked.tp1Hit||so.tp1Hit);locked.tp2Hit=!!(locked.tp2Hit||so.tp2Hit);
+      }
+    }else if(locked&&locked.fromServer){clearTrendRiderLock();clearTRPendingEntry();locked=null;}
+  }
 
   if(locked){
     // ═══ อัปเดตจุดสูงสุด/ต่ำสุดที่เคยไปถึง แล้ว trail chandelier stop ตาม (รัดเข้าทางเดียว ไม่มีวันหลวมกลับ) ═══
