@@ -1181,6 +1181,34 @@ body.glass3d:not(.light-mode) .hud-pg{background:rgba(255,255,255,.03);border-co
 .hud-pg .pg-mk{width:9px;height:9px;border-width:1.5px}
 .hud-pg .pg-cur{width:13px;height:13px;border-width:2.5px}
 .hud-pg .pg-lb div{font-size:9.5px;gap:1px}.hud-pg .pg-lb span{font-size:9.5px}
+/* v20.53 — วิดเจ็ตแบบภาพตัวอย่าง: แถบแท่ง (seg) · วงแหวนสถิติ · ไทม์ไลน์ session · แถบอายุไม้ · แถบไล่สี */
+.seg-meter{display:flex;gap:3px;align-items:flex-end;height:34px;margin:2px 0 6px}
+.seg-meter i{flex:1;border-radius:2px;background:color-mix(in srgb,var(--t1) 10%,transparent);height:60%}
+.seg-meter i.on{height:100%;background:var(--sc)}
+.seg-meter i:nth-child(n+8):nth-child(-n+14){}
+.seg-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:10px}
+.seg-head{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px}
+.seg-head b{font-family:var(--mono);font-size:22px;font-weight:800;color:var(--t1)}.seg-head b small{font-size:11px;color:var(--t3);font-weight:600}
+.seg-head span{font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:1px}
+.ring-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.ring-row .rg{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ring-row svg{width:54px;height:54px}
+.ring-row .rg-l{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.8px;color:var(--t3);text-transform:uppercase}
+.sess-tl{position:relative;margin:12px 4px 6px}
+.sess-tl .tl-track{position:relative;height:48px;border-radius:7px;background:color-mix(in srgb,var(--t1) 6%,transparent);overflow:hidden}
+.sess-tl .tl-blk{position:absolute;top:0;bottom:0;opacity:.8;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8.5px;font-weight:800;color:#06070d;overflow:hidden;white-space:nowrap}
+.sess-tl .tl-now{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff;box-shadow:0 0 6px #fff;border-radius:1px}
+.sess-tl .tl-ax{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.5px;color:var(--t3);margin-top:5px}
+.age-bar{margin:0 0 8px;padding:8px 11px;border-radius:12px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border)}
+.age-bar .ab-t{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:6px}
+.age-bar .ab-t b{font-size:12px;color:var(--t1)}
+.age-bar .ab-s{display:flex;gap:2px;height:16px}
+.age-bar .ab-s i{flex:1;border-radius:1.5px;background:color-mix(in srgb,var(--t1) 12%,transparent)}
+.age-bar .ab-s i.on{background:var(--hc)}
+.vol-grad{height:11px;border-radius:6px;position:relative;margin-bottom:6px;background:linear-gradient(90deg,#f5c518 0%,#22d399 38%,#22d399 52%,#fb923c 70%,#f43f5e 100%);opacity:.92}
+.vol-tk{position:relative;height:26px;font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:6px}
+.vol-tk span{position:absolute;transform:translateX(-50%);text-align:center;line-height:1.3;white-space:nowrap}
+.vol-tk span:first-child{transform:none;text-align:left}.vol-tk span:last-child{transform:translateX(-100%);text-align:right}
 /* v20.48 — กลุ่ม Lab (การ์ดวิจัย/ทดสอบ) หุบไว้ตอนเปิดแอป: ลดความยาวหน้า + งาน layout/paint */
 #labBar{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 #labBar .lab-t{font-size:14px;font-weight:800;color:var(--t1);}
@@ -2503,15 +2531,8 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
     <div style="font-family:var(--display);font-size:22px;font-weight:900;" id="volRegimeRatio">—</div>
     <div style="font-size:10px;color:var(--t3);">เท่าของค่าเฉลี่ย 20 แท่ง</div>
   </div>
-  <div style="height:8px;border-radius:5px;background:rgba(255,255,255,.05);position:relative;overflow:hidden;margin-bottom:8px;">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:37.5%;background:rgba(245,197,24,.15);"></div>
-    <div style="position:absolute;left:37.5%;top:0;bottom:0;width:32.5%;background:rgba(34,211,153,.12);"></div>
-    <div style="position:absolute;left:70%;top:0;bottom:0;width:30%;background:rgba(244,63,94,.15);"></div>
-    <div id="volRegimeMarker" style="position:absolute;top:-2px;bottom:-2px;width:3px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(255,255,255,.6);left:50%;"></div>
-  </div>
-  <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t3);margin-bottom:8px;">
-    <span>Compressing (≤0.75x)</span><span>Normal</span><span>Expanding (≥1.4x)</span>
-  </div>
+  <div class="vol-grad"><div id="volRegimeMarker" style="position:absolute;top:-4px;bottom:-4px;width:4px;border-radius:2px;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.8);left:50%;transform:translateX(-50%);"></div></div>
+  <div class="vol-tk"><span style="left:0">0x<br>นิ่งมาก</span><span style="left:37.5%">0.75x<br>Compress</span><span style="left:50%">1.0x</span><span style="left:70%">1.4x<br>Expand</span><span style="left:100%">2x+<br>รุนแรง</span></div>
   <div class="hdiv"></div>
   <div style="font-size:10.5px;color:var(--t2);line-height:1.6;margin-top:8px;" id="volRegimeAdvice"></div>
 </div>
@@ -2616,6 +2637,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
       <div style="font-size:10.5px;color:var(--t2);line-height:1.55;" id="csReason"></div>
     </div>
   </div>
+  <div id="csSegWrap" style="position:relative;z-index:1;"><div class="seg-head"><b id="csSegNum">—<small>/10</small></b><span id="csSegLbl"></span></div><div class="seg-meter" id="csSeg"></div><div class="seg-scale"><span>0</span><span>2.5</span><span>5</span><span>7.5</span><span>10</span></div></div>
   <div style="display:flex;flex-direction:column;gap:5px;position:relative;z-index:1;" id="csFactors"></div>
   <div class="hdiv" style="position:relative;z-index:1;"></div>
   <div id="csNewsWarn" style="display:none;padding:8px 11px;border-radius:9px;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.2);font-size:10.5px;color:var(--red);line-height:1.5;position:relative;z-index:1;">
@@ -2965,7 +2987,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.52 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.53 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -3064,6 +3086,7 @@ function tickClock(){
     return `<div class="sess-bar-row"><span class="sbn" style="color:${op?se.col:'var(--t3)'};">${se.n}</span><div class="sbb"><div class="sbf" style="width:${pr}%;background:${se.col};${op?'box-shadow:0 0 5px '+se.col+'55':''};"></div></div><span class="sbst ${op?'son':'sof'}">${op?'OPEN':'CLOSED'}</span><span style="font-family:var(--mono);font-size:9px;color:var(--t3);width:24px;text-align:right;">${Math.round(pr)}%</span></div>`;
   }).join('');
   const _p2=x=>String(x).padStart(2,'0');
+  try{renderSessTL();}catch(e){}
   document.getElementById('nextWin').textContent=h<_b.lonOpen?`London Open — ${_p2(_b.lonOpen)}:00 UTC`:h<_b.nyOpen?`NY Open — ${_p2(_b.nyOpen)}:00 UTC`:h<_b.lonClose?'London+NY Overlap — ACTIVE 🔥':'Tokyo Open — 00:00 UTC';
 }
 
@@ -5231,6 +5254,7 @@ function renderM15ConfirmationLocked(sig,cur){
   const dEl=document.getElementById('m15cDir');
   dEl.textContent='🔒 '+sig.dir;
   dEl.className='sr-dir '+(sig.dir==='BUY'?'sr-buy':'sr-sell');
+  res.dataset.t=String(sig.lockedAt||'');
   document.getElementById('m15cTime').textContent=formatLockedAt(sig.lockedAt);
   const sEl=document.getElementById('m15cScore');
   sEl.textContent=`H1 Confluence ${sig.h1Score.toFixed(1)}/10 · M15 ยืนยันแล้ว (${sig.m15Votes} เสียง)`;
@@ -5617,6 +5641,19 @@ function renderSignalProgressBar(containerId,sig,cur){
       }
       if(bs.innerHTML!==html)bs.innerHTML=html;
     });
+    try{ageBar(id,res);}catch(e){}
+  }
+  // แถบอายุไม้ (เหมือน 109 KM / REMAINING): ตามเวลาล็อก เทียบกรอบหมดอายุของการ์ดนั้น
+  const WIN={m15eRes:12*3600000,m15cRes:24*3600000};
+  function ageBar(id,res){
+    const t=parseInt(res.dataset.t||'0',10),win=WIN[id];const pg=document.getElementById(CFG[id].p+'Progress');
+    let ab=document.getElementById(CFG[id].p+'Age');
+    if(!t||!win||!pg){if(ab)ab.style.display='none';return;}
+    if(!ab){ab=document.createElement('div');ab.id=CFG[id].p+'Age';ab.className='age-bar';pg.parentNode.insertBefore(ab,pg.nextSibling);}
+    const age=Math.max(0,Date.now()-t),n=36,on=Math.min(n,Math.round(age/win*n));
+    const f=ms=>{const m=Math.round(ms/60000);return m<60?m+' นาที':Math.floor(m/60)+' ชม. '+(m%60)+' น.';};
+    const html=`<div class="ab-t"><span>อายุไม้ <b>${f(age)}</b></span><span>หมดอายุ ${win/3600000} ชม.</span></div><div class="ab-s">${Array.from({length:n},(_,i)=>'<i'+(i<on?' class="on"':'')+'></i>').join('')}</div>`;
+    if(ab.innerHTML!==html)ab.innerHTML=html;ab.style.display='';
   }
   Object.keys(CFG).forEach(id=>{
     const res=document.getElementById(id);if(!res)return;
@@ -5641,6 +5678,68 @@ function renderTRHud(cur){
   const ring=rm!=null?`<div class="hud-ring on"><div><div class="rg-t">FLOATING</div><div class="rg-s" style="color:${rm>=0?'var(--green)':'var(--red)'}">${rm>=0?'+':''}${rm.toFixed(2)}<small>R</small></div></div></div>`:'';
   el.innerHTML=`<div class="sr-lbl hud-top"><span class="hud-chip"><i class="hud-dot"></i>TREND RIDER</span><span class="hud-state lk">🚀 RIDING${lock.tp1Hit?' · TP1 ✅':''}</span></div><div class="hud-time">🕒 เข้าเมื่อ ${t}</div><div class="hud-main"><div class="hud-who"><div class="hud-arrow">${dir==='BUY'?'↑':'↓'}</div><div class="hud-dw"><div class="hud-dirline"><div class="sr-dir">${dir}</div><span class="hud-pair">XAUUSD</span></div><div class="hud-desc">ถือยาวตามเทรนด์ • Chandelier ${TR_CHANDELIER_MULT}×ATR H4</div></div></div>${ring}</div>`;
   renderSignalProgressBar('trProg',{dir,entry:lock.entry,sl:lock.sl,tp1:lock.tp1,tp2:lock.tp2},cur);
+}
+
+// ═══ v20.53 — วิดเจ็ตแบบภาพตัวอย่าง (อ่านค่าจาก DOM ที่การ์ดเรนเดอร์อยู่แล้ว ไม่แตะ logic คำนวณ) ═══
+(function(){
+  function watch(el,fn,opt){
+    if(!el)return;let q=0;const o=opt||{childList:true,subtree:true,characterData:true};
+    const mo=new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;mo.disconnect();try{fn();}catch(e){}mo.observe(el,o);});});
+    mo.observe(el,o);try{fn();}catch(e){}
+  }
+  // ── Confluence Score: แถบแท่ง 20 ช่อง (เหมือน 95db) ──
+  const seg=document.getElementById('csSeg');
+  if(seg){
+    seg.innerHTML=Array.from({length:20},()=>'<i></i>').join('');
+    const segCol=i=>i<7?'#f43f5e':i<12?'#fbbf24':i<16?'#a3e635':'#22d399';
+    watch(document.getElementById('csScoreText'),()=>{
+      const t=document.getElementById('csScoreText').textContent,v=parseFloat(t);
+      const num=document.getElementById('csSegNum'),lb=document.getElementById('csSegLbl');
+      const on=isNaN(v)?0:Math.round(Math.max(0,Math.min(10,v))/10*20);
+      [...seg.children].forEach((e,i)=>{e.className=i<on?'on':'';e.style.setProperty('--sc',segCol(i));});
+      if(num)num.innerHTML=(isNaN(v)?'—':v.toFixed(1))+'<small>/10</small>';
+      if(lb){const vd=document.getElementById('csVerdict');lb.textContent=vd?vd.textContent:'';lb.style.color=isNaN(v)?'var(--t3)':v>=6.5?'var(--green)':v>=4?'var(--amber)':'var(--red)';}
+    },{childList:true,subtree:true,characterData:true});
+    const vd=document.getElementById('csVerdict');
+    if(vd)new MutationObserver(()=>{const lb=document.getElementById('csSegLbl');if(lb)lb.textContent=vd.textContent;}).observe(vd,{childList:true,characterData:true,subtree:true});
+  }
+  // ── สถิติ History: วงแหวน (เหมือน sleep rings) ──
+  function ringSvg(frac,col,txt){
+    const R=21,C=2*Math.PI*R,f=Math.max(0,Math.min(1,frac||0));
+    return `<svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".12" stroke-width="6"/><circle cx="27" cy="27" r="${R}" fill="none" stroke="${col}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(f*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 27 27)"/><text x="27" y="31" text-anchor="middle" font-size="${String(txt).length>3?11:13}" font-weight="800" fill="var(--t1)" font-family="monospace">${txt}</text></svg>`;
+  }
+  ['shStats','m15shStats','m15ccStats'].forEach(id=>{
+    const box=document.getElementById(id);if(!box)return;
+    const row=document.createElement('div');row.className='ring-row';box.parentNode.insertBefore(row,box);box.style.display='none';
+    watch(box,()=>{
+      const st=[...box.querySelectorAll('.ds-stat')].map(e=>({l:(e.querySelector('.ds-stat-lbl')||{}).textContent||'',v:(e.querySelector('.ds-stat-val')||{}).textContent||'—'}));
+      if(st.length<4)return;
+      const n=x=>{const m=/-?\d+(?:\.\d+)?/.exec(x);return m?parseFloat(m[0]):0;};
+      const wr=st[0].v.indexOf('%')>-1?n(st[0].v)/100:0,w=n(st[1].v),l=n(st[2].v),p4=n(st[3].v);
+      const tot=Math.max(1,w+l+(/pend/i.test(st[3].l)?p4:0));
+      const cols=['var(--green)','var(--green)','var(--red)','var(--amber)'];
+      const fr=[wr,w/tot,l/tot,/pend/i.test(st[3].l)?p4/tot:(p4>0?1:0)];
+      row.innerHTML=st.slice(0,4).map((s,i)=>`<div class="rg">${ringSvg(fr[i],cols[i],i===0?s.v:s.v)}<div class="rg-l">${s.l}</div></div>`).join('');
+    });
+  });
+})();
+
+// ── Trading Sessions: ไทม์ไลน์ 24 ชม. (UTC) พร้อมเส้นเวลาปัจจุบัน ──
+let _tlKey='';
+function renderSessTL(){
+  const host=document.getElementById('sessList');if(!host)return;
+  let el=document.getElementById('sessTL');
+  if(!el){el=document.createElement('div');el.id='sessTL';el.className='sess-tl';host.parentNode.insertBefore(el,host.nextSibling);}
+  const n=new Date(),hf=n.getUTCHours()+n.getUTCMinutes()/60;
+  const key=SESS.map(s=>s.o+'-'+s.c).join()+'|'+Math.floor(hf*4);
+  if(key===_tlKey)return;_tlKey=key;
+  const blk=[];
+  SESS.forEach((s,i)=>{
+    const o=s.o,c=s.c;
+    const seg=(a,b)=>blk.push(`<div class="tl-blk" style="top:${4+i*10}px;height:7px;bottom:auto;left:${a/24*100}%;width:${(b-a)/24*100}%;background:${s.col};"></div>`);
+    if(c>o)seg(o,c);else{seg(o,24);if(c>0)seg(0,c);}
+  });
+  el.innerHTML=`<div class="tl-track">${blk.join('')}<div class="tl-now" style="left:${hf/24*100}%"></div></div><div class="tl-ax"><span>00</span><span>06</span><span>12</span><span>18</span><span>24 UTC</span></div>`;
 }
 
 // ═══ item C — M15 ENTRY SIGNAL ═══
@@ -5980,7 +6079,7 @@ function renderM15EntryLocked(sig,cur){
   emptyEl.style.display='none';
   resEl.style.display='block';
   resEl.className='sig-res '+(sig.dir==='BUY'?'sig-buy-r':'sig-sell-r');
-  delete resEl.dataset.src;
+  delete resEl.dataset.src;resEl.dataset.t=String(sig.lockedAt||'');
   const dEl=document.getElementById('m15eDir');
   dEl.textContent='🔒 '+sig.dir;
   dEl.className='sr-dir '+(sig.dir==='BUY'?'sr-buy':'sr-sell');
