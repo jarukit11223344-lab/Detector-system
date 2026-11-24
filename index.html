@@ -3015,7 +3015,7 @@ body:not(.light-mode) .vol-grad{background:linear-gradient(90deg,#ffd60a 0%,#2fe
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.55 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.57 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -3526,42 +3526,58 @@ async function fetchRealYield(){
   // จำกัดช่วงวันที่ย้อนหลังแค่ ~90 วัน (เดิมดึงเต็มประวัติหลายสิบปี ทำให้ payload ใหญ่ proxy timeout บ่อย)
   const d=new Date(Date.now()-90*86400000);
   const cosd=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const target=`https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10&cosd=${cosd}&coed=9999-01-01`;
-  const proxies=[
+  const fredT=`https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFII10&cosd=${cosd}&coed=9999-01-01`;
+  // v20.57 — แหล่งสำรอง: U.S. Treasury "Daily Treasury Real Yield Curve" (10 YR คือตัวเดียวกับ DFII10 ที่ FRED ดึงมาจากที่นี่อีกที) — ไม่ต้องใช้ key
+  const tsyT=`https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/${new Date().getFullYear()}/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=${new Date().getFullYear()}&page&_format=csv`;
+  const parseFred=(txt)=>{
+    const lines=txt.trim().split('\n').filter(l=>l.trim());
+    if(lines.length<2)return null;
+    let latest=null,prevVal=null;
+    for(let i=lines.length-1;i>=1;i--){ // เดินจากท้ายไฟล์ขึ้นมา หาแถวที่มีค่าจริง (FRED ใส่ "." ในวันที่ตลาดปิด/ยังไม่ประกาศ)
+      const parts=lines[i].split(',');if(parts.length<2)continue;
+      const val=parts[1].trim();
+      if(val&&val!=='.'){const num=parseFloat(val);if(isNaN(num))continue;
+        if(!latest)latest={date:parts[0],val:num};else if(!prevVal){prevVal={date:parts[0],val:num};break;}}
+    }
+    return latest?{latest,prevVal}:null;
+  };
+  const parseTsy=(txt)=>{ // แถวใหม่สุดอยู่บนสุด · คอลัมน์ "10 YR"
+    const lines=txt.trim().split('\n').filter(l=>l.trim());
+    if(lines.length<2)return null;
+    const hdr=lines[0].split(',').map(x=>x.replace(/"/g,'').trim());
+    const ci=hdr.findIndex(x=>/^10\s*YR$/i.test(x));if(ci<0)return null;
+    let latest=null,prevVal=null;
+    for(let i=1;i<lines.length;i++){
+      const parts=lines[i].split(',').map(x=>x.replace(/"/g,'').trim());
+      const num=parseFloat(parts[ci]);if(isNaN(num))continue;
+      if(!latest)latest={date:parts[0],val:num};else{prevVal={date:parts[1]?parts[0]:'',val:num};break;}
+    }
+    return latest?{latest,prevVal}:null;
+  };
+  const prox=[
     u=>`https://gold-data-proxy.jarukit11223344.workers.dev/?url=${encodeURIComponent(u)}`,
     u=>`https://r.jina.ai/${u}`,
     u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
     u=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`,
     u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
   ];
-  for(const mkP of proxies){
+  const jobs=[];
+  prox.forEach(m=>jobs.push({url:m(fredT),parse:parseFred,src:'FRED'}));
+  prox.forEach(m=>jobs.push({url:m(tsyT),parse:parseTsy,src:'Treasury'}));
+  for(const j of jobs){
     try{
-      const r=await fetch(mkP(target),{signal:AbortSignal.timeout(10000)});
+      const r=await fetch(j.url,{signal:AbortSignal.timeout(8000)});
       if(!r.ok)continue;
       const txt=await r.text();
-      const lines=txt.trim().split('\n').filter(l=>l.trim());
-      if(lines.length<2)continue;
-      // เดินจากท้ายไฟล์ขึ้นมา หาแถวที่มีค่าจริง (FRED ใส่ "." ในวันที่ตลาดปิด/ยังไม่ประกาศ)
-      let latest=null,prevVal=null;
-      for(let i=lines.length-1;i>=1;i--){
-        const parts=lines[i].split(',');
-        if(parts.length<2)continue;
-        const val=parts[1].trim();
-        if(val&&val!=='.'){
-          const num=parseFloat(val);
-          if(isNaN(num))continue;
-          if(!latest)latest={date:parts[0],val:num};
-          else if(!prevVal){prevVal={date:parts[0],val:num};break;}
-        }
-      }
-      if(latest){
-        realYieldData={cur:latest.val,prev:prevVal?prevVal.val:latest.val,date:latest.date};
+      const res=j.parse(txt);
+      if(res&&res.latest){
+        realYieldData={cur:res.latest.val,prev:res.prevVal?res.prevVal.val:res.latest.val,date:res.latest.date,src:j.src};
         realYieldFailed=false;
         return realYieldData;
       }
     }catch(e){}
   }
-  realYieldFailed=true; // proxy ทั้งหมดล้มเหลวจริง — ให้ UI รู้ว่าไม่ใช่แค่ "กำลังโหลด" อยู่
+  realYieldFailed=true; // ทุกแหล่งล้มเหลวจริง — ให้ UI รู้ว่าไม่ใช่แค่ "กำลังโหลด" อยู่
   return null;
 }
 // ═══ item — REAL YIELD HISTORY สำหรับ backtest (พอร์ต Correlation Divergence เข้า M15/H1 Threshold Sweep ตามที่
@@ -3604,7 +3620,7 @@ function renderRealYield(){
   if(!realYieldData){
     el.textContent=realYieldFailed?'ไม่พร้อมใช้งาน':'กำลังโหลด...';
     el.style.color=realYieldFailed?'var(--t3)':'var(--violet)';
-    if(chgEl)chgEl.textContent=realYieldFailed?'เชื่อมต่อ FRED ไม่สำเร็จ — ลองใหม่ใน 30 นาที':'—';
+    if(chgEl)chgEl.textContent=realYieldFailed?'เชื่อมต่อ FRED/Treasury ไม่สำเร็จ — ลองใหม่ใน 30 นาที':'—';
     return;
   }
   el.textContent=realYieldData.cur.toFixed(2)+'%';
@@ -13087,7 +13103,7 @@ function renderTRStrip(cur){
   else sizeTxt=' · <span style="color:var(--t3)">กรอก Balance ในการ์ด Position Size เพื่อดูขนาดไม้ที่เหมาะ</span>';
   let rows=`<div><b style="color:${col}">${dir}</b> · SL ห่างจากราคาตอนนี้ <b style="color:var(--t1)">${dist.toFixed(1)} จุด</b> → ถ้าหลุด SL เสีย ≈ <b style="color:var(--t1)">$${risk01.toFixed(0)}</b> ต่อ 0.10 lot${sizeTxt}</div>`;
   if(ref!=null){
-    const better=dir==='SELL'?cur-ref:ref-cur; // ราคาตอนนี้ได้เปรียบกว่า Entry ระบบกี่จุด (+ = ได้เปรียบ)
+    const better=dir==='SELL'?ref-cur:cur-ref; // ราคาตอนนี้ได้เปรียบกว่า Entry ระบบกี่จุด (+ = ได้เปรียบ)
     const rr=better/r0;
     const warn=rr<=-0.5;
     const t=Math.abs(better)<0.05?'เท่ากับ Entry ระบบ':(better>0?`ดีกว่า Entry ระบบ ${better.toFixed(1)} จุด`:`แย่กว่า Entry ระบบ ${Math.abs(better).toFixed(1)} จุด`);
