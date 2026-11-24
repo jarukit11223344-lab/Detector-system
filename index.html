@@ -1353,6 +1353,12 @@ body.light-mode .sw .sw-knob{background:radial-gradient(circle at 35% 28%,#fff,#
 .ls-closed{background:var(--amber,#ffca28);box-shadow:0 0 7px var(--amber,#ffca28);}
 body.mkt-closed .kpi-spark svg,body.mkt-closed .spark-dot{opacity:.5;}
 body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่เส้นเครือข่ายจุดพื้นหลังที่พาดผ่านตัวหนังสือ */
+/* v20.55 — โทนสีสดเข้มแบบ widget ตัวอย่าง (เฉพาะโหมดมืด/กระจก · โหมดสว่างคงเดิม): เขียวนีออน/แดงสด/เหลืองทอง/ส้ม/ฟ้า/ม่วง บนพื้นดำสนิท */
+body:not(.light-mode),body.glass3d:not(.light-mode){--bg:#000;--green:#2fe86b;--red:#ff4258;--amber:#ffc61a;--gold:#ffd60a;--orange:#ff8a1f;--cyan:#12d6ff;--indigo:#7f80ff;--violet:#c276ff;--t2:#9aa8c4;--t3:#566684}
+body:not(.light-mode) .hud .hud-dot,body:not(.light-mode) .hud .rr::before,body:not(.light-mode) .hud .sr-bl::before{box-shadow:0 0 9px var(--hc,var(--bd,transparent))}
+body:not(.light-mode) .hud .sr-bv,body:not(.light-mode) .hud .sr-dir{text-shadow:0 0 18px color-mix(in srgb,currentColor 40%,transparent)}
+body:not(.light-mode) .seg-meter i.on,body:not(.light-mode) .age-bar .ab-s i.on{box-shadow:0 0 7px -1px var(--sc,var(--hc))}
+body:not(.light-mode) .vol-grad{background:linear-gradient(90deg,#ffd60a 0%,#2fe86b 38%,#2fe86b 52%,#ff8a1f 70%,#ff3b4e 100%);opacity:1}
 </style>
 <body>
 
@@ -3009,7 +3015,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.54 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.55 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -5713,7 +5719,7 @@ function renderTRHud(cur){
   const seg=document.getElementById('csSeg');
   if(seg){
     seg.innerHTML=Array.from({length:20},()=>'<i></i>').join('');
-    const segCol=i=>i<7?'#f43f5e':i<12?'#fbbf24':i<16?'#a3e635':'#22d399';
+    const segCol=i=>i<7?'#ff3b4e':i<12?'#ffc61a':i<16?'#a6f02b':'#2fe86b';
     watch(document.getElementById('csScoreText'),()=>{
       const t=document.getElementById('csScoreText').textContent,v=parseFloat(t);
       const num=document.getElementById('csSegNum'),lb=document.getElementById('csSegLbl');
