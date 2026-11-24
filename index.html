@@ -1142,6 +1142,45 @@ body.glass3d:not(.light-mode) .hud-pg{background:rgba(255,255,255,.03);border-co
 .hud-pg .pg-lb div{display:flex;flex-direction:column;gap:3px;font-family:var(--mono);font-size:11px;font-weight:800;min-width:0}
 .hud-pg .pg-lb span{font-size:11px;font-weight:600;color:var(--t3)}
 .hud-pg .pg-lb div:last-child{align-items:flex-end;text-align:right}
+/* v20.52 — HUD แบบกระชับ (ลดขนาดตัวอักษร/ระยะห่าง) */
+.sig-res.hud{padding:10px;border-radius:16px}
+.hud .hud-top{margin:0 0 5px}
+.hud .hud-chip{padding:5px 9px;border-radius:10px;font-size:10.5px;letter-spacing:1px;gap:6px}
+.hud .hud-dot{width:7px;height:7px}
+.hud .hud-state{padding:4px 8px;border-radius:10px;font-size:9.5px;letter-spacing:.6px}
+.hud .hud-time{font-size:10.5px;margin:0 0 8px}
+.hud .hud-main{gap:8px;margin:0 0 8px;flex-wrap:nowrap}
+.hud .hud-who{gap:8px;flex:1 1 auto}
+.hud .hud-arrow{width:34px;height:42px;border-radius:12px;font-size:20px}
+.hud .sr-dir{font-size:26px}
+.hud .hud-pair{font-size:9.5px;padding:3px 7px;border-radius:7px}
+.hud .hud-desc{font-size:10px;margin-top:3px;line-height:1.35}
+.hud .hud-ring{padding:5px 8px;border-radius:14px;gap:6px}
+.hud .hud-ring svg{width:38px;height:38px}
+.hud .hud-ring .rg-t{display:none}
+.hud .hud-ring .rg-s{font-size:12px}.hud .hud-ring .rg-s small{font-size:10px}
+.hud .hud-ring.on+*{}
+.hud .rr{padding:7px 10px;margin:0 0 8px;border-radius:11px;font-size:11px;gap:7px}
+.hud .rr::before{width:7px;height:7px}
+.hud .sr-grid{gap:7px;margin-bottom:8px}
+.hud .sr-box{padding:8px 10px;border-radius:12px}
+.hud .sr-bl{font-size:9.5px;margin-bottom:4px;gap:5px;letter-spacing:.8px;padding-right:16px}
+.hud .sr-bl::before{width:6px;height:6px}
+.hud .sr-bv{font-size:17px}
+.hud .sr-bs{margin-top:4px;font-size:10px;gap:4px;flex-wrap:nowrap}
+.hud .sr-bs .ch{padding:2px 6px;border-radius:6px;font-size:9.5px;white-space:nowrap}
+.hud .hud-cp{top:7px;right:8px;font-size:12px}
+.hud .sr-txt{font-size:10.5px;line-height:1.5;padding:7px 9px;border-radius:11px}
+.hud .hud-pl{padding:8px 11px;margin:0 0 8px;border-radius:11px}
+.hud .hud-pl-l{font-size:9.5px}
+.hud-pg{padding:9px 11px 8px;border-radius:13px}
+.hud-pg .pg-top{margin-bottom:12px;gap:6px}
+.hud-pg .pg-l{font-size:11px}.hud-pg .pg-p{font-size:13px}
+.hud-pg .pg-d{font-size:10px;padding:3px 7px;border-radius:7px}
+.hud-pg .pg-tr{height:5px;margin:0 6px 9px}
+.hud-pg .pg-mk{width:9px;height:9px;border-width:1.5px}
+.hud-pg .pg-cur{width:13px;height:13px;border-width:2.5px}
+.hud-pg .pg-lb div{font-size:9.5px;gap:1px}.hud-pg .pg-lb span{font-size:9.5px}
 /* v20.48 — กลุ่ม Lab (การ์ดวิจัย/ทดสอบ) หุบไว้ตอนเปิดแอป: ลดความยาวหน้า + งาน layout/paint */
 #labBar{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 #labBar .lab-t{font-size:14px;font-weight:800;color:var(--t1);}
@@ -2926,7 +2965,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.51 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.52 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
