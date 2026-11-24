@@ -1209,6 +1209,28 @@ body.glass3d:not(.light-mode) .hud-pg{background:rgba(255,255,255,.03);border-co
 .vol-tk{position:relative;height:26px;font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:6px}
 .vol-tk span{position:absolute;transform:translateX(-50%);text-align:center;line-height:1.3;white-space:nowrap}
 .vol-tk span:first-child{transform:none;text-align:left}.vol-tk span:last-child{transform:translateX(-100%);text-align:right}
+/* v20.54 — วงแหวน HTF · แถบช่อง Risk · ปฏิทิน Kill Zone */
+.htf-rings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.htf-rings .hr{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 9px;border-radius:14px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border)}
+.htf-rings svg{width:62px;height:62px}
+.htf-rings .hr-tf{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:1px;color:var(--t1)}
+.htf-rings .hr-tf small{color:var(--t3);font-size:9px;font-weight:700}
+.htf-rings .hr-d{font-size:10.5px;font-weight:800}
+.htf-rings .hr-v{font-family:var(--mono);font-size:9px;color:var(--t3)}
+.risk-pills{margin:4px 0 8px}
+.risk-pills .rp-t{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:5px}
+.risk-pills .rp-t b{font-size:12px;color:var(--t1)}
+.risk-pills .rp-r{display:flex;gap:4px}
+.risk-pills .rp-r i{flex:1;height:30px;border-radius:9px;background:color-mix(in srgb,var(--t1) 8%,transparent);border:1px solid var(--border);position:relative;overflow:hidden}
+.risk-pills .rp-r i::after{content:'';position:absolute;left:0;top:0;bottom:0;width:var(--f,0%);background:var(--pc);border-radius:inherit;box-shadow:0 0 8px -2px var(--pc)}
+.kz-cal{margin:0 0 10px;padding:10px 10px 8px;border-radius:14px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border)}
+.kz-cal .kc-h{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:10px;color:var(--t3);margin-bottom:8px}
+.kz-cal .kc-h b{font-size:12px;color:var(--t1)}
+.kz-cal .kc-b{position:relative}
+.kz-cal .kc-l{position:relative;height:22px;margin-bottom:4px}
+.kz-cal .kc-k{position:absolute;top:0;bottom:0;border-radius:6px;display:flex;align-items:center;padding:0 7px;font-size:9.5px;font-weight:800;color:#06070d;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.kz-cal .kc-now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--t1);border-radius:1px;box-shadow:0 0 6px var(--t1)}
+.kz-cal .kc-ax{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.5px;color:var(--t3);margin-top:6px;border-top:1px solid var(--border);padding-top:4px}
 /* v20.48 — กลุ่ม Lab (การ์ดวิจัย/ทดสอบ) หุบไว้ตอนเปิดแอป: ลดความยาวหน้า + งาน layout/paint */
 #labBar{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 #labBar .lab-t{font-size:14px;font-weight:800;color:var(--t1);}
@@ -2987,7 +3009,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.53 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.54 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -5740,6 +5762,51 @@ function renderSessTL(){
     if(c>o)seg(o,c);else{seg(o,24);if(c>0)seg(0,c);}
   });
   el.innerHTML=`<div class="tl-track">${blk.join('')}<div class="tl-now" style="left:${hf/24*100}%"></div></div><div class="tl-ax"><span>00</span><span>06</span><span>12</span><span>18</span><span>24 UTC</span></div>`;
+}
+
+// ── Risk: แถบช่องแบบน้ำดื่ม (1 ช่อง = 0.5% ของพอร์ต) ──
+(function(){
+  function mk(accId,riskId,anchor,pos){
+    const acc=document.getElementById(accId),rk=document.getElementById(riskId);if(!acc||!rk||!anchor)return;
+    const el=document.createElement('div');el.className='risk-pills';
+    if(pos==='before')anchor.parentNode.insertBefore(el,anchor);else anchor.parentNode.insertBefore(el,anchor.nextSibling);
+    let last='';
+    function upd(){
+      const r=parseFloat(rk.value),a=parseFloat(acc.value);
+      const rr=isNaN(r)||r<0?0:r;const key=rr+'|'+a;if(key===last)return;last=key;
+      const col=rr<=1?'var(--green)':rr<=2?'var(--amber)':'var(--red)';
+      const usd=a>0?' = $'+(a*rr/100).toFixed(0):'';
+      const lab=rr<=1?'ปลอดภัย':rr<=2?'ระวัง':'เสี่ยงสูง';
+      el.innerHTML=`<div class="rp-t"><span>เสี่ยงต่อไม้ <b>${rr.toFixed(1)}%</b>${usd}</span><span style="color:${col};font-weight:800;">${lab} · แนะนำ ≤2%</span></div><div class="rp-r">${Array.from({length:8},(_,i)=>`<i style="--pc:${col};--f:${Math.max(0,Math.min(1,rr/0.5-i))*100}%"></i>`).join('')}</div>`;
+    }
+    ['input','change'].forEach(ev=>{acc.addEventListener(ev,upd);rk.addEventListener(ev,upd);});
+    setInterval(()=>{if(!document.hidden)upd();},3000);upd();
+  }
+  mk('cAcc','cRisk',document.getElementById('kellyHint'),'before');
+  const ps=document.getElementById('psRisk');if(ps){const grid=ps.closest('div[style*="grid"]');if(grid)mk('psBalance','psRisk',grid,'after');}
+})();
+
+// ── Kill Zone: ปฏิทินบล็อก 12 ชม.ข้างหน้า (UTC) ──
+function renderKZCal(nowMins){
+  const host=document.getElementById('kzList');if(!host)return;
+  let el=document.getElementById('kzCal');
+  if(!el){el=document.createElement('div');el.id='kzCal';el.className='kz-cal';host.parentNode.insertBefore(el,host);
+    const tl=document.getElementById('sessTimeline');if(tl){tl.style.display='none';if(tl.previousElementSibling)tl.previousElementSibling.style.display='none';if(tl.nextElementSibling)tl.nextElementSibling.style.display='none';}}
+  const ws=nowMins-60,W=720,p2=x=>String(((x%24)+24)%24).padStart(2,'0');
+  const lanes=KILL_ZONES.map(z=>{
+    let blk='';
+    for(let k=-1;k<=1;k++){
+      const s=z.open*60+k*1440,e=(z.close<=z.open?z.close+24:z.close)*60+k*1440;
+      const a=Math.max(s,ws),b=Math.min(e,ws+W);if(b<=a)continue;
+      const act=nowMins>=s&&nowMins<e;
+      blk+=`<div class="kc-k" style="left:${(a-ws)/W*100}%;width:${(b-a)/W*100}%;background:${z.col};opacity:${act?1:.55};">${z.n}${z.isKZ?' KZ':''} · ${p2(z.open)}–${p2(z.close)}</div>`;
+    }
+    return `<div class="kc-l">${blk}</div>`;
+  }).join('');
+  let ax='';for(let i=0;i<=6;i++){ax+=`<span>${p2(Math.round((ws+i*120)/60))}</span>`;}
+  const n=new Date(),d=n.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});
+  const html=`<div class="kc-h"><b>${d}</b><span>UTC ${p2(n.getUTCHours())}:${p2(n.getUTCMinutes())} · 12 ชม.ข้างหน้า</span></div><div class="kc-b">${lanes}<div class="kc-now" style="left:${60/W*100}%"></div></div><div class="kc-ax">${ax}</div>`;
+  if(el.innerHTML!==html)el.innerHTML=html;
 }
 
 // ═══ item C — M15 ENTRY SIGNAL ═══
@@ -12699,6 +12766,7 @@ function updateKillZones(){
   const badge=document.getElementById('kzActiveBadge');
   const adv=document.getElementById('kzAdvice');
   if(!el)return;
+  try{renderKZCal(nowMins);}catch(e){}
   let activeKZ=null;
   el.innerHTML=KILL_ZONES.map(z=>{
     const oM=z.open*60,cM=z.close*60;
@@ -12831,25 +12899,14 @@ function updateHTFLock(price,chg){
   const badge=document.getElementById('htfLockBadge');
 
   // แสดงแถว TF — ถ้ายังโหลดไม่เสร็จให้ขึ้น "..." แทนที่จะเดาข้อมูล
-  if(rowEl)rowEl.innerHTML=tfs.map(t=>{
-    const dir=t.bias?t.bias.dir:null;
-    const loading=!t.bias;
-    const col=dir==='BULLISH'?'var(--green)':dir==='BEARISH'?'var(--red)':'var(--amber)';
+  if(rowEl){rowEl.className='htf-rings';rowEl.style.cssText='';rowEl.innerHTML=tfs.map(t=>{
+    const dir=t.bias?t.bias.dir:null,loading=!t.bias;
+    const col=loading?'var(--t3)':dir==='BULLISH'?'var(--green)':dir==='BEARISH'?'var(--red)':'var(--amber)';
     const icon=dir==='BULLISH'?'▲':dir==='BEARISH'?'▼':loading?'…':'—';
-    const label=loading?'Loading...':dir;
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid ${loading?'rgba(255,255,255,.08)':col+'33'};">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-family:var(--mono);font-size:11px;font-weight:800;color:var(--t2);width:28px;">${t.tf}</span>
-        <div style="width:80px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;">
-          <div style="width:${loading?'0':dir==='NEUTRAL'?'50':dir==='BULLISH'?'85':'15'}%;height:100%;background:${col};border-radius:3px;"></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <span style="font-size:11.5px;font-weight:800;color:${loading?'var(--t3)':col};">${icon} ${label}</span>
-        <span style="font-size:9px;color:var(--t3);">×${t.weight}</span>
-      </div>
-    </div>`;
-  }).join('');
+    const dom=loading?0:Math.max(t.bias.bullVotes,t.bias.bearVotes),tot=loading?1:Math.max(1,t.bias.total);
+    const R=26,C=2*Math.PI*R,f=loading?0:Math.max(.08,dom/tot);
+    return `<div class="hr"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".12" stroke-width="6"/><circle cx="32" cy="32" r="${R}" fill="none" stroke="${col}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(f*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="38" text-anchor="middle" font-size="18" font-weight="800" fill="${col}">${icon}</text></svg><div class="hr-tf">${t.tf} <small>×${t.weight}</small></div><div class="hr-d" style="color:${col};">${loading?'Loading...':dir}</div><div class="hr-v">${loading?'':dom+'/'+tot+' โหวต'}</div></div>`;
+  }).join('');}
 
   // ต้องมีอย่างน้อย D1+H4 หรือครบทุก TF ก่อนจึงจะสรุปผล ไม่งั้นถือว่ายังโหลดไม่พอ
   if(loadedTfs.length<2){
