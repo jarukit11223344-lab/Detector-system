@@ -1083,6 +1083,65 @@ body.glass3d:not(.light-mode) .section-card::after{
     border-color:rgba(190,175,255,.42);
   }
 }
+/* v20.49 — HUD การ์ดสัญญาณ (Quick Signal / Watchlist / M15 Confirmation / M15 Entry / Trend Rider): ป้ายสถานะ + วงคะแนน + กล่อง Entry/SL/TP + แถบราคา · สีพื้นตามโหมด (ใช้ตัวแปรธีม) */
+.sig-res.hud{--hc:var(--amber);position:relative;padding:14px;border-radius:20px;background:linear-gradient(180deg,color-mix(in srgb,var(--hc) 8%,var(--card)),var(--card) 75%);border:1px solid color-mix(in srgb,var(--hc) 38%,var(--border));box-shadow:inset 0 1px 0 color-mix(in srgb,var(--hc) 28%,transparent)}
+.sig-res.hud.hud-buy{--hc:var(--green)}.sig-res.hud.hud-sell{--hc:var(--red)}.sig-res.hud.hud-wait{--hc:var(--amber)}
+body.glass3d:not(.light-mode) .sig-res.hud{background:linear-gradient(180deg,color-mix(in srgb,var(--hc) 10%,#05060c),#04050a 80%);border:1.5px solid color-mix(in srgb,var(--hc) 55%,#000);box-shadow:0 0 18px -8px var(--hc),inset 0 0 30px -22px var(--hc)}
+.hud .hud-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;letter-spacing:0}
+.hud .hud-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:12px;font-family:var(--mono);font-size:12px;font-weight:800;letter-spacing:1.2px;color:var(--t1);background:color-mix(in srgb,var(--t1) 6%,var(--card));border:1px solid var(--border)}
+.hud .hud-dot{width:9px;height:9px;border-radius:50%;background:var(--hc);box-shadow:0 0 8px var(--hc);display:inline-block}
+.hud .hud-state{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:12px;font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:1px;color:var(--t2);background:color-mix(in srgb,var(--t1) 5%,transparent);border:1px solid var(--border);white-space:nowrap}
+.hud .hud-state.lk{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 55%,transparent);background:color-mix(in srgb,var(--amber) 10%,transparent)}
+.hud .hud-time{font-family:var(--mono);font-size:12px;color:var(--t2);margin:0 0 12px}
+.hud .hud-main{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 12px}
+.hud .hud-who{display:flex;align-items:center;gap:11px;flex:1 1 190px;min-width:0}
+.hud .hud-arrow{flex:0 0 auto;width:46px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;line-height:1;color:var(--hc);background:color-mix(in srgb,var(--hc) 12%,transparent);border:1px solid color-mix(in srgb,var(--hc) 45%,transparent)}
+.hud .hud-dw{min-width:0}
+.hud .hud-dirline{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.hud .sr-dir{font-size:34px;line-height:1;margin:0;letter-spacing:1px;color:var(--hc);text-shadow:none}
+body.glass3d:not(.light-mode) .hud .sr-dir{text-shadow:0 0 22px color-mix(in srgb,var(--hc) 45%,transparent)}
+.hud .hud-pair{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:1px;color:var(--t2);padding:4px 9px;border-radius:8px;border:1px solid var(--border);background:color-mix(in srgb,var(--t1) 4%,transparent)}
+.hud .hud-desc{font-size:11.5px;line-height:1.45;color:var(--t2);margin-top:6px}
+.hud .hud-ring{flex:0 0 auto;display:none;align-items:center;gap:10px;padding:10px 14px;border-radius:18px;margin-left:auto;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border)}
+.hud .hud-ring.on{display:flex}
+.hud .hud-ring svg{width:54px;height:54px;flex:0 0 auto}
+.hud .hud-ring .rg-t{font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--t3);line-height:1.5}
+.hud .hud-ring .rg-s{font-family:var(--mono);font-size:15px;font-weight:800;color:var(--t1)}
+.hud .hud-ring .rg-s small{color:var(--t3);font-size:13px;font-weight:700}
+.hud .rr{display:flex;width:100%;box-sizing:border-box;align-items:center;gap:8px;padding:11px 13px;margin:0 0 12px;border-radius:14px;font-family:inherit;font-size:12.5px;font-weight:700;line-height:1.45;color:var(--t1);background:color-mix(in srgb,var(--hc) 8%,transparent);border:1px solid color-mix(in srgb,var(--hc) 40%,transparent)}
+.hud .rr::before{content:'';flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:var(--hc);box-shadow:0 0 7px var(--hc)}
+.hud .sr-grid{gap:10px;margin-bottom:12px}
+.hud .sr-box{position:relative;padding:12px 13px;border-radius:16px;background:color-mix(in srgb,var(--t1) 4%,var(--card));border:1px solid var(--border);min-width:0}
+body.glass3d:not(.light-mode) .hud .sr-box{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.12)}
+.hud .sr-bl{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:1.2px;color:var(--t2);margin-bottom:8px;padding-right:22px}
+.hud .sr-bl::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--bd,var(--t3));box-shadow:0 0 6px var(--bd,transparent);flex:0 0 auto}
+.hud .sr-grid .sr-box:nth-child(1){--bd:var(--indigo)}.hud .sr-grid .sr-box:nth-child(2){--bd:var(--red)}.hud .sr-grid .sr-box:nth-child(3),.hud .sr-grid .sr-box:nth-child(4){--bd:var(--green)}.hud .sr-grid .sr-box:nth-child(n+5){--bd:var(--t3)}
+.hud .sr-bv{font-size:21px;line-height:1.15;letter-spacing:.3px;word-break:break-word}
+.hud .sr-bs{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:9px;font-family:var(--mono);font-size:11.5px;color:var(--t3);flex-wrap:wrap}
+.hud .sr-bs .ch{padding:3px 8px;border-radius:7px;font-weight:700;font-size:11px;color:var(--t2);background:color-mix(in srgb,var(--t1) 6%,transparent);border:1px solid var(--border)}
+.hud .sr-bs .ch.g{color:var(--green);border-color:color-mix(in srgb,var(--green) 35%,transparent);background:color-mix(in srgb,var(--green) 10%,transparent)}
+.hud .sr-bs .ch.r{color:var(--red);border-color:color-mix(in srgb,var(--red) 35%,transparent);background:color-mix(in srgb,var(--red) 10%,transparent)}
+.hud .sr-bs .ch.i{color:var(--indigo);border-color:color-mix(in srgb,var(--indigo) 35%,transparent);background:color-mix(in srgb,var(--indigo) 10%,transparent)}
+.hud .hud-cp{position:absolute;top:10px;right:11px;cursor:pointer;font-size:14px;color:var(--t3);opacity:.8;user-select:none}
+.hud .sr-txt{border-radius:14px;background:color-mix(in srgb,var(--t1) 3%,transparent);border:1px solid var(--border)}
+.hud .hud-pl{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;margin:0 0 10px;border-radius:14px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border)}
+.hud .hud-pl-l{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--t2);text-transform:uppercase}
+.hud-pg{padding:13px 14px 12px;border-radius:18px;background:color-mix(in srgb,var(--t1) 4%,var(--card));border:1px solid var(--border)}
+body.glass3d:not(.light-mode) .hud-pg{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.12)}
+.hud-pg .pg-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.hud-pg .pg-l{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--t2)}
+.hud-pg .pg-l i{width:8px;height:8px;border-radius:50%;background:var(--t3)}
+.hud-pg .pg-p{font-family:var(--mono);font-size:16px;font-weight:800;color:var(--t1)}
+.hud-pg .pg-d{font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 10px;border-radius:9px}
+.hud-pg .pg-d.up{color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent);border:1px solid color-mix(in srgb,var(--green) 35%,transparent)}
+.hud-pg .pg-d.dn{color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent);border:1px solid color-mix(in srgb,var(--red) 35%,transparent)}
+.hud-pg .pg-tr{position:relative;height:7px;border-radius:4px;margin:0 7px 12px}
+.hud-pg .pg-mk{position:absolute;top:50%;width:11px;height:11px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--card)}
+.hud-pg .pg-cur{position:absolute;top:50%;width:17px;height:17px;border-radius:50%;background:#fff;border:3px solid var(--c);transform:translate(-50%,-50%);box-shadow:0 0 10px var(--c)}
+.hud-pg .pg-lb{display:flex;justify-content:space-between;gap:4px}
+.hud-pg .pg-lb div{display:flex;flex-direction:column;gap:3px;font-family:var(--mono);font-size:11px;font-weight:800;min-width:0}
+.hud-pg .pg-lb span{font-size:11px;font-weight:600;color:var(--t3)}
+.hud-pg .pg-lb div:last-child{align-items:flex-end;text-align:right}
 /* v20.48 — กลุ่ม Lab (การ์ดวิจัย/ทดสอบ) หุบไว้ตอนเปิดแอป: ลดความยาวหน้า + งาน layout/paint */
 #labBar{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 #labBar .lab-t{font-size:14px;font-weight:800;color:var(--t1);}
@@ -1545,8 +1604,9 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
     </div>
   </div>
   <div class="sig-res" id="qsRes">
-    <div class="sr-lbl">Quick Signal — <span id="qsTime">—</span></div>
-    <div class="sr-dir" id="qsDir">—</div>
+    <div class="sr-lbl hud-top"><span class="hud-chip"><i class="hud-dot"></i>QUICK SIGNAL</span><span class="hud-state" id="qsState"></span></div>
+    <div class="hud-time">🕒 <span id="qsTime">—</span></div>
+    <div class="hud-main"><div class="hud-who"><div class="hud-arrow" id="qsArrow">·</div><div class="hud-dw"><div class="hud-dirline"><div class="sr-dir" id="qsDir">—</div><span class="hud-pair">XAUUSD</span></div><div class="hud-desc" id="qsDesc"></div></div></div><div class="hud-ring" id="qsRing"></div></div>
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
       <div class="rr rr-b" id="qsRR">—</div>
       <div class="rr" id="qsM15Badge" style="display:none;font-size:10.5px;">—</div>
@@ -1596,9 +1656,10 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
     <button onclick="resetWatchlistThresholds()" style="padding:9px 10px;border-radius:8px;background:transparent;border:1px solid var(--bd);color:var(--t3);font-size:10.5px;cursor:pointer;white-space:nowrap;">รีเซ็ต</button>
   </div>
   <div id="wlDisagree" style="display:none;margin-bottom:10px;padding:9px 11px;border-radius:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);font-size:11px;color:var(--indigo);font-weight:600;line-height:1.5;"></div>
-  <div class="sig-res" id="wlRes" style="display:none;border-style:dashed;">
-    <div class="sr-lbl">Watchlist — <span id="wlTime">—</span></div>
-    <div class="sr-dir" id="wlDir">—</div>
+  <div class="sig-res" id="wlRes" style="display:none;">
+    <div class="sr-lbl hud-top"><span class="hud-chip"><i class="hud-dot"></i>EARLY · WATCHLIST</span><span class="hud-state" id="wlState"></span></div>
+    <div class="hud-time">🕒 <span id="wlTime">—</span></div>
+    <div class="hud-main"><div class="hud-who"><div class="hud-arrow" id="wlArrow">·</div><div class="hud-dw"><div class="hud-dirline"><div class="sr-dir" id="wlDir">—</div><span class="hud-pair">XAUUSD</span></div><div class="hud-desc" id="wlDesc"></div></div></div><div class="hud-ring" id="wlRing"></div></div>
     <div class="rr rr-w" id="wlScore">—</div>
     <div class="sr-txt" id="wlReason">—</div>
   </div>
@@ -1632,9 +1693,10 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
     19-factor) การ์ดนี้ใช้ H1 (ข้อมูลนานกว่า น่าเชื่อถือกว่า) เป็นตัวกรองทิศทางหลักตั้งแต่เข้าโซน Watchlist แล้วรอ M15 (getM15Bias —
     RSI/MACD/EMA เอกฉันท์ ≥2 เสียง ใช้ engine เดียวกับที่ m15Blocked ใน Quick Signal ใช้อยู่แล้ว) ยืนยันตรงทิศจริงๆ ก่อนถึงจะติ๊กว่า
     เป็นจังหวะเข้าที่ดี — เหมาะกับสไตล์ "ดู H1 หาทิศทาง แล้วดู M15 จับจังหวะเข้า" ที่ trader หลายคนใช้ -->
-  <div class="sig-res" id="m15cRes" style="display:none;border-style:dashed;">
-    <div class="sr-lbl">M15 Confirmation — <span id="m15cTime">—</span></div>
-    <div class="sr-dir" id="m15cDir">—</div>
+  <div class="sig-res" id="m15cRes" style="display:none;">
+    <div class="sr-lbl hud-top"><span class="hud-chip"><i class="hud-dot"></i>M15 CONFIRMATION</span><span class="hud-state" id="m15cState"></span></div>
+    <div class="hud-time">🕒 <span id="m15cTime">—</span></div>
+    <div class="hud-main"><div class="hud-who"><div class="hud-arrow" id="m15cArrow">·</div><div class="hud-dw"><div class="hud-dirline"><div class="sr-dir" id="m15cDir">—</div><span class="hud-pair">XAUUSD</span></div><div class="hud-desc" id="m15cDesc"></div></div></div><div class="hud-ring" id="m15cRing"></div></div>
     <div class="rr rr-w" id="m15cScore">—</div>
     <div class="sr-grid">
       <div class="sr-box"><div class="sr-bl">Entry</div><div class="sr-bv" id="m15cEntry" style="color:var(--indigo);">—</div></div>
@@ -1663,8 +1725,9 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
     เปิดแอปอย่างน้อย 1 ครั้งหลังตั้งเกณฑ์ M15 ใหม่ (ผ่าน Threshold Sweep) เพื่อ sync ค่าขึ้นคลาวด์ก่อน ไม่งั้น cron จะยังใช้ค่าเก่าอยู่ -->
   <div id="m15eEarlyWarn" style="display:none;margin:8px 0;padding:9px 11px;border-radius:10px;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.25);font-size:11px;color:var(--red);font-weight:600;line-height:1.5;"></div>
   <div class="sig-res" id="m15eRes" style="display:none;">
-    <div class="sr-lbl">M15 Entry — <span id="m15eTime">—</span></div>
-    <div class="sr-dir" id="m15eDir">—</div>
+    <div class="sr-lbl hud-top"><span class="hud-chip"><i class="hud-dot"></i>M15 ENTRY</span><span class="hud-state" id="m15eState"></span></div>
+    <div class="hud-time">🕒 <span id="m15eTime">—</span></div>
+    <div class="hud-main"><div class="hud-who"><div class="hud-arrow" id="m15eArrow">·</div><div class="hud-dw"><div class="hud-dirline"><div class="sr-dir" id="m15eDir">—</div><span class="hud-pair">XAUUSD</span></div><div class="hud-desc" id="m15eDesc"></div></div></div><div class="hud-ring" id="m15eRing"></div></div>
     <div class="rr rr-b" id="m15eScore">—</div>
     <div class="sr-grid">
       <div class="sr-box"><div class="sr-bl">Entry</div><div class="sr-bv" id="m15eEntry" style="color:var(--indigo);">—</div></div>
@@ -2294,22 +2357,20 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
   </div>
   <div id="trStrip" style="display:none;margin:0 0 10px;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);font-size:10.5px;line-height:1.65;color:var(--t2);"></div>
   <div id="trEmpty" style="font-size:11.5px;color:var(--t3);text-align:center;padding:16px 0;">ยังไม่มี trend ที่แข็งแรงพอ — รอ HTF Lock ล็อกทิศชัดเจน + ADX H4 แข็งแรงก่อน</div>
-  <div id="trRes" style="display:none;">
-    <div id="trDir" class="sr-dir" style="font-size:19px;margin-bottom:6px;"></div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;">
-      <div class="ds-stat"><div class="ds-stat-lbl">Entry</div><div class="ds-stat-val" id="trEntry" style="color:var(--t2);">—</div></div>
-      <div class="ds-stat"><div class="ds-stat-lbl">SL (Trailing)</div><div class="ds-stat-val" id="trSL" style="color:var(--red);">—</div></div>
-      <div class="ds-stat"><div class="ds-stat-lbl">TP1 (1R)</div><div class="ds-stat-val" id="trTP1" style="color:var(--green);">—</div></div>
-      <div class="ds-stat"><div class="ds-stat-lbl">TP2 (2R)</div><div class="ds-stat-val" id="trTP2" style="color:var(--green);">—</div></div>
-      <div class="ds-stat"><div class="ds-stat-lbl">จุดสูงสุด/ต่ำสุด</div><div class="ds-stat-val" id="trExtreme" style="color:var(--green);">—</div></div>
-      <div class="ds-stat"><div class="ds-stat-lbl">ถืออยู่</div><div class="ds-stat-val" id="trDays" style="color:var(--t2);">—</div></div>
+  <div id="trRes" class="sig-res hud" style="display:none;">
+    <div id="trHud"></div>
+    <div id="trDir" class="sr-dir" style="display:none;"></div>
+    <div class="sr-grid">
+      <div class="sr-box"><div class="sr-bl">Entry</div><div class="sr-bv" id="trEntry" style="color:var(--indigo);">—</div></div>
+      <div class="sr-box"><div class="sr-bl">SL (Trailing)</div><div class="sr-bv" id="trSL" style="color:var(--red);">—</div></div>
+      <div class="sr-box"><div class="sr-bl">TP1 (1R)</div><div class="sr-bv" id="trTP1" style="color:var(--green);">—</div></div>
+      <div class="sr-box"><div class="sr-bl">TP2 (2R)</div><div class="sr-bv" id="trTP2" style="color:var(--green);">—</div></div>
+      <div class="sr-box"><div class="sr-bl">จุดสูงสุด/ต่ำสุด</div><div class="sr-bv" id="trExtreme" style="color:var(--green);">—</div></div>
+      <div class="sr-box"><div class="sr-bl">ถืออยู่</div><div class="sr-bv" id="trDays" style="color:var(--t2);">—</div></div>
     </div>
-    <div style="padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);margin-bottom:8px;">
-      <div style="font-size:9px;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Floating P/L</div>
-      <div style="font-size:18px;font-weight:800;" id="trPL">—</div>
-    </div>
-    <div class="hdiv"></div>
-    <div style="font-size:10.5px;color:var(--t2);line-height:1.6;" id="trReason"></div>
+    <div id="trProg" style="margin:10px 0;"></div>
+    <div class="hud-pl"><div class="hud-pl-l">Floating P/L</div><div style="font-size:19px;font-weight:800;" id="trPL">—</div></div>
+    <div class="sr-txt" id="trReason"></div>
   </div>
 </div>
 
@@ -2865,7 +2926,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.49 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.50 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -5447,23 +5508,100 @@ function renderM15EntrySessionStats(arr){
 function renderSignalProgressBar(containerId,sig,cur){
   const el=document.getElementById(containerId);
   if(!el)return;
-  const vals=[sig.sl,sig.entry,sig.tp1,sig.tp2];
+  const vals=[sig.sl,sig.entry,sig.tp1,sig.tp2].filter(v=>v!=null&&isFinite(v));
+  if(vals.length<2){el.innerHTML='';return;}
   const min=Math.min(...vals),max=Math.max(...vals);
   const range=max-min||1;
   const pct=(v)=>Math.max(0,Math.min(100,((v-min)/range)*100));
-  const curPct=cur!=null?pct(cur):null;
   const marks=[
-    {v:sig.sl,label:'SL',color:'var(--red)'},
-    {v:sig.entry,label:'Entry',color:'var(--indigo)'},
-    {v:sig.tp1,label:'TP1',color:'var(--green)'},
     {v:sig.tp2,label:'TP2',color:'var(--green)'},
-  ];
-  const marksHtml=marks.map(m=>{
-    const p=pct(m.v);
-    return `<div style="position:absolute;left:${p}%;top:0;bottom:0;width:2px;background:${m.color};opacity:.7;transform:translateX(-1px);"></div><div style="position:absolute;left:${p}%;top:-15px;transform:translateX(-50%);font-size:8px;color:${m.color};font-weight:700;white-space:nowrap;">${m.label}</div>`;
-  }).join('');
-  const curHtml=curPct!=null?`<div title="ราคาปัจจุบัน ${cur.toFixed(2)}" style="position:absolute;left:${curPct}%;top:50%;width:11px;height:11px;border-radius:50%;background:#fff;border:2px solid var(--indigo);transform:translate(-50%,-50%);box-shadow:0 0 6px rgba(255,255,255,.7);"></div>`:'';
-  el.innerHTML=`<div style="position:relative;height:5px;background:linear-gradient(90deg,rgba(239,68,68,.3),rgba(99,102,241,.2),rgba(34,197,94,.35));border-radius:3px;margin:16px 6px 8px 6px;">${marksHtml}${curHtml}</div>`;
+    {v:sig.tp1,label:'TP1',color:'var(--green)'},
+    {v:sig.entry,label:'Entry',color:'var(--indigo)'},
+    {v:sig.sl,label:'SL',color:'var(--red)'},
+  ].filter(m=>m.v!=null&&isFinite(m.v)).sort((a,b)=>a.v-b.v);
+  const leftIsGood=sig.dir==='SELL'; // SELL: เป้ากำไรอยู่ฝั่งราคาต่ำ (ซ้าย)
+  const A=leftIsGood?'var(--green)':'var(--red)',B=leftIsGood?'var(--red)':'var(--green)';
+  const ep=pct(sig.entry);
+  const dist=cur!=null?(sig.dir==='SELL'?(sig.entry-cur):(cur-sig.entry)):null;
+  const c=dist==null?'var(--indigo)':(dist>=0?'var(--green)':'var(--red)');
+  const mk=marks.map(m=>`<div class="pg-mk" style="left:${pct(m.v)}%;background:${m.color};"></div>`).join('');
+  const lb=marks.map(m=>`<div style="color:${m.color};">${m.label}<span>${m.v.toFixed(2)}</span></div>`).join('');
+  const top=cur!=null?`<div class="pg-top"><span class="pg-l"><i></i>ราคาปัจจุบัน</span><b class="pg-p">${cur.toFixed(2)}</b><span class="pg-d ${dist>=0?'up':'dn'}">${dist>=0?'+':''}${dist.toFixed(2)} จากจุดเข้า</span></div>`:'<div class="pg-top"><span class="pg-l"><i></i>ราคาปัจจุบัน</span><b class="pg-p">—</b></div>';
+  const curDot=cur!=null?`<div class="pg-cur" style="left:${pct(cur)}%;--c:${c};" title="ราคาปัจจุบัน ${cur.toFixed(2)}"></div>`:'';
+  el.innerHTML=`<div class="hud-pg">${top}<div class="pg-tr" style="background:linear-gradient(90deg,color-mix(in srgb,${A} 55%,transparent) 0%,color-mix(in srgb,var(--indigo) 60%,transparent) ${ep}%,color-mix(in srgb,${B} 55%,transparent) 100%);">${mk}${curDot}</div><div class="pg-lb">${lb}</div></div>`;
+}
+
+// ═══ v20.49 — HUD การ์ดสัญญาณ: ตัวจัดวางหัวการ์ด/วงคะแนน/ป้ายใต้กล่อง Entry-SL-TP (ไม่แตะ logic คำนวณสัญญาณเลย อ่านค่าจาก DOM ที่การ์ดเรนเดอร์แล้วเท่านั้น) ═══
+(function(){
+  const CFG={
+    qsRes:{p:'qs',score:'qsRR',tf:'H1',label:'H1',desc:'กรอบเวลา H1'},
+    wlRes:{p:'wl',score:'wlScore',tf:'',label:'WATCH',desc:'เฝ้าดูเท่านั้น — ไม่ใช่คำสั่งเข้า'},
+    m15cRes:{p:'m15c',score:'m15cScore',tf:'M15',rtf:'H1',label:'M15',desc:'กรอบเวลา 15 นาที'},
+    m15eRes:{p:'m15e',score:'m15eScore',tf:'M15',label:'M15',desc:'กรอบเวลา 15 นาที'}
+  };
+  const R=22,C=2*Math.PI*R;
+  function num(el){if(!el)return NaN;const m=/-?\d+(?:\.\d+)?/.exec(el.textContent.replace(/,/g,''));return m?parseFloat(m[0]):NaN;}
+  function deco(id){
+    const res=document.getElementById(id),cf=CFG[id];if(!res)return;
+    const p=cf.p,g=k=>document.getElementById(p+k);
+    const dEl=g('Dir');if(!dEl)return;
+    const raw=dEl.textContent,locked=raw.indexOf('🔒')>-1;
+    const dir=/SELL/.test(raw)?'SELL':/BUY/.test(raw)?'BUY':'WAIT';
+    if(dEl.textContent!==dir)dEl.textContent=dir;
+    res.classList.add('hud');['hud-buy','hud-sell','hud-wait'].forEach(c=>res.classList.remove(c));res.classList.add('hud-'+dir.toLowerCase());
+    const ar=g('Arrow');if(ar)ar.textContent=dir==='BUY'?'↑':dir==='SELL'?'↓':'⏸';
+    const st=g('State');if(st){st.textContent=locked?'🔒 LOCKED':(id==='wlRes'?'👀 WATCH':'● LIVE');st.className='hud-state'+(locked?' lk':'');}
+    const ds=g('Desc');if(ds&&id==='wlRes')ds.textContent=(dir==='BUY'?'เฝ้าดูฝั่งซื้อ':dir==='SELL'?'เฝ้าดูฝั่งขาย':'ยังไม่มีทิศ')+' • ยังไม่ใช่คำสั่งเข้า';else if(ds)ds.textContent=dir==='BUY'?'สัญญาณเข้าออเดอร์ฝั่งซื้อ'+(cf.tf?' • '+cf.desc:' • '+cf.desc):dir==='SELL'?'สัญญาณเข้าออเดอร์ฝั่งขาย'+' • '+cf.desc:'ยังไม่แนะนำเข้า • '+cf.desc;
+    const rg=g('Ring'),sc=document.getElementById(cf.score);
+    if(rg){
+      const m=sc?/(\d+(?:\.\d+)?)\s*\/\s*10/.exec(sc.textContent):null;
+      if(m){const v=Math.min(10,parseFloat(m[1]));
+        rg.innerHTML=`<svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".14" stroke-width="5"/><circle cx="27" cy="27" r="${R}" fill="none" stroke="var(--hc)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(v/10*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 27 27)"/><text x="27" y="31.5" text-anchor="middle" font-size="13" font-weight="800" fill="var(--t1)" font-family="monospace">${v.toFixed(1)}</text></svg><div><div class="rg-t">CONFLUENCE${(cf.rtf||cf.tf)?'<br>'+(cf.rtf||cf.tf):''}</div><div class="rg-s">${v.toFixed(1)}<small>/10</small></div></div>`;
+        rg.classList.add('on');}
+      else{rg.innerHTML='';rg.classList.remove('on');}
+    }
+    // ป้ายใต้กล่องราคา
+    const entry=num(g('Entry')),sl=num(g('SL'));
+    res.querySelectorAll('.sr-box').forEach((box,i)=>{
+      const v=box.querySelector('.sr-bv');if(!v)return;
+      let bs=box.querySelector('.sr-bs');if(!bs){bs=document.createElement('div');bs.className='sr-bs';box.appendChild(bs);}
+      if(!box.querySelector('.hud-cp')){const cp=document.createElement('span');cp.className='hud-cp';cp.textContent='⧉';cp.title='คัดลอก';cp.onclick=()=>{const n=num(v);if(!isNaN(n)){try{navigator.clipboard.writeText(n.toFixed(2));cp.textContent='✓';setTimeout(()=>cp.textContent='⧉',900);}catch(e){}}};box.appendChild(cp);}
+      const val=num(v);let html='';
+      if(isNaN(val)||isNaN(entry)){html='';}
+      else if(i===0){html=`<span>จุดเข้าอ้างอิง</span>${cf.tf?`<span class="ch i">${cf.tf}</span>`:''}`;}
+      else{
+        const diff=val-entry,sg=diff>=0?'+':'';
+        const risk=Math.abs(sl-entry);
+        if(i===1){html=`<span>${sg}${diff.toFixed(2)} pts</span><span class="ch r">RISK 1R</span>`;}
+        else if(risk>0){html=`<span>${sg}${diff.toFixed(2)} pts</span><span class="ch g">R:R 1:${(Math.abs(diff)/risk).toFixed(1)}</span>`;}
+        else html=`<span>${sg}${diff.toFixed(2)} pts</span>`;
+      }
+      if(bs.innerHTML!==html)bs.innerHTML=html;
+    });
+  }
+  Object.keys(CFG).forEach(id=>{
+    const res=document.getElementById(id);if(!res)return;
+    let q=0;const opt={childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class','style']};
+    const mo=new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;mo.disconnect();try{deco(id);}catch(e){}mo.observe(res,opt);});});
+    mo.observe(res,opt);
+    try{deco(id);}catch(e){}
+  });
+})();
+
+// Trend Rider — หัวการ์ด HUD (อ่านจาก lock จริง ไม่แตะ logic)
+function renderTRHud(cur){
+  const res=document.getElementById('trRes'),el=document.getElementById('trHud');
+  if(!res||!el||res.style.display==='none')return;
+  const lock=loadTrendRiderLock();if(!lock||!lock.dir)return;
+  const dir=lock.dir;
+  res.classList.add('hud');res.classList.remove('hud-buy','hud-sell','hud-wait');res.classList.add(dir==='BUY'?'hud-buy':'hud-sell');
+  const pl=cur!=null?(dir==='BUY'?cur-lock.entry:lock.entry-cur):null;
+  const r0=lock.sl0!=null?Math.abs(lock.entry-lock.sl0):(lock.atr?lock.atr*TR_CHANDELIER_MULT:0);
+  const rm=(pl!=null&&r0>0)?pl/r0:null;
+  const t=new Date(lock.lockedAt).toLocaleString('th-TH',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  const ring=rm!=null?`<div class="hud-ring on"><div><div class="rg-t">FLOATING</div><div class="rg-s" style="color:${rm>=0?'var(--green)':'var(--red)'}">${rm>=0?'+':''}${rm.toFixed(2)}<small>R</small></div></div></div>`:'';
+  el.innerHTML=`<div class="sr-lbl hud-top"><span class="hud-chip"><i class="hud-dot"></i>TREND RIDER</span><span class="hud-state lk">🚀 RIDING${lock.tp1Hit?' · TP1 ✅':''}</span></div><div class="hud-time">🕒 เข้าเมื่อ ${t}</div><div class="hud-main"><div class="hud-who"><div class="hud-arrow">${dir==='BUY'?'↑':'↓'}</div><div class="hud-dw"><div class="hud-dirline"><div class="sr-dir">${dir}</div><span class="hud-pair">XAUUSD</span></div><div class="hud-desc">ถือยาวตามเทรนด์ • Chandelier ${TR_CHANDELIER_MULT}×ATR H4</div></div></div>${ring}</div>`;
+  renderSignalProgressBar('trProg',{dir,entry:lock.entry,sl:lock.sl,tp1:lock.tp1,tp2:lock.tp2},cur);
 }
 
 // ═══ item C — M15 ENTRY SIGNAL ═══
@@ -12766,7 +12904,7 @@ function renderTRStrip(cur){
   }
   el.innerHTML=rows;el.style.display='block';
 }
-function generateTrendRider(cur){try{_generateTrendRiderCore(cur);}finally{try{renderTRStrip(cur);}catch(e){}}}
+function generateTrendRider(cur){try{_generateTrendRiderCore(cur);}finally{try{renderTRStrip(cur);}catch(e){}try{renderTRHud(cur);}catch(e){}}}
 function _generateTrendRiderCore(cur){
   const emptyEl=document.getElementById('trEmpty'),resEl=document.getElementById('trRes');
   if(!emptyEl||!resEl)return;
