@@ -1359,8 +1359,8 @@ body:not(.light-mode) .hud .hud-dot,body:not(.light-mode) .hud .rr::before,body:
 body:not(.light-mode) .hud .sr-bv,body:not(.light-mode) .hud .sr-dir{text-shadow:0 0 18px color-mix(in srgb,currentColor 40%,transparent)}
 body:not(.light-mode) .seg-meter i.on,body:not(.light-mode) .age-bar .ab-s i.on{box-shadow:0 0 7px -1px var(--sc,var(--hc))}
 body:not(.light-mode) .vol-grad{background:linear-gradient(90deg,#ffd60a 0%,#2fe86b 38%,#2fe86b 52%,#ff8a1f 70%,#ff3b4e 100%);opacity:1}
-/* v20.58 — โหมดปกติ (ไม่ใช่กระจก): พื้นหลังแอพ+การ์ดสว่างขึ้นอีกนิด · สีอื่นคงเดิม · โหมดกระจก/สว่างไม่เปลี่ยน */
-body:not(.glass3d):not(.light-mode){--bg:#10142b;--card:rgba(30,35,68,.74);--card2:rgba(38,44,80,.78);--border:rgba(255,255,255,.11);--border2:rgba(255,255,255,.2)}
+/* v20.58 — โหมดปกติ (ไม่ใช่กระจก): พื้นหลังแอพ+การ์ดสว่างขึ้นแค่เล็กน้อย (ปรับลดจากรอบก่อนที่สว่างเกิน) · สีอื่นคงเดิม · โหมดกระจก/สว่างไม่เปลี่ยน */
+body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--card2:rgba(21,25,48,.72);--border:rgba(255,255,255,.075);--border2:rgba(255,255,255,.16)}
 </style>
 <body>
 
@@ -3017,7 +3017,7 @@ body:not(.glass3d):not(.light-mode){--bg:#10142b;--card:rgba(30,35,68,.74);--car
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.58 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.59 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
