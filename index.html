@@ -2926,7 +2926,7 @@ body.glass3d:not(.light-mode) #bgCanvas{opacity:.4;} /* v20.40 — หรี่�
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.50 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.51 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -5550,7 +5550,7 @@ function renderSignalProgressBar(containerId,sig,cur){
     if(dEl.textContent!==dir)dEl.textContent=dir;
     res.classList.add('hud');['hud-buy','hud-sell','hud-wait'].forEach(c=>res.classList.remove(c));res.classList.add('hud-'+dir.toLowerCase());
     const ar=g('Arrow');if(ar)ar.textContent=dir==='BUY'?'↑':dir==='SELL'?'↓':'⏸';
-    const st=g('State');if(st){st.textContent=locked?'🔒 LOCKED':(id==='wlRes'?'👀 WATCH':'● LIVE');st.className='hud-state'+(locked?' lk':'');}
+    const st=g('State');if(st){st.textContent=res.dataset.src==='cron'?'🤖 CRON':locked?'🔒 LOCKED':(id==='wlRes'?'👀 WATCH':'● LIVE');st.className='hud-state'+(locked?' lk':'');}
     const ds=g('Desc');if(ds&&id==='wlRes')ds.textContent=(dir==='BUY'?'เฝ้าดูฝั่งซื้อ':dir==='SELL'?'เฝ้าดูฝั่งขาย':'ยังไม่มีทิศ')+' • ยังไม่ใช่คำสั่งเข้า';else if(ds)ds.textContent=dir==='BUY'?'สัญญาณเข้าออเดอร์ฝั่งซื้อ'+(cf.tf?' • '+cf.desc:' • '+cf.desc):dir==='SELL'?'สัญญาณเข้าออเดอร์ฝั่งขาย'+' • '+cf.desc:'ยังไม่แนะนำเข้า • '+cf.desc;
     const rg=g('Ring'),sc=document.getElementById(cf.score);
     if(rg){
@@ -5827,8 +5827,10 @@ function generateM15EntrySignal(){
    if(!locked&&sv&&sv.ok&&Date.now()-sv.t<10*60000&&sv.lock&&sv.lock.dir&&sv.lock.entry!=null){
      const L=sv.lock,col=L.dir==='BUY'?'var(--green)':'var(--red)',f=x=>(x!=null&&isFinite(x))?Number(x).toFixed(2):'—';
      const mins=L.lockedAt?Math.max(0,Math.round((Date.now()-L.lockedAt)/60000)):null;
-     resEl.style.display='none';emptyEl.style.display='block';
-     emptyEl.innerHTML=`<div style="text-align:left;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid ${col};"><div style="font-size:12px;font-weight:800;color:${col};">${L.dir==='BUY'?'🟢':'🔴'} ${L.dir} — cron เปิดไม้แล้ว${mins!=null?` (${mins<60?mins+' นาที':Math.round(mins/60*10)/10+' ชม.'}ที่แล้ว)`:''}</div><div style="font-size:11px;color:var(--t1);margin-top:6px;line-height:1.7;">Entry ${f(L.entry)} · SL ${f(L.sl)}${L.tp1Hit?' (เลื่อนแล้ว)':''}<br>TP1 ${f(L.tp1)}${L.tp1Hit?' ✅':''} · TP2 ${f(L.tp2)}</div><div style="font-size:9.5px;color:var(--t3);margin-top:6px;">ไม้นี้ถูกติดตามและปิดโดย cron (แจ้ง Telegram) · หน้านี้แสดงอย่างเดียว ไม่เปิดไม้ซ้ำ</div></div>`;
+     const sg={...L,score:(L.score!=null?L.score:(L.entryScore!=null?L.entryScore:null)),htfBias:L.htfBias||'—',aligned:L.aligned||[],atr:L.atr||0,sl:L.sl!=null?L.sl:L.entry,tp1:L.tp1,tp2:L.tp2,lockedAt:L.lockedAt||Date.now()};
+     renderM15EntryLocked(sg,cur);
+     resEl.dataset.src='cron';
+     const rs=document.getElementById('m15eReason');if(rs)rs.textContent=`🤖 ไม้นี้ cron เปิด${mins!=null?` (${mins<60?mins+' นาที':Math.round(mins/60*10)/10+' ชม.'}ที่แล้ว)`:''} — ติดตามและปิดโดย cron (แจ้ง Telegram) · หน้านี้แสดงอย่างเดียว ไม่เปิดไม้ซ้ำ${L.tp1Hit?' · ถึง TP1 แล้ว (SL เลื่อนแล้ว)':''}`;
      return;
    }}
   if(!locked)updateM15EarlyWarning(null,null); // ═══ item — ไม่มีไม้ล็อกอยู่ ซ่อน warning banner (ถ้ามีค้างจาก tick ก่อนหน้า) ═══
@@ -5939,12 +5941,13 @@ function renderM15EntryLocked(sig,cur){
   emptyEl.style.display='none';
   resEl.style.display='block';
   resEl.className='sig-res '+(sig.dir==='BUY'?'sig-buy-r':'sig-sell-r');
+  delete resEl.dataset.src;
   const dEl=document.getElementById('m15eDir');
   dEl.textContent='🔒 '+sig.dir;
   dEl.className='sr-dir '+(sig.dir==='BUY'?'sr-buy':'sr-sell');
   document.getElementById('m15eTime').textContent=formatLockedAt(sig.lockedAt);
   const scoreEl=document.getElementById('m15eScore');
-  scoreEl.textContent=`Confluence M15 ${sig.score.toFixed(1)}/10 · ตรงเทรนด์ H1 (${sig.htfBias})`;
+  scoreEl.textContent=sig.score!=null?`Confluence M15 ${sig.score.toFixed(1)}/10 · ตรงเทรนด์ H1 (${sig.htfBias})`:`ตรงเทรนด์ H1${sig.htfBias&&sig.htfBias!=='—'?' ('+sig.htfBias+')':''}`;
   scoreEl.className='rr '+(sig.dir==='BUY'?'rr-b':'rr-s');
   document.getElementById('m15eEntry').textContent=sig.entry.toFixed(2);
   const lockedPts=sig.tp1Hit?(sig.dir==='BUY'?sig.sl-sig.entry:sig.entry-sig.sl):0;
