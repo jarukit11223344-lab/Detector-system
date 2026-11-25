@@ -1369,6 +1369,58 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
 .sig-res,.plat-group,.crb,.smart-row,.jt-row,.eco-item,.sh-badge,.chg-pill,.sp,.sbg,.liq,.sbst,.tf-pills,.ai-box,.cinp,.ai-inp{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play-state:paused!important}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important}}
+
+/* ═══ v20.67 — widget style: Watchlist / Correlation / TPO / ATR / Confluence factors ═══ */
+.wl-row{position:relative;overflow:hidden;border-left:3px solid var(--wc,var(--border2))}
+.wl-row .wl-bar{position:absolute;left:0;bottom:0;height:2px;background:var(--wc);opacity:.75;border-radius:0 2px 2px 0;transition:width .6s}
+.wl-row>*:not(.wl-bar){position:relative}
+.cr-row{display:flex;align-items:center;gap:8px}
+.cr-sym{font-size:10.5px;font-weight:600;color:var(--t1);width:104px;flex-shrink:0;line-height:1.25}
+.cr-seg{flex:1;display:flex;align-items:center;gap:2px;height:16px}
+.cr-half{flex:1;display:flex;gap:2px;height:100%}
+.cr-half i{flex:1;border-radius:2px;background:color-mix(in srgb,var(--t1) 9%,transparent);transition:background .4s}
+.cr-half i.on{background:var(--cc);opacity:var(--o,1)}
+.cr-mid{width:2px;height:20px;border-radius:1px;background:color-mix(in srgb,var(--t1) 35%,transparent);flex:0 0 auto}
+.cr-val{font-family:var(--mono);font-size:11px;font-weight:800;width:46px;text-align:right;line-height:1.1}
+.cr-val small{display:block;font-family:inherit;font-size:7.5px;font-weight:700;color:var(--t3);letter-spacing:.3px}
+.tp-row{display:flex;align-items:center;gap:6px;padding:1px 3px;border-radius:5px}
+.tp-row.va{background:color-mix(in srgb,var(--amber) 7%,transparent)}
+.tp-px{font-family:var(--mono);font-size:8.5px;color:var(--t3);width:42px;text-align:right}
+.tp-row.poc .tp-px{color:var(--amber);font-weight:800}
+.tp-track{flex:1;height:11px;border-radius:6px;background:color-mix(in srgb,var(--t1) 7%,transparent);position:relative;overflow:hidden}
+.tp-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 55%,transparent),var(--tc));transition:width .6s}
+.tp-row.poc .tp-fill{box-shadow:0 0 8px color-mix(in srgb,var(--tc) 70%,transparent)}
+.tp-now{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:7.5px;font-weight:800;color:var(--t1);letter-spacing:.2px;text-shadow:0 0 3px rgba(0,0,0,.6)}
+.tp-n{font-size:8.5px;color:var(--t3);font-family:var(--mono);width:22px}
+.tp-range{margin:4px 0 10px}
+.tp-rb-top{display:flex;justify-content:space-between;font-size:9.5px;color:var(--t3);margin-bottom:7px}.tp-rb-top b{font-weight:800}
+.tp-rb{position:relative;height:8px;border-radius:5px;background:color-mix(in srgb,var(--t1) 9%,transparent)}
+.tp-rb .va{position:absolute;top:0;bottom:0;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));opacity:.8}
+.tp-rb .pc{position:absolute;top:-3px;width:3px;height:14px;margin-left:-1px;border-radius:2px;background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.tp-rb .pr{position:absolute;top:-4px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--t1);border:2px solid var(--card);box-shadow:0 0 0 1px var(--t2)}
+.at-range{margin:0 0 12px}
+.at-pills{display:flex;gap:6px;margin-bottom:9px}
+.at-pills span{flex:1;text-align:center;font-size:9.5px;font-weight:800;letter-spacing:.6px;padding:5px 0;border-radius:999px;color:var(--t3);background:color-mix(in srgb,var(--t1) 6%,transparent);border:1px solid var(--border)}
+.at-pills span.on.g{color:var(--green);background:color-mix(in srgb,var(--green) 16%,transparent);border-color:color-mix(in srgb,var(--green) 50%,transparent)}
+.at-pills span.on.a{color:var(--amber);background:color-mix(in srgb,var(--amber) 16%,transparent);border-color:color-mix(in srgb,var(--amber) 50%,transparent)}
+.at-pills span.on.r{color:var(--red);background:color-mix(in srgb,var(--red) 16%,transparent);border-color:color-mix(in srgb,var(--red) 50%,transparent)}
+.at-bar{position:relative;height:8px;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--amber),var(--red))}
+.at-bar i{position:absolute;top:-4px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--t1);border:2px solid var(--card);box-shadow:0 0 0 1px var(--t2);transition:left .8s}
+.at-cap{display:flex;justify-content:space-between;align-items:center;font-size:9px;color:var(--t3);margin-top:8px}.at-cap b{font-size:10px}
+.cf-sum{margin:2px 0 8px}
+.cf-stack{display:flex;gap:3px;height:10px}
+.cf-stack i{display:block;border-radius:5px;min-width:0;transition:width .6s}
+.cf-leg{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:10px;color:var(--t3);margin-top:7px}
+.cf-leg u{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.cf-leg b{color:var(--t1);font-family:var(--mono)}.cf-leg em{margin-left:auto;font-style:normal;font-size:9px}
+.cf-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--t1) 6%,transparent)}
+.cf-name{font-size:10px;color:var(--t3);width:80px;flex-shrink:0}
+.cf-seg{flex:1;display:flex;gap:3px;height:7px}
+.cf-seg i{flex:1;border-radius:2px;background:color-mix(in srgb,var(--t1) 9%,transparent)}
+.cf-seg i.on{background:var(--fc)}
+body.glass3d:not(.light-mode) .cf-seg i.on{box-shadow:0 0 6px color-mix(in srgb,var(--fc) 60%,transparent)}
+.cf-lbl{font-size:9.5px;font-weight:600;min-width:130px;text-align:right}
+@media(max-width:520px){.cf-lbl{min-width:120px}.cr-sym{width:96px}}
 </style>
 <body>
 
@@ -2750,9 +2802,10 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
     </svg>
     <div style="font-size:11px;color:var(--t2);margin-top:-6px;">ATR(14) · pips</div>
   </div>
+  <div id="atrRange" class="at-range"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
     <div style="text-align:center;background:rgba(255,255,255,.03);border-radius:8px;padding:7px 4px;border:1px solid var(--border);">
-      <div style="font-size:9px;color:var(--t3);margin-bottom:2px;">ATR Low</div>
+      <div style="font-size:9px;color:var(--t3);margin-bottom:2px;">Low · 100 แท่ง</div>
       <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--green);" id="atrLow">—</div>
     </div>
     <div style="text-align:center;background:rgba(255,255,255,.03);border-radius:8px;padding:7px 4px;border:1px solid var(--border);">
@@ -2760,7 +2813,7 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
       <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--amber);" id="atrCur">—</div>
     </div>
     <div style="text-align:center;background:rgba(255,255,255,.03);border-radius:8px;padding:7px 4px;border:1px solid var(--border);">
-      <div style="font-size:9px;color:var(--t3);margin-bottom:2px;">ATR High</div>
+      <div style="font-size:9px;color:var(--t3);margin-bottom:2px;">High · 100 แท่ง</div>
       <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--red);" id="atrHigh">—</div>
     </div>
   </div>
@@ -3009,7 +3062,7 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.66 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.67 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -7517,7 +7570,9 @@ function renderWatchlist(){
     const col=c===null?'var(--t3)':c>=0?'var(--green)':'var(--red)';
     const cStr=c===null?'—':`${c>=0?'+':''}${c.toFixed(2)}%`;
     const chgBg=c===null?'rgba(255,255,255,.04)':c>=0?'rgba(34,211,153,.1)':'rgba(244,63,94,.1)';
-    return `<div class="wl-row">
+    const mag=c===null?0:Math.min(100,Math.abs(c)/2*100);
+    return `<div class="wl-row" style="--wc:${col}">
+      <i class="wl-bar" style="width:${mag.toFixed(0)}%"></i>
       <span class="wl-sym">${w.sym}</span>
       <span class="wl-price" style="color:${c===null?'var(--t3)':c>=0?'var(--green)':'var(--red)'};">${p}</span>
       <span class="wl-chg" style="background:${chgBg};color:${col};">${cStr}</span>
@@ -8172,9 +8227,19 @@ function updateSessionOverlap(){
 function updateATR(price,chg){
   // Use real ATR(14) from candle data if available (convert price-units to pips: 1 pip = 0.1 for XAUUSD)
   const atrCur=(realTA&&realTA.atr)?Math.round(realTA.atr*10*10)/10:Math.round(Math.max(8,Math.abs(chg)*price*0.004+12)*10)/10;
-  const atrLow=Math.round(atrCur*0.6*10)/10;
-  const atrHigh=Math.round(atrCur*1.8*10)/10;
-  const pct=Math.min(1,Math.max(0,(atrCur-atrLow)/(atrHigh-atrLow)));
+  // v20.67 — เดิม Low/High = 0.6×/1.8× ของค่าปัจจุบัน → pct ตายตัว 33% เข็มชี้ LOW ตลอด
+  // ตอนนี้ใช้ช่วง ATR(14) จริงของ H1 ย้อนหลัง ~100 แท่ง (ต่ำสุด–สูงสุด) แล้วดูว่าค่าปัจจุบันอยู่ตำแหน่งไหน
+  let atrLow=Math.round(atrCur*0.6*10)/10,atrHigh=Math.round(atrCur*1.8*10)/10,atrReal=false;
+  try{
+    if(realTA&&realTA.closes&&realTA.highs&&realTA.lows&&realTA.closes.length>=40){
+      const ser=calcATRSeries(realTA.closes,realTA.highs,realTA.lows,14).filter(x=>x!=null&&isFinite(x)&&x>0).slice(-100);
+      if(ser.length>=20){
+        const lo=Math.min(...ser,realTA.atr||Infinity),hi=Math.max(...ser,realTA.atr||0);
+        if(hi>lo){atrLow=Math.round(lo*100)/10;atrHigh=Math.round(hi*100)/10;atrReal=true;}
+      }
+    }
+  }catch(e){}
+  const pct=Math.min(1,Math.max(0,(atrCur-atrLow)/(atrHigh-atrLow||1)));
   const angle=-90+pct*180;
   const needle=document.getElementById('atrNeedle');
   if(needle)needle.style.transform=`rotate(${angle}deg)`;
@@ -8186,6 +8251,15 @@ function updateATR(price,chg){
     const el=document.getElementById(id);
     if(el){el.textContent=[atrLow,atrCur,atrHigh][i].toFixed(1);if(i===1)el.style.color=atrColor;}
   });
+  try{
+    const rb=document.getElementById('atrRange');
+    if(rb){
+      const L=atrLevel;
+      rb.innerHTML=`<div class="at-pills"><span class="${L==='LOW'?'on g':''}">LOW</span><span class="${L==='MEDIUM'?'on a':''}">MED</span><span class="${L==='HIGH'?'on r':''}">HIGH</span></div>
+        <div class="at-bar"><i style="left:${(pct*100).toFixed(1)}%"></i></div>
+        <div class="at-cap"><span>${atrReal?'ต่ำสุด':'ประมาณ'}</span><b style="color:${atrColor}">${Math.round(pct*100)}% ของช่วง</b><span>${atrReal?'สูงสุด (~100 แท่ง H1)':'ประมาณ'}</span></div>`;
+    }
+  }catch(e){}
   const advEl=document.getElementById('atrAdvice');
   if(advEl){
     const advMap={LOW:'ตลาดสงบ ควรลด lot size และรอ breakout ก่อน entry',MEDIUM:'ความผันผวนปกติ เหมาะสำหรับ entry ตาม trend',HIGH:'ความผันผวนสูง ควรขยาย SL และลด position size ลง 30-50%'};
@@ -8229,18 +8303,30 @@ function updateVolProfile(price,chg){
     const isPoc=b===poc;
     const isAbove=b.midPrice>price;
     const barCol=isPoc?'var(--amber)':isAbove?'rgba(244,63,94,.55)':'rgba(34,211,153,.55)';
-    return `<div style="display:flex;align-items:center;gap:6px;">
-      <div style="font-family:var(--mono);font-size:8px;color:${isPoc?'var(--amber)':'var(--t3)'};width:42px;text-align:right;font-weight:${isPoc?700:400};">${b.hi.toFixed(1)}</div>
-      <div style="flex:1;height:10px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;">
-        <div style="width:${pct}%;height:100%;background:${barCol};border-radius:2px;transition:width .6s;${isPoc?'box-shadow:0 0 5px rgba(245,197,24,.4)':''}"></div>
-      </div>
-      <div style="font-size:8px;color:var(--t3);font-family:var(--mono);width:22px;">${b.vol}${hasRealData?'x':'~'}</div>
+    const inVA=vahSrc&&valSrc&&b.midPrice<=vahSrc.midPrice&&b.midPrice>=valSrc.midPrice;
+    const here=price>=b.lo&&price<b.hi;
+    return `<div class="tp-row${inVA?' va':''}${isPoc?' poc':''}">
+      <div class="tp-px">${b.hi.toFixed(1)}</div>
+      <div class="tp-track"><div class="tp-fill" style="width:${pct}%;--tc:${isPoc?'var(--amber)':isAbove?'var(--red)':'var(--green)'};"></div>${here?'<span class="tp-now">◀ ราคา</span>':''}</div>
+      <div class="tp-n">${b.vol}${hasRealData?'x':'~'}</div>
     </div>`;
   }).join('');
   const pocEl=document.getElementById('pocVal'),vahEl=document.getElementById('vahVal'),valEl=document.getElementById('valVal');
   if(pocEl)pocEl.textContent=poc.hi.toFixed(2);
   if(vahEl)vahEl.textContent=vahSrc?.hi.toFixed(2)||'—';
   if(valEl)valEl.textContent=valSrc?.lo.toFixed(2)||'—';
+  try{
+    let rb=document.getElementById('tpoRange');
+    if(!rb&&el){rb=document.createElement('div');rb.id='tpoRange';rb.className='tp-range';el.parentNode.insertBefore(rb,el.nextSibling);}
+    if(rb&&vahSrc&&valSrc){
+      const vH=vahSrc.hi,vL=valSrc.lo,span=Math.max(0.01,hi-lo);
+      const pos=v=>Math.max(0,Math.min(100,(v-lo)/span*100)).toFixed(1);
+      const inside=price>=vL&&price<=vH;
+      const st=inside?['อยู่ใน Value Area','var(--amber)']:price>vH?['เหนือ Value Area','var(--red)']:['ใต้ Value Area','var(--green)'];
+      rb.innerHTML=`<div class="tp-rb-top"><span>ช่วงราคาวันนี้ ${lo.toFixed(0)}–${hi.toFixed(0)}</span><b style="color:${st[1]}">${st[0]}</b></div>
+        <div class="tp-rb"><i class="va" style="left:${pos(vL)}%;width:${(pos(vH)-pos(vL)).toFixed(1)}%"></i><i class="pc" style="left:${pos(poc.midPrice)}%"></i><i class="pr" style="left:${pos(price)}%"></i></div>`;
+    }
+  }catch(e){}
   // VWAP (ประมาณ): ใช้ TWAP จาก candle H1 จริงล่าสุด ~24 แท่ง (≈ วันปัจจุบัน) แทน volume จริงที่ retail forex ไม่มีให้
   const vwapEl=document.getElementById('vwapVal');
   if(vwapEl){
@@ -10342,14 +10428,17 @@ async function updateCorrelation(){
     const col=r.val>0.3?'var(--green)':r.val<-0.3?'var(--red)':'var(--amber)';
     const barCol=r.val>=0?'var(--green)':'var(--red)';
     const badge=r.isLive?'<span style="font-size:7px;color:var(--green);font-weight:800;margin-left:4px;">●LIVE</span>':'<span style="font-size:7px;color:var(--t3);font-weight:700;margin-left:4px;">est.</span>';
-    return `<div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:10.5px;font-weight:600;color:var(--t1);width:108px;flex-shrink:0;">${r.sym}${badge}</span>
-      <div style="flex:1;height:16px;background:rgba(255,255,255,.04);border-radius:4px;position:relative;overflow:hidden;">
-        <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.15);"></div>
-        <div style="position:absolute;top:1px;bottom:1px;border-radius:3px;background:${barCol};opacity:.55;
-          ${r.val>=0?`left:50%;width:${Math.abs(r.val)*50}%;`:`right:50%;width:${Math.abs(r.val)*50}%;`}"></div>
-      </div>
-      <span style="font-family:var(--mono);font-size:11px;font-weight:800;color:${col};width:42px;text-align:right;">${r.val>=0?'+':''}${r.val.toFixed(2)}</span>
+    const a=Math.abs(r.val),n=Math.round(a*10);
+    const strength=a>=0.6?'แรง':a>=0.3?'กลาง':'อ่อน';
+    const cells=side=>Array.from({length:10},(_,k)=>{
+      const idx=side==='L'?9-k:k; // นับจากเส้นกลางออกไป
+      const on=((side==='R')===(r.val>=0))&&idx<n;
+      return `<i class="${on?'on':''}" style="--cc:${barCol};--o:${(0.45+0.55*(idx+1)/10).toFixed(2)}"></i>`;
+    }).join('');
+    return `<div class="cr-row">
+      <span class="cr-sym">${r.sym}${badge}</span>
+      <div class="cr-seg"><div class="cr-half">${cells('L')}</div><b class="cr-mid"></b><div class="cr-half">${cells('R')}</div></div>
+      <span class="cr-val" style="color:${col};">${r.val>=0?'+':''}${r.val.toFixed(2)}<small>${strength}</small></span>
     </div>`;
   }).join('');
   const adv=document.getElementById('corrAdvice');
@@ -12055,17 +12144,23 @@ function updateConfluenceScore(price,chg){
   // Factor breakdown rows
   const factEl=document.getElementById('csFactors');
   if(factEl){
-    factEl.innerHTML=factors.map(f=>{
+    let nP=0,nW=0,nF=0;
+    const rowsHtml=factors.map(f=>{
       const w=WEIGHTS[f.id]||1;
-      const pct=Math.min(100,((f.score||0)/2)*100);
-      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);">
-        <span style="font-size:10px;color:var(--t3);width:80px;flex-shrink:0;">${CS_WEIGHT_LABELS[f.id]||f.id}</span>
-        <div style="flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;">
-          <div style="width:${pct}%;height:100%;background:${f.col||'var(--t2)'};border-radius:3px;transition:width .7s;"></div>
-        </div>
-        <span style="font-size:9.5px;font-weight:600;color:${f.col||'var(--t2)'};min-width:130px;text-align:right;">${f.lbl}</span>
+      const sc=Math.max(0,Math.min(2,f.score||0));
+      if(sc>=1.5)nP++;else if(sc>=0.5)nW++;else nF++;
+      const on=Math.round(sc/2*5);
+      const cells=Array.from({length:5},(_,k)=>`<i class="${k<on?'on':''}" style="--fc:${f.col||'var(--t2)'}"></i>`).join('');
+      return `<div class="cf-row">
+        <span class="cf-name">${CS_WEIGHT_LABELS[f.id]||f.id}</span>
+        <div class="cf-seg">${cells}</div>
+        <span class="cf-lbl" style="color:${f.col||'var(--t2)'};">${f.lbl}</span>
       </div>`;
     }).join('');
+    const nT=Math.max(1,nP+nW+nF);
+    const sumHtml=`<div class="cf-sum"><div class="cf-stack"><i style="width:${nP/nT*100}%;background:var(--green)"></i><i style="width:${nW/nT*100}%;background:var(--amber)"></i><i style="width:${nF/nT*100}%;background:var(--red)"></i></div>
+      <div class="cf-leg"><span><u style="background:var(--green)"></u>ผ่าน <b>${nP}</b></span><span><u style="background:var(--amber)"></u>ระวัง <b>${nW}</b></span><span><u style="background:var(--red)"></u>ไม่ผ่าน <b>${nF}</b></span><em>จาก ${nT} ปัจจัย</em></div></div>`;
+    factEl.innerHTML=sumHtml+rowsHtml;
   }
 
   // เก็บผลลัพธ์ล่าสุดไว้ใน global ให้ Smart Summary เอาไปใช้ต่อ (ไม่ต้องคำนวณ evalConfluence ซ้ำสองรอบ)
