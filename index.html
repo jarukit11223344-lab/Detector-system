@@ -1362,6 +1362,13 @@ body:not(.light-mode) .vol-grad{background:linear-gradient(90deg,#ffd60a 0%,#2fe
 /* v20.58 — โหมดปกติ (ไม่ใช่กระจก): พื้นหลังแอพ+การ์ดสว่างขึ้นแค่เล็กน้อย (ปรับลดจากรอบก่อนที่สว่างเกิน) · สีอื่นคงเดิม · โหมดกระจก/สว่างไม่เปลี่ยน */
 body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--card2:rgba(21,25,48,.72);--border:rgba(255,255,255,.075);--border2:rgba(255,255,255,.16)}
 #toast{white-space:normal!important;width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.5}
+/* v20.63 — ลดความร้อน: (1) แถบนับถอยหลัง 30s เดิมเคลื่อนด้วย width+transition ต่อเนื่อง = layout ใหม่ ~60 ครั้ง/วินาทีตลอดเวลา → ใช้ transform (GPU) แทน (2) เส้นสแกนเดิมขยับ top (layout) → ใช้ transform (3) ตัด backdrop-blur ของชิ้นเล็กๆ ที่มองไม่เห็นความต่าง (4) หยุด animation ทั้งหมดตอนแท็บถูกซ่อน */
+.cd-fill{width:100%!important;transform-origin:left center;transform:scaleX(var(--p,1));transition:transform 1s linear;will-change:transform}
+.scan-line{top:0!important;will-change:transform;animation-name:scanDownT!important}
+@keyframes scanDownT{0%{transform:translateY(-2px)}100%{transform:translateY(100vh)}}
+.sig-res,.plat-group,.crb,.smart-row,.jt-row,.eco-item,.sh-badge,.chg-pill,.sp,.sbg,.liq,.sbst,.tf-pills,.ai-box,.cinp,.ai-inp{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important}}
 </style>
 <body>
 
@@ -3006,7 +3013,7 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.62 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.63 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -4028,7 +4035,7 @@ let cd=30;
 setInterval(()=>{
   cd--;if(cd<=0)cd=30;
   const e=document.getElementById('cdEl'),b=document.getElementById('cdFill');
-  if(e)e.textContent=cd+'s';if(b)b.style.width=(cd/30*100)+'%';
+  if(e)e.textContent=cd+'s';if(b)b.style.setProperty('--p',(cd/30).toFixed(3));
 },1000);
 
 // ═══ SPARKLINES ═══
@@ -14161,6 +14168,8 @@ document.addEventListener('visibilitychange',()=>{
 });
 running=true;start();
 })();
+document.addEventListener('visibilitychange',()=>{document.documentElement.classList.toggle('gt-hidden',document.hidden);});
+
 
 </script>
 </body>
