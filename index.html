@@ -1361,6 +1361,7 @@ body:not(.light-mode) .seg-meter i.on,body:not(.light-mode) .age-bar .ab-s i.on{
 body:not(.light-mode) .vol-grad{background:linear-gradient(90deg,#ffd60a 0%,#2fe86b 38%,#2fe86b 52%,#ff8a1f 70%,#ff3b4e 100%);opacity:1}
 /* v20.58 — โหมดปกติ (ไม่ใช่กระจก): พื้นหลังแอพ+การ์ดสว่างขึ้นแค่เล็กน้อย (ปรับลดจากรอบก่อนที่สว่างเกิน) · สีอื่นคงเดิม · โหมดกระจก/สว่างไม่เปลี่ยน */
 body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--card2:rgba(21,25,48,.72);--border:rgba(255,255,255,.075);--border2:rgba(255,255,255,.16)}
+#toast{white-space:normal!important;width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.5}
 </style>
 <body>
 
@@ -1942,10 +1943,6 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
   <div class="hdiv"></div>
   <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">📊 Win Rate แยกตาม Session (เวลาเปิดสัญญาณ)</div>
   <div id="shSessionStats" style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px;"></div>
-  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour ของสัญญาณ (ไม่ใช่เวลาไทย): ตามเวลา London/New York จริง (ฤดูหนาว UTC: London 08-13 · Overlap 13-16 · NY 16-22 · ฤดูร้อนเลื่อนเร็วขึ้น 1 ชม.) · ที่เหลือ = Asian — ยิ่งมีสัญญาณสะสมเยอะ สถิติยิ่งน่าเชื่อถือ (ตัวเลขจากสัญญาณน้อยยังไม่ควรเชื่อทั้งหมด)</div>
-  <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">
-    * นับผลจากราคาที่ชนจริงเท่านั้น (TP1/TP2/SL) · <strong style="color:var(--indigo);">ระบบตรวจสัญญาณใหม่อัตโนมัติทุก ~30 วิด้วย</strong> — ถ้าทิศทางเปลี่ยนจริง (ไม้เดิม resolve แล้ว + Confluence เห็นทิศใหม่ชัดเจน) จะถูกบันทึกเพิ่มเองโดยไม่ต้องกดปุ่ม สังเกตได้จาก tag <span style="background:rgba(99,102,241,.12);color:var(--indigo);padding:0 4px;border-radius:4px;">AUTO</span> vs <span style="background:rgba(255,255,255,.08);color:var(--t3);padding:0 4px;border-radius:4px;">MANUAL</span> ต่อรายการ · สัญญาณที่ไม่ชนอะไรภายใน 48 ชม. จะนับเป็น EXPIRED (ไม่รวมในสถิติ) · กันบันทึกซ้ำ: ถ้าห่างจากสัญญาณล่าสุดไม่ถึง 30 นาที จะไม่บันทึกเพิ่ม
-  </div>
 </div>
 
 <!-- ── ACCURACY DIAGNOSTICS (v20.20) — วิเคราะห์ผลแยกตามปัจจัย พร้อมช่วงความเชื่อมั่น/คำเตือนตัวอย่างน้อย ── -->
@@ -2005,10 +2002,6 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
   <div class="hdiv"></div>
   <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">📊 Win Rate แยกตาม Session (เวลาที่สัญญาณล็อก)</div>
   <div id="m15shSessionStats" style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px;"></div>
-  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour เดียวกับ Signal History ของ H1 ด้านบน: ตามเวลา London/New York จริง (ฤดูหนาว UTC: London 08-13 · Overlap 13-16 · NY 16-22 · ฤดูร้อนเลื่อนเร็วขึ้น 1 ชม.) · ที่เหลือ = Asian</div>
-  <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">
-    * บันทึกอัตโนมัติทุกครั้งที่การ์ด M15 Entry Signal ล็อกสัญญาณใหม่ ไม่ต้องกดปุ่มเอง (การ์ด M15 Entry Signal เองยังเป็น Display Only เหมือนเดิม — ตัวเลขบนการ์ดนั้นไม่เปลี่ยน สถิตินี้แค่บันทึกผลลัพธ์คู่ขนานไว้ต่างหาก) · นับผลจากราคาที่ชนจริงเท่านั้น (TP1/TP2/trailing stop/SL — ผ่าน anti-noise confirm 3 ครั้งเหมือนการ์ดสด) · R-multiple ใช้สูตรเดียวกับ Quick Signal (partial ที่ TP1 = ครึ่งพอร์ต, ครึ่งหลัง trail ต่อ) · สัญญาณที่ไม่ resolve ภายใน 12 ชม. จะนับเป็น EXPIRED (ไม่รวมสถิติ ถ้ายังไม่ผ่าน TP1) หรือนับเป็น partial-timeout (ถ้าผ่าน TP1 แล้วแต่ไม่ทันถึง TP2/trailing stop) — 12 ชม. สั้นกว่า 48 ชม. ของ H1 เพราะ M15 เป็น timeframe ที่เร็วกว่า 4 เท่า
-  </div>
 </div>
 
 <!-- ── M15 CONFIRMATION HISTORY (v16 — เต็มรูปแบบ ต่อยอดจาก stats line เดิม (v11) ใน M15 Confirmation card เอง
@@ -2044,10 +2037,6 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
   <div class="hdiv"></div>
   <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">📊 Win Rate แยกตาม Session (เวลาที่สัญญาณล็อก)</div>
   <div id="m15ccSessionStats" style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px;"></div>
-  <div style="font-size:9px;color:var(--t3);margin-top:4px;">* จับกลุ่มตาม UTC hour เดียวกับ Signal History ของ H1: ตามเวลา London/New York จริง (ฤดูหนาว UTC: London 08-13 · Overlap 13-16 · NY 16-22 · ฤดูร้อนเลื่อนเร็วขึ้น 1 ชม.) · ที่เหลือ = Asian</div>
-  <div style="font-size:9px;color:var(--t3);margin-top:8px;line-height:1.5;">
-    * บันทึกอัตโนมัติทุกครั้งที่การ์ด M15 Confirmation ล็อกสัญญาณ resolve (TP2/BE-trailing/timeout-หลัง-TP1/SL/override-หลัง-TP1) — ไม่นับ "Pending" เพราะบันทึกเฉพาะตอน resolve แล้วเท่านั้น (ไม้ที่ยังล็อกอยู่ดูสถานะสดได้ที่การ์ด M15 Confirmation ด้านบนโดยตรง) · R-multiple ใช้สูตรเดียวกับ Quick Signal/M15 Entry Signal (partial ที่ TP1 = ครึ่งพอร์ต, ครึ่งหลัง trail ต่อ) · <strong>sync ขึ้น Cloudflare Worker แล้ว (v20.6)</strong> — เปลี่ยนเครื่อง/ล้าง browser data สถิติไม่หาย · ประวัติ append-only merge ตาม id · กด "ล้าง" จากเครื่องไหนก็ล้างทุกเครื่อง (ไม่ฟื้นคืนชีพ) · ต่างจาก M15 Signal History ด้านบนตรงที่ client เป็นคนบันทึก (การ์ดนี้ไม่มี server-side lock state) จึงต้องเปิดแอปให้ไม้ resolve ถึงจะถูกบันทึกและ sync
-  </div>
 </div>
 
 <!-- ── HISTORICAL BACKTEST ── -->
@@ -3017,7 +3006,7 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.59 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.60 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -3745,6 +3734,38 @@ const MAJOR_EVENTS_2026=[
   {name:'NFP (Nonfarm Payrolls) — November', date:'2026-12-04T13:30:00Z', impact:'high'},
   {name:'FOMC Rate Decision', date:'2026-12-09T19:00:00Z', impact:'high'},
   {name:'CPI — November', date:'2026-12-10T13:30:00Z', impact:'high'},
+  // v20.60 — เติมปฏิทินปี 2027 (BLS Employment Situation + CPI ตาม bls.gov/schedule · FOMC ตาม federalreserve.gov/monetarypolicy/fomccalendars · ตุลาคม 2027 เป็นประชุม strategy-only จึงไม่ใส่ · FOMC 2027 ยัง tentative จนกว่าจะยืนยันในประชุมก่อนหน้า)
+  {name:'NFP (Nonfarm Payrolls) — December', date:'2027-01-08T13:30:00Z', impact:'high'},
+  {name:'CPI — December', date:'2027-01-13T13:30:00Z', impact:'high'},
+  {name:'FOMC Rate Decision', date:'2027-01-27T19:00:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — January', date:'2027-02-05T13:30:00Z', impact:'high'},
+  {name:'CPI — January', date:'2027-02-11T13:30:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — February', date:'2027-03-05T13:30:00Z', impact:'high'},
+  {name:'CPI — February', date:'2027-03-10T13:30:00Z', impact:'high'},
+  {name:'FOMC Rate Decision', date:'2027-03-17T18:00:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — March', date:'2027-04-02T12:30:00Z', impact:'high'},
+  {name:'CPI — March', date:'2027-04-13T12:30:00Z', impact:'high'},
+  {name:'FOMC Rate Decision', date:'2027-04-28T18:00:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — April', date:'2027-05-07T12:30:00Z', impact:'high'},
+  {name:'CPI — April', date:'2027-05-12T12:30:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — May', date:'2027-06-04T12:30:00Z', impact:'high'},
+  {name:'FOMC Rate Decision', date:'2027-06-09T18:00:00Z', impact:'high'},
+  {name:'CPI — May', date:'2027-06-10T12:30:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — June', date:'2027-07-02T12:30:00Z', impact:'high'},
+  {name:'CPI — June', date:'2027-07-14T12:30:00Z', impact:'high'},
+  {name:'FOMC Rate Decision', date:'2027-07-28T18:00:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — July', date:'2027-08-06T12:30:00Z', impact:'high'},
+  {name:'CPI — July', date:'2027-08-11T12:30:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — August', date:'2027-09-03T12:30:00Z', impact:'high'},
+  {name:'CPI — August', date:'2027-09-14T12:30:00Z', impact:'high'},
+  {name:'FOMC Rate Decision', date:'2027-09-15T18:00:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — September', date:'2027-10-08T12:30:00Z', impact:'high'},
+  {name:'CPI — September', date:'2027-10-14T12:30:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — October', date:'2027-11-05T12:30:00Z', impact:'high'},
+  {name:'CPI — October', date:'2027-11-10T13:30:00Z', impact:'high'},
+  {name:'FOMC Rate Decision', date:'2027-11-17T19:00:00Z', impact:'high'},
+  {name:'NFP (Nonfarm Payrolls) — November', date:'2027-12-03T13:30:00Z', impact:'high'},
+  {name:'CPI — November', date:'2027-12-10T13:30:00Z', impact:'high'},
 ];
 // ═══ NEWS BLACKOUT — เช็คจากวันที่ข่าวจริงใน MAJOR_EVENTS_2026 (ของเดิมใช้ ECO_HOURS แบบเดาชั่วโมง ไม่ตรงกับปฏิทินจริงที่มีอยู่แล้ว) ═══
 const NEWS_BLACKOUT_BEFORE_MIN=15; // งดเข้าออเดอร์ก่อนข่าว high impact 15 นาที
