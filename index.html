@@ -2090,7 +2090,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 <!-- ── SIGNAL HISTORY / BACKTEST ── -->
 <div class="section-card sc-indigo" id="secSignalHistory">
   <div class="sh">
-    <div><div class="sh-title">📊 Signal History</div><div class="sh-sub">Backtest จริงจากสัญญาณที่กดไปแล้ว · เก็บในเครื่อง + sync ข้ามอุปกรณ์ผ่าน Worker</div><div id="shLastSync" style="font-size:9px;color:var(--t3);margin-top:2px;"></div></div>
+    <div><div class="sh-title">📊 Signal History</div><div id="shLastSync" style="font-size:9px;color:var(--t3);margin-top:2px;"></div></div>
     <div style="display:flex;gap:6px;flex-shrink:0;"><button onclick="exportSignalHistoryCSV()" title="ดาวน์โหลดประวัติทั้งหมดเป็นไฟล์ CSV" style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);color:var(--indigo);border-radius:8px;padding:4px 10px;font-size:9.5px;font-weight:700;cursor:pointer;">⬇️ CSV</button>
     <button onclick="clearSignalHistory()" style="background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);color:var(--red);border-radius:8px;padding:4px 10px;font-size:9.5px;font-weight:700;cursor:pointer;">ล้าง</button></div>
   </div>
@@ -2148,7 +2148,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
      เท่านั้น ไม่รวม M15 Confirmation เพราะกันสถิติปนกันระหว่างสองมาตรฐานที่เข้มไม่เท่ากัน) ── -->
 <div class="section-card sc-indigo" id="secM15SignalHistory">
   <div class="sh">
-    <div><div class="sh-title">📊 M15 Signal History</div><div class="sh-sub">Backtest จริงจากการ์ด M15 Entry Signal เท่านั้น (แยกจาก Quick Signal H1 ด้านบนสมบูรณ์) · sync จาก server (ข้ามอุปกรณ์ได้แล้ว)</div></div>
+    <div><div class="sh-title">📊 M15 Signal History</div></div>
     <div style="display:flex;gap:6px;flex-shrink:0;"><button onclick="exportM15EntryHistoryCSV()" title="ดาวน์โหลดประวัติทั้งหมดเป็นไฟล์ CSV" style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);color:var(--indigo);border-radius:8px;padding:4px 10px;font-size:9.5px;font-weight:700;cursor:pointer;">⬇️ CSV</button>
     <button onclick="clearM15EntryHistory()" style="background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);color:var(--red);border-radius:8px;padding:4px 10px;font-size:9.5px;font-weight:700;cursor:pointer;">ล้าง</button></div>
   </div>
@@ -2185,7 +2185,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
      ไม่มี server-side lock state ให้ sync ข้ามอุปกรณ์แบบ M15 Entry Signal) ── -->
 <div class="section-card sc-indigo" id="secM15ConfirmHistory">
   <div class="sh">
-    <div><div class="sh-title">📊 M15 Confirmation History</div><div class="sh-sub">Backtest จริงจากการ์ด M15 Confirmation เท่านั้น (แยกจาก M15 Signal History ของ M15 Entry Signal ด้านบนสมบูรณ์) · เก็บในเครื่อง + sync ข้ามอุปกรณ์ผ่าน Worker</div></div>
+    <div><div class="sh-title">📊 M15 Confirmation History</div></div>
     <button onclick="clearM15ConfirmHistory()" style="background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);color:var(--red);border-radius:8px;padding:4px 10px;font-size:9.5px;font-weight:700;cursor:pointer;">ล้าง</button>
   </div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;" id="m15ccStats">
@@ -3185,7 +3185,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.74 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.75 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -7933,10 +7933,13 @@ function updateIndicators(price,chg){
   if(el)el.innerHTML=INDS.map(i=>{
     const sMap={'Buy':85,'Cross':85,'High':75,'Oversold':75,'Caution':45,'Hold':50,'Below':25,'Sell':20,'Overbought':30,'Normal':50};
     const num=parseFloat(i.v);
-    const pct=(i.n==='RSI'||i.n==='Stoch')&&!isNaN(num)?Math.max(4,Math.min(100,num)):(sMap[i.s]||50);
+    let pct=(i.n==='RSI'||i.n==='Stoch')&&!isNaN(num)?Math.max(4,Math.min(100,num)):(sMap[i.s]||50);
+    if(i.n==='BB'){pct=bbDetail&&bbDetail.upper>bbDetail.lower?Math.max(4,Math.min(100,((price-bbDetail.lower)/(bbDetail.upper-bbDetail.lower))*100)):({Upper:90,Mid:50,Lower:10}[i.v]||50);}
+    const vTxt=i.v==='Upper'?'UP':i.v==='Lower'?'LOW':i.v==='Mid'?'MID':i.v;
+    const vSz=String(vTxt).length>=3?'12px':'15px';
     const R=21,C=2*Math.PI*R;
     return `<div class="ind-cell ig-cell">
-      <div class="ig-ring"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".13" stroke-width="5.5"/><circle cx="27" cy="27" r="${R}" fill="none" stroke="${i.c}" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="${(pct/100*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 27 27)"/></svg><b style="color:${i.c}">${i.v}</b></div>
+      <div class="ig-ring"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".13" stroke-width="5.5"/><circle cx="27" cy="27" r="${R}" fill="none" stroke="${i.c}" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="${(pct/100*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 27 27)"/></svg><b style="color:${i.c};font-size:${vSz}">${vTxt}</b></div>
       <div class="ig-n">${i.n}</div>
       <div class="ig-s" style="color:${i.c}">${i.s}</div>
     </div>`;
@@ -7945,7 +7948,7 @@ function updateIndicators(price,chg){
   const sellCount=INDS.filter(i=>['Sell','Below','Overbought'].includes(i.s)).length;
   const bias=buyCount>sellCount?'BUY':sellCount>buyCount?'SELL':'NEUTRAL';
   const ob=document.getElementById('overallBias');
-  if(ob){const dom=bias==='BUY'?buyCount:bias==='SELL'?sellCount:Math.max(0,INDS.length-buyCount-sellCount);ob.textContent=`${bias} ${dom}/${INDS.length}`;ob.style.color=bias==='BUY'?'var(--green)':bias==='SELL'?'var(--red)':'var(--amber)';}
+  if(ob){const dom=bias==='BUY'?buyCount:bias==='SELL'?sellCount:Math.max(0,INDS.length-buyCount-sellCount);ob.textContent=bias==='NEUTRAL'?'NEUTRAL':`${bias} ${dom}/${INDS.length}`;ob.style.color=bias==='BUY'?'var(--green)':bias==='SELL'?'var(--red)':'var(--amber)';}
   try{
     let bb=document.getElementById('overallSeg');
     if(!bb&&ob){bb=document.createElement('div');bb.id='overallSeg';bb.className='ig-seg';ob.closest('div').parentNode.insertBefore(bb,ob.closest('div').nextSibling);}
