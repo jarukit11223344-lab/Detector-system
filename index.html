@@ -1447,6 +1447,13 @@ body.light-mode .ico-btn{background:color-mix(in srgb,var(--t1) 88%,#fff);color:
 .zc-px small{font-size:8.5px;color:var(--t3);letter-spacing:.4px;text-transform:uppercase}
 .zc-px b{font-size:12px;font-weight:800;color:var(--t1)}
 .zc-ft{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:8px;padding-top:7px;border-top:1px dashed color-mix(in srgb,var(--t1) 12%,transparent)}
+
+/* v20.69 — ปุ่มรีเฟรช Status ขนาดเท่าปุ่มย่อ · caret ของกล่อง Lab ใช้สไตล์ .sc-toggle */
+.ico-btn{width:26px;height:26px;border-radius:7px;margin-right:8px;box-shadow:none}
+.ico-btn svg{width:14px;height:14px}
+#labBar .lab-caret{transform:rotate(-90deg);font-size:10px;color:var(--t3)}
+#labBar.open .lab-caret{transform:none}
+.sc-toggle{font-variant-emoji:text}
 </style>
 <body>
 
@@ -3088,7 +3095,7 @@ body.light-mode .ico-btn{background:color-mix(in srgb,var(--t1) 88%,#fff);color:
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.68 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.69 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -11493,7 +11500,7 @@ function saveSpreadPref(){
     const picked=all.filter(c=>{const t=c.querySelector('.sh-title');return t&&names.some(n=>t.textContent.includes(n));});
     if(picked.length<2||document.getElementById('labBar'))return;
     const bar=document.createElement('div');bar.className='section-card';bar.id='labBar';
-    bar.innerHTML='<div><div class="lab-t">🔬 Lab · ห้องทดลอง</div><div class="lab-s">Backtest · Validation · ปรับน้ำหนัก ('+picked.length+' การ์ด) — ไม่ได้ใช้ทุกวัน หุบไว้</div></div><div class="lab-caret">▶</div>';
+    bar.innerHTML='<div style="min-width:0"><div class="lab-t">🔬 Lab · ห้องทดลอง</div><div class="lab-s">Backtest · Validation · ปรับน้ำหนัก ('+picked.length+' การ์ด) — ไม่ได้ใช้ทุกวัน หุบไว้</div></div><button type="button" class="sc-toggle lab-caret" tabindex="-1" aria-hidden="true">\u25BC\uFE0E</button>';
     const body=document.createElement('div');body.id='labBody';
     picked[0].parentNode.insertBefore(bar,picked[0]);
     bar.parentNode.insertBefore(body,bar.nextSibling);
