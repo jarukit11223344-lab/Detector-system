@@ -1732,13 +1732,7 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
     </div>
     <div style="height:38px;"><canvas id="qsScoreTrendChart"></canvas></div>
   </div>
-  <button class="sig-btn btn-green" id="qsBtn" onclick="generateQuickSignal(true)">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-    Generate Quick Signal
-  </button>
-  <div style="font-size:10.5px;color:var(--t3);text-align:center;">
-    Auto-fill เข้า Risk Calculator · อัปเดตตามราคาล่าสุดทุก 30s
-  </div>
+  <button class="sig-btn btn-green" id="qsBtn" onclick="generateQuickSignal(true)" style="display:none;"></button><!-- v20.65 ซ่อนปุ่ม: ระบบตรวจจับ/อัปเดตสัญญาณเองทุก 30 วินาที (เก็บ element ไว้ให้ logic เดิมอ้างอิงได้) -->
 </div>
 
 <!-- ── WATCHLIST SIGNAL (แยกชั้นจาก Quick Signal — เกณฑ์หลวมกว่า สำหรับเฝ้าดูเท่านั้น) ── -->
@@ -1945,7 +1939,7 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
   </div>
   <div class="hdiv"></div>
   <div id="shList" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;">
-    <div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0;">ยังไม่มีประวัติ — กด "Generate Quick Signal" เพื่อเริ่มเก็บสถิติ</div>
+    <div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0;">ยังไม่มีประวัติ — ระบบจะบันทึกให้อัตโนมัติเมื่อมีสัญญาณแรกเก็บสถิติ</div>
   </div>
   <div class="hdiv"></div>
   <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;">📊 Win Rate แยกตาม Session (เวลาเปิดสัญญาณ)</div>
@@ -3013,7 +3007,7 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.64 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.65 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -6808,7 +6802,7 @@ function renderSignalHistory(){
   const listEl=document.getElementById('shList');
   if(!listEl)return;
   if(arr.length===0){
-    listEl.innerHTML='<div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0;">ยังไม่มีประวัติ — กด "Generate Quick Signal" เพื่อเริ่มเก็บสถิติ</div>';
+    listEl.innerHTML='<div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0;">ยังไม่มีประวัติ — ระบบจะบันทึกให้อัตโนมัติเมื่อมีสัญญาณแรกเก็บสถิติ</div>';
     renderSessionStats(arr);
     return;
   }
