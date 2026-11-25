@@ -3013,7 +3013,7 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.63 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.64 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -3559,12 +3559,16 @@ async function fetchRealYield(){
     u=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`,
     u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
   ];
-  const jobs=[];
-  prox.forEach(m=>jobs.push({url:m(fredT),parse:parseFred,src:'FRED'}));
-  prox.forEach(m=>jobs.push({url:m(tsyT),parse:parseTsy,src:'Treasury'}));
+  // ลำดับ: Worker ของเราเองก่อน (Treasury เร็วและเสถียรกว่า FRED) แล้วค่อย CORS proxy สาธารณะ
+  const jobs=[
+    {url:prox[0](tsyT),parse:parseTsy,src:'Treasury',to:16000},
+    {url:prox[0](fredT),parse:parseFred,src:'FRED',to:16000},
+  ];
+  prox.slice(1).forEach(m=>jobs.push({url:m(tsyT),parse:parseTsy,src:'Treasury',to:9000}));
+  prox.slice(1).forEach(m=>jobs.push({url:m(fredT),parse:parseFred,src:'FRED',to:9000}));
   for(const j of jobs){
     try{
-      const r=await fetch(j.url,{signal:AbortSignal.timeout(8000)});
+      const r=await fetch(j.url,{signal:AbortSignal.timeout(j.to)});
       if(!r.ok)continue;
       const txt=await r.text();
       const res=j.parse(txt);
