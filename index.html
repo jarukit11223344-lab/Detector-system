@@ -1538,6 +1538,12 @@ body.glass3d:not(.light-mode)::before{
     radial-gradient(ellipse 70% 32% at 50% 100%,rgba(90,56,210,.045),transparent 70%),
     linear-gradient(180deg,#010205 0%,#010207 55%,#010205 100%) !important;
 }
+
+/* v20.74 — สีขอบ/เรืองแสงของการ์ด KPI ทั้ง 8 ใบ ตามสีไอคอน (ใช้ --kc ที่ไม่ถูกกฎอื่นทับ) */
+.kpi-card.kc-gold{--kc:var(--gold)}.kpi-card.kc-red{--kc:var(--red)}.kpi-card.kc-violet{--kc:var(--violet)}
+.kpi-card.kc-indigo{--kc:var(--indigo)}.kpi-card.kc-green{--kc:var(--green)}.kpi-card.kc-cyan{--kc:var(--cyan)}
+html body .kpi-card[class*="kc-"]{--hc:var(--kc);border-color:color-mix(in srgb,var(--kc) 55%,transparent)}
+html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border-color:color-mix(in srgb,var(--kc) 60%,transparent)!important;box-shadow:0 0 22px -9px var(--kc),inset 0 0 30px -20px var(--kc),0 14px 28px -16px rgba(0,0,0,.85)!important}
 </style>
 <body>
 
@@ -1688,7 +1694,7 @@ body.glass3d:not(.light-mode)::before{
 <div class="kpi-grid">
 
   <!-- XAUUSD Price -->
-  <div class="kpi-card sc-gold">
+  <div class="kpi-card sc-gold kc-gold">
     <div class="kpi-top">
       <div class="kpi-label">XAUUSD Price</div>
       <div class="kpi-ico ico-gold">
@@ -1704,7 +1710,7 @@ body.glass3d:not(.light-mode)::before{
   </div>
 
   <!-- DXY -->
-  <div class="kpi-card">
+  <div class="kpi-card kc-red">
     <div class="kpi-top">
       <div class="kpi-label">DXY · Dollar</div>
       <div class="kpi-ico ico-red">
@@ -1717,7 +1723,7 @@ body.glass3d:not(.light-mode)::before{
   </div>
 
   <!-- 10Y Yield -->
-  <div class="kpi-card">
+  <div class="kpi-card kc-violet">
     <div class="kpi-top">
       <div class="kpi-label">10Y Yield</div>
       <div class="kpi-ico ico-violet">
@@ -1730,7 +1736,7 @@ body.glass3d:not(.light-mode)::before{
   </div>
 
   <!-- VIX · Risk Mood (v20.22 — แทน "Fear & Greed" ที่เป็นเลขคงที่ 62 + sparkline ปลอม; ใช้ VIX จริงจาก Yahoo ตัวเดียวกับ factor Risk Sentiment) -->
-  <div class="kpi-card">
+  <div class="kpi-card kc-indigo">
     <div class="kpi-top">
       <div class="kpi-label">VIX · Risk Mood</div>
       <div class="kpi-ico ico-indigo">
@@ -1744,7 +1750,7 @@ body.glass3d:not(.light-mode)::before{
 
 
   <!-- AI Confidence -->
-  <div class="kpi-card">
+  <div class="kpi-card kc-green">
     <div class="kpi-top">
       <div class="kpi-label">AI Confidence</div>
       <div class="kpi-ico ico-green">
@@ -1757,7 +1763,7 @@ body.glass3d:not(.light-mode)::before{
   </div>
 
   <!-- Silver -->
-  <div class="kpi-card">
+  <div class="kpi-card kc-cyan">
     <div class="kpi-top">
       <div class="kpi-label">XAGUSD Silver</div>
       <div class="kpi-ico ico-cyan">
@@ -1770,7 +1776,7 @@ body.glass3d:not(.light-mode)::before{
   </div>
 
   <!-- Volatility Regime (v20.32 — ให้เห็นว่า "ตอนนี้ตลาดผันผวนผิดปกติแค่ไหน" เทียบกับช่วงล่าสุดของ H1/M15 · แสดงข้อมูลเท่านั้น ไม่ปรับคะแนน/เกณฑ์สัญญาณ) -->
-  <div class="kpi-card">
+  <div class="kpi-card kc-indigo">
     <div class="kpi-top">
       <div class="kpi-label">ความผันผวน · Regime</div>
       <div class="kpi-ico ico-indigo">
@@ -1783,7 +1789,7 @@ body.glass3d:not(.light-mode)::before{
   </div>
 
   <!-- Nearest Level (v20.33 — แนวต้าน/รับ "ใกล้สุด" จาก Key Levels · แสดงข้อมูลเท่านั้น ไม่ปรับคะแนน/เกณฑ์สัญญาณ) -->
-  <div class="kpi-card">
+  <div class="kpi-card kc-indigo">
     <div class="kpi-top">
       <div class="kpi-label">แนวใกล้สุด · Nearest Level</div>
       <div class="kpi-ico ico-indigo">
@@ -3179,7 +3185,7 @@ body.glass3d:not(.light-mode)::before{
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.73 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.74 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
