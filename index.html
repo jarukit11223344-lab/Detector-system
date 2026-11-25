@@ -1421,6 +1421,32 @@ html.gt-hidden *,html.gt-hidden *::before,html.gt-hidden *::after{animation-play
 body.glass3d:not(.light-mode) .cf-seg i.on{box-shadow:0 0 6px color-mix(in srgb,var(--fc) 60%,transparent)}
 .cf-lbl{font-size:9.5px;font-weight:600;min-width:130px;text-align:right}
 @media(max-width:520px){.cf-lbl{min-width:120px}.cr-sym{width:96px}}
+
+/* ═══ v20.68 — Status icon button + FVG/OB zone ladder cards ═══ */
+.ico-btn{flex:0 0 auto;width:40px;height:40px;border-radius:13px;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--t1) 90%,var(--card));color:var(--card);box-shadow:0 2px 10px -3px rgba(0,0,0,.45);transition:transform .15s}
+.ico-btn:active{transform:scale(.92)}
+.ico-btn svg{width:20px;height:20px}
+.ico-btn.spin svg{animation:icoSpin .9s linear infinite}
+@keyframes icoSpin{to{transform:rotate(360deg)}}
+body.light-mode .ico-btn{background:color-mix(in srgb,var(--t1) 88%,#fff);color:#fff}
+.zc{padding:11px 12px 10px;border-radius:14px;background:color-mix(in srgb,var(--zc) 6%,var(--card));border:1px solid color-mix(in srgb,var(--zc) 22%,transparent)}
+.zc.near{border-color:color-mix(in srgb,var(--zc) 55%,transparent);box-shadow:0 0 14px -6px var(--zc)}
+.zc.filled{opacity:.65}
+.zc-top{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.zc-type{font-size:10px;font-weight:800;color:var(--zc);padding:3px 8px;border-radius:999px;background:color-mix(in srgb,var(--zc) 15%,transparent);border:1px solid color-mix(in srgb,var(--zc) 35%,transparent)}
+.zc-near{font-size:9px;font-weight:800;color:var(--amber)}
+.zc-fill{font-size:9px;color:var(--t3)}
+.zc-age{margin-left:auto;font-size:9px;font-family:var(--mono);color:var(--t3)}
+.zc-bar{position:relative;height:8px;border-radius:5px;background:color-mix(in srgb,var(--t1) 9%,transparent);margin:0 4px 12px}
+.zc-bar .zb{position:absolute;top:0;bottom:0;border-radius:5px;background:linear-gradient(90deg,color-mix(in srgb,var(--zc) 45%,transparent),var(--zc))}
+.zc-bar .zm{position:absolute;top:-2px;width:2px;height:12px;margin-left:-1px;background:color-mix(in srgb,var(--t1) 70%,transparent);border-radius:1px}
+.zc-bar .zp{position:absolute;top:-4px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--t1);border:2px solid var(--card);box-shadow:0 0 0 1px var(--t2)}
+.zc-px{display:flex;justify-content:space-between;font-family:var(--mono)}
+.zc-px span{display:flex;flex-direction:column;gap:1px}
+.zc-px span:nth-child(2){align-items:center}.zc-px span:nth-child(3){align-items:flex-end}
+.zc-px small{font-size:8.5px;color:var(--t3);letter-spacing:.4px;text-transform:uppercase}
+.zc-px b{font-size:12px;font-weight:800;color:var(--t1)}
+.zc-ft{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:8px;padding-top:7px;border-top:1px dashed color-mix(in srgb,var(--t1) 12%,transparent)}
 </style>
 <body>
 
@@ -1941,12 +1967,12 @@ body.glass3d:not(.light-mode) .cf-seg i.on{box-shadow:0 0 6px color-mix(in srgb,
 <div class="section-card sc-indigo" id="secSystemStatus">
   <div class="sh">
     <div><div class="sh-title">🩺 System Status</div><div class="sh-sub">เช็คว่า background worker ทั้ง 3 ตัวยังทำงานปกติอยู่ไหม</div></div>
+    <button type="button" class="ico-btn" id="sysRefreshBtn" aria-label="รีเฟรชสถานะ" title="รีเฟรชตอนนี้" onclick="this.classList.add('spin');setTimeout(()=>this.classList.remove('spin'),1200);checkSystemStatus()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.3-4.5L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.5L20 15.5"/><path d="M20 20v-4.5h-4.5"/></svg></button>
   </div>
   <div id="sysStatusList" style="display:flex;flex-direction:column;gap:8px;">
     <div style="font-size:11px;color:var(--t3);text-align:center;padding:10px 0;">⏳ กำลังเช็คสถานะ...</div>
   </div>
-  <div style="font-size:9px;color:var(--t3);margin-top:8px;">อัปเดตทุก 5 นาที · กด "รีเฟรชตอนนี้" เพื่อเช็คทันที</div>
-  <button onclick="checkSystemStatus()" style="margin-top:6px;width:100%;padding:8px;border-radius:9px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:var(--indigo);font-size:11px;font-weight:700;cursor:pointer;">🔄 รีเฟรชตอนนี้</button>
+  <div style="font-size:9px;color:var(--t3);margin-top:8px;">อัปเดตทุก 5 นาที · กดปุ่มรีเฟรชมุมขวาบนเพื่อเช็คทันที</div>
   <button type="button" id="authKeyToggle" onclick="toggleAuthKeyPanel()" style="margin-top:10px;width:100%;padding:6px;border-radius:9px;background:transparent;border:1px dashed var(--border);color:var(--t3);font-size:10px;cursor:pointer;">🔑 ตั้งค่า Auth Key (ซ่อนอยู่ — กดเพื่อแสดง)</button>
   <div id="authKeyPanel" style="display:none;margin-top:8px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
@@ -3062,7 +3088,7 @@ body.glass3d:not(.light-mode) .cf-seg i.on{box-shadow:0 0 6px color-mix(in srgb,
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.67 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.68 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -13735,6 +13761,27 @@ function renderMultiTFSMC(price){
     </div>`;
   }).join('');
 }
+// v20.68 — การ์ด zone แบบ price-ladder (FVG + Order Block ใช้ร่วมกัน)
+function zoneCardHtml(z,label,price){
+  const top=+z.top,bot=+z.bot,mid=+z.mid,p=+price;
+  const isBull=z.type==='Bullish',col=isBull?'var(--green)':'var(--red)';
+  const near=z.proximity<30,inside=p>=bot&&p<=top;
+  const lo=Math.min(bot,p),hi=Math.max(top,p),pad=Math.max(0.5,(hi-lo)*0.12),a=lo-pad,b=hi+pad,sp=b-a||1;
+  const pos=v=>Math.max(0,Math.min(100,(v-a)/sp*100)).toFixed(1);
+  const dist=inside?0:(p>top?p-top:bot-p);
+  const dTxt=inside?'ราคาอยู่ในโซน':`ห่าง ${dist.toFixed(1)} จุด · ${p>top?'ราคาอยู่เหนือโซน':'ราคาอยู่ใต้โซน'}`;
+  const gapPts=top-bot;
+  return `<div class="zc ${isBull?'bull':'bear'}${near||inside?' near':''}${z.filled?' filled':''}" style="--zc:${col}">
+    <div class="zc-top">
+      <span class="zc-type">${isBull?'▲':'▼'} ${z.type} ${label}</span>
+      ${near||inside?'<span class="zc-near">⚡ NEAR</span>':''}${z.filled?'<span class="zc-fill">✓ Filled</span>':''}
+      <span class="zc-age">${z.age} bars ago</span>
+    </div>
+    <div class="zc-bar"><i class="zb" style="left:${pos(bot)}%;width:${(pos(top)-pos(bot)).toFixed(1)}%"></i><i class="zm" style="left:${pos(mid)}%"></i><i class="zp" style="left:${pos(p)}%"></i></div>
+    <div class="zc-px"><span><small>Bot</small><b>${bot.toFixed(2)}</b></span><span><small>Mid</small><b style="color:var(--zc)">${mid.toFixed(2)}</b></span><span><small>Top</small><b>${top.toFixed(2)}</b></span></div>
+    <div class="zc-ft"><span>${dTxt}</span><span>กว้าง ${gapPts.toFixed(1)}</span></div>
+  </div>`;
+}
 function detectOrderBlocks(price){
   if(!price)return;
   const sorted=computeOrderBlocksFor(realTA,price).slice(0,4);
@@ -13743,25 +13790,7 @@ function detectOrderBlocks(price){
   const proxEl=document.getElementById('obProximity');
   if(ct)ct.textContent=`${sorted.length} zones`;
   if(el)el.innerHTML=sorted.length?sorted.map(z=>{
-    const isBull=z.type==='Bullish';
-    const col=isBull?'var(--green)':'var(--red)';
-    const bg=isBull?'rgba(34,211,153,.06)':'rgba(244,63,94,.06)';
-    const border=isBull?'rgba(34,211,153,.2)':'rgba(244,63,94,.2)';
-    const near=z.proximity<30;
-    return `<div style="padding:8px 10px;border-radius:10px;background:${bg};border:1px solid ${near?col+'66':border};${near?'box-shadow:0 0 8px '+col+'22;':''}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span style="font-size:9.5px;font-weight:700;color:${col};padding:2px 6px;border-radius:4px;background:${col}22;border:1px solid ${col}33;">${z.type} OB</span>
-          ${near?`<span style="font-size:8.5px;color:var(--amber);font-weight:700;animation:blink 1.5s infinite;">⚡ NEAR</span>`:''}
-        </div>
-        <span style="font-size:9px;color:var(--t3);font-family:var(--mono);">${z.age} bars ago</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;">
-        <span style="color:var(--t3);">Top: <strong style="color:var(--t1);">${z.top.toFixed(2)}</strong></span>
-        <span style="color:var(--t3);">Mid: <strong style="color:${col};">${z.mid.toFixed(2)}</strong></span>
-        <span style="color:var(--t3);">Bot: <strong style="color:var(--t1);">${z.bot.toFixed(2)}</strong></span>
-      </div>
-    </div>`;
+    return zoneCardHtml(z,'OB',price);
   }).join(''):'<div style="font-size:11px;color:var(--t3);padding:8px 0;text-align:center;">ไม่พบ Order Block ที่ active (ยัง mitigated หมด หรือข้อมูล OHLC ไม่พอ)</div>';
   if(proxEl){
     const nearest=sorted[0];
@@ -13790,26 +13819,7 @@ function detectFVG(price,chg){
   const proxEl=document.getElementById('fvgProximity');
   if(ct)ct.textContent=`${sorted.filter(z=>!z.filled).length} zones`;
   if(el)el.innerHTML=sorted.map(z=>{
-    const isBull=z.type==='Bullish';
-    const col=isBull?'var(--green)':'var(--red)';
-    const bg=isBull?'rgba(34,211,153,.06)':'rgba(244,63,94,.06)';
-    const border=isBull?'rgba(34,211,153,.2)':'rgba(244,63,94,.2)';
-    const near=z.proximity<30;
-    return `<div style="padding:8px 10px;border-radius:10px;background:${bg};border:1px solid ${near?col+'66':border};${near?'box-shadow:0 0 8px '+col+'22;':''}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span style="font-size:9.5px;font-weight:700;color:${col};padding:2px 6px;border-radius:4px;background:${col}22;border:1px solid ${col}33;">${z.type} FVG</span>
-          ${near?`<span style="font-size:8.5px;color:var(--amber);font-weight:700;animation:blink 1.5s infinite;">⚡ NEAR</span>`:''}
-          ${z.filled?`<span style="font-size:8.5px;color:var(--t3);">✓ Filled</span>`:''}
-        </div>
-        <span style="font-size:9px;color:var(--t3);font-family:var(--mono);">${z.age} bars ago</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;">
-        <span style="color:var(--t3);">Top: <strong style="color:var(--t1);">${z.top}</strong></span>
-        <span style="color:var(--t3);">Mid: <strong style="color:${col};">${z.mid}</strong></span>
-        <span style="color:var(--t3);">Bot: <strong style="color:var(--t1);">${z.bot}</strong></span>
-      </div>
-    </div>`;
+    return zoneCardHtml(z,'FVG',price);
   }).join('')||'<div style="font-size:11px;color:var(--t3);padding:8px 0;text-align:center;">ไม่พบ FVG ที่ active</div>';
   if(proxEl){
     const nearest=sorted[0];
