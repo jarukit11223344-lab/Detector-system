@@ -1470,6 +1470,38 @@ body.light-mode .ico-btn{background:color-mix(in srgb,var(--t1) 88%,#fff);color:
 .zc-px b{font-size:10.5px}
 .zc-ft{font-size:8.5px;margin-top:6px;padding-top:5px}
 #fvgList,#obList{gap:6px!important}
+
+/* ═══ v20.71 — COT gradient meter / HTF diverging columns / Indicator rings ═══ */
+.ct-top{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--t3);margin-bottom:9px}.ct-top b{font-size:10.5px;font-weight:800}
+.ct-bar{position:relative;height:10px;border-radius:6px;background:linear-gradient(90deg,var(--red),var(--amber) 50%,var(--green))}
+.ct-bar i{position:absolute;top:-4px;width:4px;height:18px;margin-left:-2px;border-radius:2px;background:var(--t1);box-shadow:0 0 0 2px var(--card),0 0 8px rgba(0,0,0,.4);transition:left .8s}
+.ct-tick{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.5px;color:var(--t3);margin:7px 0 12px;letter-spacing:.4px}
+.ct-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ct-pair>div{padding:9px 11px;border-radius:12px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
+.ct-pair small{font-size:8.5px;font-weight:800;letter-spacing:.8px}
+.ct-pair b{font-family:var(--mono);font-size:14px;font-weight:800}
+.ct-pair em{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--t3)}
+.ct-pair .l small,.ct-pair .l b{color:var(--green)}.ct-pair .s small,.ct-pair .s b{color:var(--red)}.ct-pair .s{text-align:right;align-items:flex-end}
+.mtf-cols{display:grid!important;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.mc{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px 8px;border-radius:14px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border);position:relative}
+.mc-v{font-family:var(--mono);font-size:10.5px;font-weight:800;color:var(--mc);margin-bottom:3px}
+.mc-half{display:flex;flex-direction:column;gap:2px;width:60%}
+.mc-half i{display:block;height:5px;border-radius:2px;background:color-mix(in srgb,var(--t1) 10%,transparent)}
+.mc-half i.on{background:var(--mc);box-shadow:0 0 6px color-mix(in srgb,var(--mc) 50%,transparent)}
+.mc-axis{width:78%;height:2px;border-radius:1px;background:color-mix(in srgb,var(--t1) 35%,transparent);margin:1px 0}
+.mc .nt{position:absolute;left:50%;top:50%;width:60%;height:5px;margin:-2px 0 0 -30%;border-radius:3px;background:var(--mc);opacity:.7}
+.mc-tf{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--t1);margin-top:5px}
+.mc-sig{font-size:8.5px;font-weight:800;letter-spacing:.5px;color:var(--mc)}
+.ig-cell{display:flex;flex-direction:column;align-items:center;padding:11px 4px 9px!important}
+.ig-ring{position:relative;width:54px;height:54px;color:var(--t1);margin-bottom:6px}
+.ig-ring svg{width:100%;height:100%}
+.ig-ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:14px;font-weight:900}
+.ig-n{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ig-s{font-size:9.5px;font-weight:800}
+.ig-seg{position:relative;display:flex;gap:3px;height:8px;margin:2px 0 22px}
+.ig-seg i{display:block;border-radius:4px;min-width:0;transition:flex .5s}
+.ig-seg i.b{background:var(--green)}.ig-seg i.n{background:color-mix(in srgb,var(--t1) 18%,transparent)}.ig-seg i.s{background:var(--red)}
+.ig-seg span{position:absolute;top:12px;font-size:8.5px;font-weight:800;letter-spacing:.4px}.ig-seg .l{left:0;color:var(--green)}.ig-seg .r{right:0;color:var(--red)}
 </style>
 <body>
 
@@ -3111,7 +3143,7 @@ body.light-mode .ico-btn{background:color-mix(in srgb,var(--t1) 88%,#fff);color:
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.70 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.71 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -3809,13 +3841,13 @@ function renderCOT(){
   if(barEl){
     const total=cotData.longNC+cotData.shortNC||1;
     const longPct=(cotData.longNC/total*100).toFixed(0);
-    barEl.innerHTML=`<div style="display:flex;height:14px;border-radius:7px;overflow:hidden;">
-      <div style="width:${longPct}%;background:var(--green);opacity:.6;"></div>
-      <div style="width:${100-longPct}%;background:var(--red);opacity:.6;"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;margin-top:3px;">
-      <span style="color:var(--green);">Long ${cotData.longNC.toLocaleString('en-US')} (${longPct}%)</span>
-      <span style="color:var(--red);">Short ${cotData.shortNC.toLocaleString('en-US')} (${100-longPct}%)</span>
+    const lc=longPct>=65?'var(--green)':longPct<=35?'var(--red)':'var(--amber)';
+    barEl.innerHTML=`<div class="ct-top"><span>แนวโน้มนักเก็งกำไร</span><b style="color:${lc}">${longPct>=65?'เอียง LONG':longPct<=35?'เอียง SHORT':'สมดุล'} · ${longPct}% Long</b></div>
+    <div class="ct-bar"><i style="left:${longPct}%"></i></div>
+    <div class="ct-tick"><span>SHORT</span><span>50%</span><span>LONG</span></div>
+    <div class="ct-pair">
+      <div class="l"><small>LONG</small><b>${cotData.longNC.toLocaleString('en-US')}</b><em>${longPct}%</em></div>
+      <div class="s"><small>SHORT</small><b>${cotData.shortNC.toLocaleString('en-US')}</b><em>${100-longPct}%</em></div>
     </div>`;
   }
   if(adviceEl){
@@ -7467,20 +7499,18 @@ function updateMTF(price,chg){
     {tf:'D1',  bias:d1Bias},
   ];
   const el=document.getElementById('mtfGrid');
-  if(el)el.innerHTML=frames.map(f=>{
+  if(el){el.className='mtf-cols';el.style.cssText='';el.innerHTML=frames.map(f=>{
     const b=f.bias;
     const loading=!b;
     const signal=loading?'...':b.dir==='BULLISH'?'BUY':b.dir==='BEARISH'?'SELL':'NEUTRAL';
     const strength=loading?0:Math.min(95,Math.round((Math.abs(b.bullVotes-b.bearVotes)/Math.max(1,b.total))*100));
     const col=signal==='BUY'?'var(--green)':signal==='SELL'?'var(--red)':'var(--amber)';
-    const bgCol=signal==='BUY'?'rgba(34,211,153,.15)':signal==='SELL'?'rgba(244,63,94,.15)':'rgba(245,197,24,.1)';
-    return `<div class="mtf-row">
-      <span class="mtf-tf">${f.tf}</span>
-      <div class="mtf-bar"><div class="mtf-fill" style="width:${strength}%;background:${col};opacity:.7;"></div></div>
-      <span style="font-size:9px;color:var(--t3);font-family:var(--mono);width:28px;text-align:right;">${loading?'—':strength+'%'}</span>
-      <span class="mtf-signal" style="background:${bgCol};color:${col};border:1px solid ${col}33;">${signal}</span>
-    </div>`;
-  }).join('');
+    const on=Math.round(strength/100*5);
+    const up=Array.from({length:5},(_,k)=>`<i class="${signal==='BUY'&&(4-k)<on?'on':''}"></i>`).join('');
+    const dn=Array.from({length:5},(_,k)=>`<i class="${signal==='SELL'&&k<on?'on':''}"></i>`).join('');
+    const mid=signal==='NEUTRAL'?'<u class="nt"></u>':'';
+    return `<div class="mc" style="--mc:${col}"><div class="mc-v">${loading?'—':strength+'%'}</div><div class="mc-half up">${up}</div><div class="mc-axis"></div><div class="mc-half dn">${dn}</div>${mid}<div class="mc-tf">${f.tf}</div><div class="mc-sig">${signal}</div></div>`;
+  }).join('');}
 
   // สรุป alignment จากข้อมูลจริงทุก TF ที่โหลดสำเร็จ (ไม่บังคับว่าต้องครบ 4 — TF ไหนยังโหลดไม่เสร็จจะไม่นับ)
   const loaded=frames.filter(f=>f.bias);
@@ -7831,20 +7861,26 @@ function updateIndicators(price,chg){
   const el=document.getElementById('indGrid');
   if(el)el.innerHTML=INDS.map(i=>{
     const sMap={'Buy':85,'Cross':85,'High':75,'Oversold':75,'Caution':45,'Hold':50,'Below':25,'Sell':20,'Overbought':30,'Normal':50};
-    const pct=sMap[i.s]||50;
-    return `<div class="ind-cell">
-      <div style="font-size:20px;margin-bottom:5px;">${i.ico}</div>
-      <div style="font-size:17px;font-weight:900;font-family:var(--display);color:${i.c};line-height:1;margin-bottom:4px;">${i.v}</div>
-      <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">${i.n}</div>
-      <div style="font-size:9px;color:${i.c};font-weight:700;">${i.s}</div>
-      ${scoreMode?`<div style="height:2px;border-radius:2px;background:rgba(255,255,255,.06);margin-top:5px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:${i.c};border-radius:2px;transition:width .6s;"></div></div>`:''}
+    const num=parseFloat(i.v);
+    const pct=(i.n==='RSI'||i.n==='Stoch')&&!isNaN(num)?Math.max(4,Math.min(100,num)):(sMap[i.s]||50);
+    const R=21,C=2*Math.PI*R;
+    return `<div class="ind-cell ig-cell">
+      <div class="ig-ring"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".13" stroke-width="5.5"/><circle cx="27" cy="27" r="${R}" fill="none" stroke="${i.c}" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="${(pct/100*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 27 27)"/></svg><b style="color:${i.c}">${i.v}</b></div>
+      <div class="ig-n">${i.n}</div>
+      <div class="ig-s" style="color:${i.c}">${i.s}</div>
     </div>`;
   }).join('');
   const buyCount=INDS.filter(i=>['Buy','Cross','Oversold'].includes(i.s)).length;
   const sellCount=INDS.filter(i=>['Sell','Below','Overbought'].includes(i.s)).length;
   const bias=buyCount>sellCount?'BUY':sellCount>buyCount?'SELL':'NEUTRAL';
   const ob=document.getElementById('overallBias');
-  if(ob){ob.textContent=`${bias} ${buyCount}/10`;ob.style.color=bias==='BUY'?'var(--green)':bias==='SELL'?'var(--red)':'var(--amber)';}
+  if(ob){const dom=bias==='BUY'?buyCount:bias==='SELL'?sellCount:Math.max(0,INDS.length-buyCount-sellCount);ob.textContent=`${bias} ${dom}/${INDS.length}`;ob.style.color=bias==='BUY'?'var(--green)':bias==='SELL'?'var(--red)':'var(--amber)';}
+  try{
+    let bb=document.getElementById('overallSeg');
+    if(!bb&&ob){bb=document.createElement('div');bb.id='overallSeg';bb.className='ig-seg';ob.closest('div').parentNode.insertBefore(bb,ob.closest('div').nextSibling);}
+    if(bb){const n=INDS.length,neu=n-buyCount-sellCount;
+      bb.innerHTML='<i class="b" style="flex:'+buyCount+'"></i><i class="n" style="flex:'+neu+'"></i><i class="s" style="flex:'+sellCount+'"></i>'+'<span class="l">BUY '+buyCount+'</span><span class="r">SELL '+sellCount+'</span>';}
+  }catch(e){}
   // Data source indicator
   const srcBadge=document.querySelector('#indSrcBadge');
   if(srcBadge){
