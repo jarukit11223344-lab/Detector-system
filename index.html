@@ -2108,10 +2108,10 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
   </div>
 
   <!-- API Gateway node (Platform Connections style) -->
-  <div class="api-node">
+  <div class="api-node" id="aiGenNode" role="button" tabindex="0" onclick="aiGenTap()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();aiGenTap();}" style="cursor:pointer;-webkit-tap-highlight-color:transparent;">
     <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-    <div class="api-node-lbl">AI ANALYSIS</div>
-    <div class="api-node-sub">Claude Sonnet · Gold Expert</div>
+    <div class="api-node-lbl" id="aiGenLbl">AI ANALYSIS</div>
+    <div class="api-node-sub" id="aiGenSub">Claude Sonnet · Gold Expert · แตะเพื่อ Generate Signal</div>
   </div>
 
   <!-- Input channels (like Frontend/Backend grid) -->
@@ -2155,7 +2155,7 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
     <div class="sr-txt" id="srReason">—</div>
   </div>
 
-  <button class="sig-btn btn-indigo" id="sigBtn" onclick="generateSignal()">
+  <button class="sig-btn btn-indigo" id="sigBtn" onclick="generateSignal()" style="display:none;">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
     Generate AI Signal
   </button>
@@ -3006,7 +3006,7 @@ body:not(.glass3d):not(.light-mode){--bg:#060919;--card:rgba(15,18,38,.68);--car
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.60 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.61 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -7164,6 +7164,14 @@ async function generateSignal(){
   }
 }
 
+// v20.61 — ปุ่ม Generate AI Signal เดิมถูกซ่อน: ใช้การ์ด "AI ANALYSIS" เป็นปุ่มแทน (ยังเรียก generateSignal() ตัวเดิม)
+function aiGenTap(){const b=document.getElementById('sigBtn');if(b&&!b.disabled)generateSignal();}
+(function(){
+  const b=document.getElementById('sigBtn'),n=document.getElementById('aiGenNode');if(!b||!n)return;
+  const lbl=document.getElementById('aiGenLbl'),sub=document.getElementById('aiGenSub');
+  const sync=()=>{const busy=b.disabled;n.style.opacity=busy?'.75':'1';n.style.pointerEvents=busy?'none':'';lbl.textContent=busy?'กำลังวิเคราะห์...':'AI ANALYSIS';sub.textContent=busy?'Claude กำลังอ่านราคา เทรนด์ และ session':'Claude Sonnet · Gold Expert · แตะเพื่อ Generate Signal';};
+  new MutationObserver(sync).observe(b,{attributes:true,attributeFilter:['disabled']});
+})();
 // ═══ AI ASK ═══
 async function askAI(){
   const inp=document.getElementById('aiInp'),q=inp.value.trim();if(!q)return;
