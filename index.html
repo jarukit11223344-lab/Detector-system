@@ -1544,6 +1544,19 @@ body.glass3d:not(.light-mode)::before{
 .kpi-card.kc-indigo{--kc:var(--indigo)}.kpi-card.kc-green{--kc:var(--green)}.kpi-card.kc-cyan{--kc:var(--cyan)}
 html body .kpi-card[class*="kc-"]{--hc:var(--kc);border-color:color-mix(in srgb,var(--kc) 55%,transparent)}
 html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border-color:color-mix(in srgb,var(--kc) 60%,transparent)!important;box-shadow:0 0 22px -9px var(--kc),inset 0 0 30px -20px var(--kc),0 14px 28px -16px rgba(0,0,0,.85)!important}
+
+/* v20.77 — Confluence History: แถวสถิติแบบวงแหวน + ไทล์ */
+.csh-wrap{display:grid;grid-template-columns:78px 1fr 1fr 1fr;gap:8px;align-items:stretch;margin-top:10px}
+.csh-ring{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t1);padding:8px 2px 6px;border-radius:14px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border)}
+.csh-ring svg{width:54px;height:54px}
+.csh-ring b{position:absolute;top:8px;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:900}
+.csh-ring span{font-size:8.5px;color:var(--t3);margin-top:4px;font-family:var(--mono)}
+.csh-t{display:flex;flex-direction:column;justify-content:center;gap:5px;padding:8px 8px;border-radius:14px;background:color-mix(in srgb,var(--t1) 4%,transparent);border:1px solid var(--border)}
+.csh-t small{font-size:8.5px;color:var(--t3);letter-spacing:.3px}
+.csh-t b{font-family:var(--mono);font-size:16px;font-weight:800;line-height:1}
+.csh-g{position:relative;height:4px;border-radius:2px;background:color-mix(in srgb,var(--t1) 10%,transparent)}
+.csh-g i{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+.csh-g u{position:absolute;top:-2px;width:1.5px;height:8px;background:var(--t2);opacity:.7}
 </style>
 <body>
 
@@ -3186,7 +3199,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.76 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.77 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -12137,7 +12150,15 @@ function renderCSHistoryChart(arr){
   const hud=document.getElementById('cshHud');
   if(hud){hud.style.display='block';hud.innerHTML=`<div class="seg-head" style="margin:0 0 8px;"><b style="color:${cCol};">${cur.toFixed(1)}<small>/10</small></b><span style="color:${dlt>=0?'var(--green)':'var(--red)'};">${dlt>=0?'▲ +':'▼ '}${dlt.toFixed(1)} · 1 ชม.</span></div>`;}
   const band=document.getElementById('cshBand');
-  if(band){const n=20,on=Math.round(above*n);band.style.display='block';band.innerHTML=`<div class="age-bar" style="margin:8px 0 0;--hc:var(--green);"><div class="ab-t"><span>เวลาที่คะแนน ≥ เกณฑ์ ${thr.toFixed(1)} <b>${Math.round(above*100)}%</b></span><span>เฉลี่ย ${avg.toFixed(1)} · สูง ${mx.toFixed(1)} · ต่ำ ${mn.toFixed(1)}</span></div><div class="ab-s">${Array.from({length:n},(_,i)=>'<i'+(i<on?' class="on"':'')+'></i>').join('')}</div></div>`;}
+  if(band){
+    const pc=Math.round(above*100),R=22,C=2*Math.PI*R,rc=above>=0.5?'var(--green)':above>0?'var(--amber)':'var(--t3)';
+    const tile=(lbl,v)=>{const col=v>=thr?'var(--green)':v>=4?'var(--amber)':'var(--red)';
+      return `<div class="csh-t"><small>${lbl}</small><b style="color:${col}">${v.toFixed(1)}</b><div class="csh-g"><i style="width:${Math.max(3,v*10)}%;background:${col}"></i><u style="left:${thr*10}%"></u></div></div>`;};
+    band.style.display='block';
+    band.innerHTML=`<div class="csh-wrap">
+      <div class="csh-ring"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".13" stroke-width="5.5"/><circle cx="27" cy="27" r="${R}" fill="none" stroke="${rc}" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="${(above*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 27 27)"/></svg><b style="color:${rc}">${pc}%</b><span>≥ ${thr.toFixed(1)}</span></div>
+      ${tile('เฉลี่ย',avg)}${tile('สูงสุด',mx)}${tile('ต่ำสุด',mn)}
+    </div>`;}
   if(csHistoryChart)csHistoryChart.destroy();
   const grad=(c,alpha)=>{const a=c.chartArea;if(!a)return '#818cf8';const g=c.ctx.createLinearGradient(0,a.bottom,0,a.top);
     [[0,'255,66,88'],[.4,'255,198,26'],[.65,'166,240,43'],[1,'47,232,107']].forEach(([o,rgb])=>g.addColorStop(o,alpha?`rgba(${rgb},${alpha})`:`rgb(${rgb})`));return g;};
@@ -12163,7 +12184,7 @@ function renderCSHistoryChart(arr){
       responsive:true,maintainAspectRatio:false,layout:{padding:{right:6,top:4}},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`Confluence ${c.parsed.y.toFixed(1)}/10`}}},
       scales:{
-        x:{display:false},
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#8a8fa3',font:{size:9},maxTicksLimit:5,maxRotation:0,autoSkipPadding:18}},
         y:{min:0,max:10,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8a8fa3',font:{size:9},stepSize:2}},
       }
     }
