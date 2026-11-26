@@ -1574,6 +1574,9 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 .mz-f{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:10px;color:var(--t3)}
 .mz-f b{font-size:12px;font-weight:800;color:var(--zc)}
 .mz-d{text-align:center;font-size:8.5px;color:var(--t3);margin-top:4px}
+
+/* v20.81 — คำอธิบายใต้ชื่อการ์ด M15 Confirmation / M15 Entry Signal แสดงเฉพาะตอนหุบการ์ด */
+.section-card:not(.collapsed) .sub-collapsed-only{display:none}
 </style>
 <body>
 
@@ -1984,7 +1987,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 <!-- ── M15 CONFIRMATION MODE (H1 นำทาง + M15 จับจังหวะเข้า — เทคนิค multi-timeframe มาตรฐานที่ trader ใช้จริง) ── -->
 <div class="section-card sc-indigo" id="secM15Confirm">
   <div class="sh">
-    <div><div class="sh-title">🎯 M15 Confirmation</div><div class="sh-sub">H1 กำหนดทิศทาง (ตั้งแต่โซน Watchlist ไม่ต้องรอผ่านเกณฑ์ Quick Signal เต็มๆ) · M15 (RSI/MACD/EMA เอกฉันท์) ยืนยันจังหวะเข้า · 🔒 ล็อกตัวเลขไว้จนถึง TP2/SL</div></div>
+    <div><div class="sh-title">🎯 M15 Confirmation</div><div class="sh-sub sub-collapsed-only">H1 กำหนดทิศทาง (ตั้งแต่โซน Watchlist ไม่ต้องรอผ่านเกณฑ์ Quick Signal เต็มๆ) · M15 (RSI/MACD/EMA เอกฉันท์) ยืนยันจังหวะเข้า · 🔒 ล็อกตัวเลขไว้จนถึง TP2/SL</div></div>
     <span class="sh-badge sb-y">Display Only</span>
   </div>
   <!-- ⚠️ FIX (v11): เพิ่ม stats line เล็กๆ ใต้ header — การ์ดนี้ยังเป็น Display Only เหมือนเดิม (ตัวเลข entry/sl/tp
@@ -2018,7 +2021,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 <!-- ── item C — M15 ENTRY SIGNAL (แสดงผลอย่างเดียว ไม่ auto-log — สำหรับคนเทรดสไตล์ M15+H1) ── -->
 <div class="section-card sc-indigo" id="secM15Entry">
   <div class="sh">
-    <div><div class="sh-title">⏱️ M15 Entry Signal</div><div class="sh-sub">คำนวณจาก ATR/ADX ของ M15 เอง · บังคับตรงทิศทาง HTF Lock ของ H1 เสมอ · ผ่าน gate เข้มเท่า Quick Signal · 🔒 ล็อกตัวเลขไว้จนถึง TP2/SL</div></div>
+    <div><div class="sh-title">⏱️ M15 Entry Signal</div><div class="sh-sub sub-collapsed-only">คำนวณจาก ATR/ADX ของ M15 เอง · บังคับตรงทิศทาง HTF Lock ของ H1 เสมอ · ผ่าน gate เข้มเท่า Quick Signal · 🔒 ล็อกตัวเลขไว้จนถึง TP2/SL</div></div>
     <span class="sh-badge sb-y">Display Only</span>
   </div>
   <!-- ⚠️ คำเตือนเดิม (ย้ายมาเก็บเป็น comment ตามที่ขอ — ไม่โชว์ในหน้า UI แล้ว เพราะรกเกินไป แต่ยังเก็บไว้อ่านในโค้ดได้):
@@ -3216,7 +3219,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.80 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.81 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
