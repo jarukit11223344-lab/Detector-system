@@ -2119,7 +2119,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
     <span style="font-size:9px;color:var(--t3);">Max DD: <strong id="ecMaxDD" style="color:var(--red);">—</strong></span>
   </div>
   <div id="ecEmpty" style="font-size:11px;color:var(--t3);text-align:center;padding:14px 0;">ยังไม่มีสัญญาณที่ปิดจบ — Equity Curve จะเริ่มแสดงหลังมีไม้ resolve อย่างน้อย 2 ไม้</div>
-  <div style="height:140px;display:none;margin-bottom:6px;" id="ecChartWrap"><canvas id="equityCurveChart"></canvas></div>
+  <div style="height:176px;display:none;margin-bottom:6px;" id="ecChartWrap"><canvas id="equityCurveChart"></canvas></div>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;display:none;" id="ecStatsRow">
     <div class="ds-stat"><div class="ds-stat-lbl">Total R</div><div class="ds-stat-val" id="ecTotalR" style="color:var(--gold);">—</div></div>
     <div class="ds-stat"><div class="ds-stat-lbl">Avg R/Trade</div><div class="ds-stat-val" id="ecAvgR" style="color:var(--t2);">—</div></div>
@@ -2178,7 +2178,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
     <span style="font-size:9px;color:var(--t3);">Max DD: <strong id="m15ecMaxDD" style="color:var(--red);">—</strong></span>
   </div>
   <div id="m15ecEmpty" style="font-size:11px;color:var(--t3);text-align:center;padding:14px 0;">ยังไม่มีสัญญาณที่ปิดจบ — Equity Curve จะเริ่มแสดงหลังมีไม้ resolve อย่างน้อย 2 ไม้</div>
-  <div style="height:140px;display:none;margin-bottom:6px;" id="m15ecChartWrap"><canvas id="m15EquityCurveChart"></canvas></div>
+  <div style="height:176px;display:none;margin-bottom:6px;" id="m15ecChartWrap"><canvas id="m15EquityCurveChart"></canvas></div>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;display:none;" id="m15ecStatsRow">
     <div class="ds-stat"><div class="ds-stat-lbl">Total R</div><div class="ds-stat-val" id="m15ecTotalR" style="color:var(--gold);">—</div></div>
     <div class="ds-stat"><div class="ds-stat-lbl">Avg R/Trade</div><div class="ds-stat-val" id="m15ecAvgR" style="color:var(--t2);">—</div></div>
@@ -2213,7 +2213,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
     <span style="font-size:9px;color:var(--t3);">Max DD: <strong id="m15ccEcMaxDD" style="color:var(--red);">—</strong></span>
   </div>
   <div id="m15ccEcEmpty" style="font-size:11px;color:var(--t3);text-align:center;padding:14px 0;">ยังไม่มีสัญญาณที่ปิดจบ — Equity Curve จะเริ่มแสดงหลังมีไม้ resolve อย่างน้อย 2 ไม้</div>
-  <div style="height:140px;display:none;margin-bottom:6px;" id="m15ccEcChartWrap"><canvas id="m15ConfirmEquityCurveChart"></canvas></div>
+  <div style="height:176px;display:none;margin-bottom:6px;" id="m15ccEcChartWrap"><canvas id="m15ConfirmEquityCurveChart"></canvas></div>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;display:none;" id="m15ccEcStatsRow">
     <div class="ds-stat"><div class="ds-stat-lbl">Total R</div><div class="ds-stat-val" id="m15ccEcTotalR" style="color:var(--gold);">—</div></div>
     <div class="ds-stat"><div class="ds-stat-lbl">Avg R/Trade</div><div class="ds-stat-val" id="m15ccEcAvgR" style="color:var(--t2);">—</div></div>
@@ -3199,7 +3199,7 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.77 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.78 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -5365,15 +5365,7 @@ function renderM15ConfirmEquityCurve(arr){
   if(!ctx)return;
   if(m15ConfirmEquityCurveChart)m15ConfirmEquityCurveChart.destroy();
   const lineColor=cum>=0?'#22d399':'#f43f5e';
-  m15ConfirmEquityCurveChart=new Chart(ctx,{
-    type:'line',
-    data:{labels:points.map((_,i)=>i),datasets:[{data:points,borderColor:lineColor,backgroundColor:lineColor+'22',borderWidth:2,fill:true,pointRadius:0,tension:0.15}]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(2)}R`}}},
-      scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#8a8fa3',font:{size:9},callback:(v)=>v.toFixed(0)+'R'}}}
-    }
-  });
+  m15ConfirmEquityCurveChart=buildEquityChart(ctx,points);
 }
 function renderM15ConfirmSessionStats(arr){
   const el=document.getElementById('m15ccSessionStats');
@@ -5793,15 +5785,7 @@ function renderM15EntryEquityCurve(arr){
   if(!ctx)return;
   if(m15EquityCurveChart)m15EquityCurveChart.destroy();
   const lineColor=cum>=0?'#22d399':'#f43f5e';
-  m15EquityCurveChart=new Chart(ctx,{
-    type:'line',
-    data:{labels:points.map((_,i)=>i),datasets:[{data:points,borderColor:lineColor,backgroundColor:lineColor+'22',borderWidth:2,fill:true,pointRadius:0,tension:0.15}]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(2)}R`}}},
-      scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#8a8fa3',font:{size:9},callback:(v)=>v.toFixed(0)+'R'}}}
-    }
-  });
+  m15EquityCurveChart=buildEquityChart(ctx,points);
 }
 // ═══ Win Rate by Session — ใช้ getSessionForUTCHour() ตัวเดียวกับ Signal History ของ H1 เพื่อขอบเขต session ตรงกันทั้งแอป ═══
 function renderM15EntrySessionStats(arr){
@@ -7184,6 +7168,44 @@ function renderFactorAttribution(){
 }
 
 // ═══ EQUITY CURVE / DRAWDOWN — เดิมมีแค่ list win/loss รายไม้ ไม่เห็นภาพรวม performance สะสม ═══
+// v20.78 — กราฟ Equity Curve แบบ "เส้นโค้งเรืองแสง" (ไล่สีฟ้า→ม่วง · เส้นเงาของ peak · เส้นแนวตั้ง+จุดล่าสุด · ไม่มีเส้นตาราง) ใช้ร่วมทั้ง 3 การ์ด History
+function buildEquityChart(ctx,points){
+  const n=points.length,cur=points[n-1];
+  let pk=-Infinity;const peakLine=points.map(v=>(pk=Math.max(pk,v)));
+  const lineGrad=c=>{const a=c.chartArea;if(!a)return '#8b5cf6';const g=c.ctx.createLinearGradient(a.left,0,a.right,0);g.addColorStop(0,'#38bdf8');g.addColorStop(.5,'#6366f1');g.addColorStop(1,'#c026d3');return g;};
+  const fillGrad=c=>{const a=c.chartArea;if(!a)return 'rgba(99,102,241,.12)';const g=c.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,'rgba(124,92,246,.30)');g.addColorStop(1,'rgba(56,189,248,0)');return g;};
+  const glow={id:'eqGlow',beforeDatasetDraw(c,args){if(args.index!==0)return;c.ctx.save();c.ctx.shadowColor='rgba(139,92,246,.75)';c.ctx.shadowBlur=14;},afterDatasetDraw(c,args){if(args.index===0)c.ctx.restore();}};
+  const marker={id:'eqMarker',afterDatasetsDraw(c){
+    const m=c.getDatasetMeta(0).data,p=m[m.length-1],a=c.chartArea,x=c.ctx;if(!p||!a)return;
+    x.save();
+    const zy=c.scales.y.getPixelForValue(0);x.setLineDash([3,4]);x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=1;x.beginPath();x.moveTo(a.left,zy);x.lineTo(a.right,zy);x.stroke();
+    x.setLineDash([]);const g=x.createLinearGradient(0,p.y,0,a.bottom);g.addColorStop(0,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');
+    x.strokeStyle=g;x.beginPath();x.moveTo(p.x,p.y+6);x.lineTo(p.x,a.bottom);x.stroke();
+    x.shadowColor='#c026d3';x.shadowBlur=14;x.fillStyle='#fff';x.beginPath();x.arc(p.x,p.y,5.5,0,6.283);x.fill();
+    x.shadowBlur=0;x.strokeStyle='rgba(192,38,211,.7)';x.lineWidth=2;x.beginPath();x.arc(p.x,p.y,8.5,0,6.283);x.stroke();
+    const t=(cur>=0?'+':'')+cur.toFixed(1)+'R',w=x.measureText(t).width;x.font='bold 10px monospace';const tw=x.measureText(t).width+12,tx=Math.min(a.right-tw/2,Math.max(a.left+tw/2,p.x)),ty=p.y-24;
+    x.fillStyle='rgba(20,22,40,.92)';x.strokeStyle='rgba(255,255,255,.18)';x.lineWidth=1;
+    x.beginPath();(x.roundRect?x.roundRect(tx-tw/2,ty-9,tw,18,6):x.rect(tx-tw/2,ty-9,tw,18));x.fill();x.stroke();
+    x.fillStyle=cur>=0?'#4ade80':'#fb7185';x.textAlign='center';x.textBaseline='middle';x.fillText(t,tx,ty);
+    x.restore();}};
+  return new Chart(ctx,{
+    type:'line',
+    plugins:[glow,marker],
+    data:{labels:points.map((_,i)=>i===0?'เริ่ม':'#'+i),datasets:[
+      {data:points,borderColor:lineGrad,backgroundColor:fillGrad,borderWidth:3.2,fill:true,pointRadius:0,pointHoverRadius:4,tension:0.4,order:1},
+      {data:peakLine,borderColor:'rgba(255,255,255,.14)',borderWidth:1.4,fill:false,pointRadius:0,tension:0.4,order:2}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,layout:{padding:{top:26,right:12,left:2}},
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{filter:i=>i.datasetIndex===0,callbacks:{title:i=>i[0].label,label:c=>`${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(2)}R`}}},
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#6b7088',font:{size:9},maxTicksLimit:6,maxRotation:0,autoSkipPadding:14}},
+        y:{grid:{display:false},border:{display:false},ticks:{color:'#6b7088',font:{size:9},maxTicksLimit:4,callback:v=>v.toFixed(0)+'R'}}
+      }
+    }
+  });
+}
 function renderEquityCurve(arr){
   const emptyEl=document.getElementById('ecEmpty');
   const wrapEl=document.getElementById('ecChartWrap');
@@ -7216,29 +7238,7 @@ function renderEquityCurve(arr){
   if(!ctx)return;
   if(equityCurveChart)equityCurveChart.destroy();
   const lineColor=cum>=0?'#22d399':'#f43f5e';
-  equityCurveChart=new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:points.map((_,i)=>i),
-      datasets:[{
-        data:points,
-        borderColor:lineColor,
-        backgroundColor:lineColor+'22',
-        borderWidth:2,
-        fill:true,
-        pointRadius:0,
-        tension:0.15,
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(2)}R`}}},
-      scales:{
-        x:{display:false},
-        y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#8a8fa3',font:{size:9},callback:(v)=>v.toFixed(0)+'R'}},
-      }
-    }
-  });
+  equityCurveChart=buildEquityChart(ctx,points);
 }
 
 // ═══ SIGNAL HISTORY — WIN RATE BY SESSION ═══
