@@ -1663,6 +1663,20 @@ body.light-mode #heroPrice.price-hero{background:linear-gradient(170deg,#f5b400 
 #csSegNum{background:linear-gradient(90deg,#b18cff,#5b9dff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 0 8px rgba(139,120,255,.35))}
 #csSegNum small{-webkit-text-fill-color:var(--t3)}
 body.light-mode #csSegNum{background:linear-gradient(90deg,#7c3aed,#2563eb);-webkit-background-clip:text;background-clip:text;filter:none}
+
+/* v20.93 — Confluence Score ทั้งการ์ด: ม่วงผสมน้ำเงินโทนเข้ม */
+#csAction{color:#a99cff!important}
+#csVerdict{color:#a99cff!important;background:rgba(109,80,230,.16)!important;border-color:rgba(130,110,240,.4)!important}
+#csSegLbl{color:#a99cff!important}
+#csGlow{background:#5b3fd6!important}
+#csSegNum{background:linear-gradient(90deg,#9b7cff,#4f80e8);-webkit-background-clip:text;background-clip:text}
+body.light-mode #csSegNum{background:linear-gradient(90deg,#6d28d9,#2563eb);-webkit-background-clip:text;background-clip:text}
+.cf-stack i:nth-child(3){opacity:.85}
+body.glass3d:not(.light-mode) .seg-meter i.on{box-shadow:0 0 8px -1px color-mix(in srgb,var(--sc) 70%,transparent)}
+body.light-mode #csAction,body.light-mode #csVerdict,body.light-mode #csSegLbl{color:#5b3fd6!important}
+body.light-mode #csScoreText{fill:#3b2fa0}
+body.light-mode #csNeedle{stroke:#4338ca}
+body.light-mode #csNeedle+circle{fill:#4338ca}
 </style>
 <body>
 
@@ -2931,18 +2945,18 @@ body.light-mode #csSegNum{background:linear-gradient(90deg,#7c3aed,#2563eb);-web
       <svg width="110" height="66" viewBox="0 0 110 66" style="overflow:visible;">
         <defs>
           <linearGradient id="csGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#f43f5e"/>
-            <stop offset="40%" stop-color="#fbbf24"/>
-            <stop offset="100%" stop-color="#22d3a0"/>
+            <stop offset="0%" stop-color="#5b21b6"/>
+            <stop offset="50%" stop-color="#5b4bdb"/>
+            <stop offset="100%" stop-color="#3b82f6"/>
           </linearGradient>
         </defs>
         <path d="M 10 60 A 45 45 0 0 1 100 60" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="10" stroke-linecap="round"/>
         <path d="M 10 60 A 45 45 0 0 1 100 60" fill="none" stroke="url(#csGrad)" stroke-width="10" stroke-linecap="round" opacity=".8"/>
         <line id="csNeedle" x1="55" y1="60" x2="55" y2="22" stroke="white" stroke-width="2.5" stroke-linecap="round" style="transform-origin:55px 60px;transition:transform .9s cubic-bezier(.34,1.56,.64,1);"/>
         <circle cx="55" cy="60" r="4.5" fill="white" opacity=".95"/>
-        <text x="4" y="72" font-size="8" fill="#f43f5e" font-family="JetBrains Mono">0</text>
-        <text x="48" y="16" font-size="8" fill="#fbbf24" font-family="JetBrains Mono">5</text>
-        <text x="98" y="72" font-size="8" fill="#22d3a0" font-family="JetBrains Mono" text-anchor="end">10</text>
+        <text x="4" y="72" font-size="8" fill="#7c5cf0" font-family="JetBrains Mono">0</text>
+        <text x="48" y="16" font-size="8" fill="#8b7cf6" font-family="JetBrains Mono">5</text>
+        <text x="98" y="72" font-size="8" fill="#5b8def" font-family="JetBrains Mono" text-anchor="end">10</text>
         <text id="csScoreText" x="55" y="56" font-size="18" font-weight="900" text-anchor="middle" font-family="Inter" fill="white">—</text>
       </svg>
     </div>
@@ -3277,7 +3291,7 @@ body.light-mode #csSegNum{background:linear-gradient(90deg,#7c3aed,#2563eb);-web
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.92 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.93 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -6014,7 +6028,7 @@ function renderTRHud(cur){
   const seg=document.getElementById('csSeg');
   if(seg){
     seg.innerHTML=Array.from({length:20},()=>'<i></i>').join('');
-    const segCol=i=>{const t=i/19,A=[150,80,255],B=[79,140,255];return 'rgb('+A.map((a,k)=>Math.round(a+(B[k]-a)*t)).join(',')+')';}; // v20.92 ม่วง→น้ำเงิน
+    const segCol=i=>{const t=i/19,A=[104,52,214],B=[56,98,230];return 'rgb('+A.map((a,k)=>Math.round(a+(B[k]-a)*t)).join(',')+')';}; // v20.92 ม่วง→น้ำเงิน
     watch(document.getElementById('csScoreText'),()=>{
       const t=document.getElementById('csScoreText').textContent,v=parseFloat(t);
       const num=document.getElementById('csSegNum'),lb=document.getElementById('csSegLbl');
@@ -12442,16 +12456,17 @@ function updateConfluenceScore(price,chg){
       const sc=Math.max(0,Math.min(2,f.score||0));
       if(sc>=1.5)nP++;else if(sc>=0.5)nW++;else nF++;
       const on=Math.round(sc/2*5);
-      const cells=Array.from({length:5},(_,k)=>`<i class="${k<on?'on':''}" style="--fc:${f.col||'var(--t2)'}"></i>`).join('');
+      const tone=sc>=1.5?'#5b8def':sc>=0.5?'#8b6cf0':'#6a5bd0'; // v20.93 ม่วง-น้ำเงินโทนเข้ม: ผ่าน=ฟ้า, ระวัง=ม่วง, ไม่ผ่าน=ม่วงเข้ม
+      const cells=Array.from({length:5},(_,k)=>`<i class="${k<on?'on':''}" style="--fc:${tone}"></i>`).join('');
       return `<div class="cf-row">
         <span class="cf-name">${CS_WEIGHT_LABELS[f.id]||f.id}</span>
         <div class="cf-seg">${cells}</div>
-        <span class="cf-lbl" style="color:${f.col||'var(--t2)'};">${f.lbl}</span>
+        <span class="cf-lbl" style="color:${tone};">${f.lbl}</span>
       </div>`;
     }).join('');
     const nT=Math.max(1,nP+nW+nF);
-    const sumHtml=`<div class="cf-sum"><div class="cf-stack"><i style="width:${nP/nT*100}%;background:var(--green)"></i><i style="width:${nW/nT*100}%;background:var(--amber)"></i><i style="width:${nF/nT*100}%;background:var(--red)"></i></div>
-      <div class="cf-leg"><span><u style="background:var(--green)"></u>ผ่าน <b>${nP}</b></span><span><u style="background:var(--amber)"></u>ระวัง <b>${nW}</b></span><span><u style="background:var(--red)"></u>ไม่ผ่าน <b>${nF}</b></span><em>จาก ${nT} ปัจจัย</em></div></div>`;
+    const sumHtml=`<div class="cf-sum"><div class="cf-stack"><i style="width:${nP/nT*100}%;background:#5b8def"></i><i style="width:${nW/nT*100}%;background:#8b6cf0"></i><i style="width:${nF/nT*100}%;background:#6a5bd0"></i></div>
+      <div class="cf-leg"><span><u style="background:#5b8def"></u>ผ่าน <b>${nP}</b></span><span><u style="background:#8b6cf0"></u>ระวัง <b>${nW}</b></span><span><u style="background:#6a5bd0"></u>ไม่ผ่าน <b>${nF}</b></span><em>จาก ${nT} ปัจจัย</em></div></div>`;
     factEl.innerHTML=sumHtml+rowsHtml;
   }
 
