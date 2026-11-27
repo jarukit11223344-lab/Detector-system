@@ -1707,6 +1707,28 @@ body:not(.light-mode) .wd-led i.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.4)
 body.light-mode .wd-tag{color:#5b21b6;text-shadow:none}
 body.light-mode .wd-pc{color:#6d28d9}
 body.light-mode .wd-num b{background:linear-gradient(90deg,#4c1d95,#8b5cf6);-webkit-background-clip:text;background-clip:text;filter:none}
+
+/* v20.97 — Risk Calculator: ตัวเลือกแหล่งข้อมูล (Quick Signal / Trend Rider) */
+.rc-src{display:flex;align-items:center;gap:6px;margin:2px 0 10px}
+.rc-src-l{font-size:9.5px;color:var(--t3);margin-right:2px}
+.rc-src button{font-family:var(--sans);font-size:10px;font-weight:700;padding:4px 11px;border-radius:999px;border:1px solid var(--border);background:color-mix(in srgb,var(--t1) 4%,transparent);color:var(--t3);cursor:pointer}
+.rc-src button.on{color:#dcc9ff;border-color:rgba(190,160,255,.5);background:rgba(139,92,246,.2);box-shadow:0 0 10px rgba(139,92,246,.3)}
+body.light-mode .rc-src button.on{color:#5b21b6;background:rgba(124,58,237,.12);box-shadow:none;border-color:rgba(124,58,237,.4)}
+.rc-extra{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10px;color:var(--t2);margin-top:8px}
+.rc-extra:empty{display:none}
+/* v20.97 — Multi-TF SMC: 2 สีไล่เฉด (ตัวอย่างวงแหวน: ม่วงแดง→ชมพู / น้ำเงิน→ม่วง) */
+.mz.mz-d2{--za:#c13bd8;--zb:#ff3d7a;--zg:rgba(255,61,122,.4)}
+.mz.mz-u{--za:#4f6cf0;--zb:#a45cf6;--zg:rgba(120,90,246,.4)}
+.mz::before{background:linear-gradient(180deg,var(--za),var(--zb))!important;box-shadow:0 0 10px var(--zg)}
+.mz .mz-k{background:linear-gradient(90deg,var(--za),var(--zb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.mz .zc-bar .zb{background:linear-gradient(90deg,var(--za),var(--zb))!important;box-shadow:0 0 10px -1px var(--zg)}
+.mz .mz-f b{background:linear-gradient(90deg,var(--za),var(--zb));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+/* v20.97 — Volatility Regime: แถบ + ตัวเลข ม่วงผสมน้ำเงินเข้ม */
+html body .vol-grad{background:linear-gradient(90deg,#1c0f55 0%,#3a1fa0 30%,#5b34d6 55%,#4a6cf0 80%,#3b82f6 100%)!important;opacity:1;box-shadow:0 0 12px rgba(91,52,214,.35),inset 0 1px 0 rgba(255,255,255,.18)}
+#volRegimeRatio{background:linear-gradient(90deg,#b79cff,#5b8def);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent!important;filter:drop-shadow(0 0 8px rgba(120,100,240,.4))}
+body.light-mode #volRegimeRatio{background:linear-gradient(90deg,#5b21b6,#2563eb);-webkit-background-clip:text;background-clip:text;filter:none}
+.vol-tk span{color:#8f7fd6}
+body.light-mode .vol-tk span{color:#6d58c4}
 </style>
 <body>
 
@@ -2661,6 +2683,7 @@ body.light-mode .wd-num b{background:linear-gradient(90deg,#4c1d95,#8b5cf6);-web
 <!-- ── RISK CALCULATOR (Nova card) ── -->
 <div class="section-card sc-indigo">
   <div class="sh"><div><div class="sh-title">Risk Calculator</div><div class="sh-sub">Auto-fill จาก Signal</div></div><span class="sh-badge sb-i">Smart</span></div>
+  <div class="rc-src" id="rcSrcRow"><span class="rc-src-l">ดึงค่าจาก</span><button type="button" data-s="qs" onclick="setRCSrc('qs')">Quick Signal</button><button type="button" data-s="tr" onclick="setRCSrc('tr')">Trend Rider</button></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;">
     <div><div class="clbl">Account ($)</div><input class="cinp" type="number" id="cAcc" value="10000"></div>
     <div><div class="clbl">Risk %</div><input class="cinp" type="number" id="cRisk" value="1" step="0.1"></div>
@@ -2674,8 +2697,9 @@ body.light-mode .wd-num b{background:linear-gradient(90deg,#4c1d95,#8b5cf6);-web
   <div class="cres" id="cRes" style="display:none;">
     <div class="crb"><div class="crl">Lot Size</div><div class="crv" style="color:var(--indigo);" id="rLot">—</div></div>
     <div class="crb"><div class="crl">Risk $</div><div class="crv" style="color:var(--red);" id="rRisk">—</div></div>
-    <div class="crb"><div class="crl">Profit</div><div class="crv" style="color:var(--green);" id="rProfit">—</div></div>
+    <div class="crb"><div class="crl" id="rProfitL">Profit</div><div class="crv" style="color:var(--green);" id="rProfit">—</div></div>
   </div>
+  <div id="rcExtra" class="rc-extra"></div>
   <div class="hdiv"></div>
   <div class="cd-row"><span>Next price update</span><span id="cdEl" style="font-family:var(--mono);color:var(--indigo);">30s</span></div>
   <div class="cd-bar"><div class="cd-fill" id="cdFill" style="width:100%;"></div></div>
@@ -3321,7 +3345,7 @@ body.light-mode .wd-num b{background:linear-gradient(90deg,#4c1d95,#8b5cf6);-web
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.96 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.97 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -5072,7 +5096,7 @@ async function generateQuickSignal(manual=false){
   else{const pEl=document.getElementById('qsProgress');if(pEl)pEl.innerHTML='';} // WAIT ยังไม่มีทิศทางจริง ตัวเลข entry/sl/tp1/tp2 เป็นแค่ preview จาก ATR เฉยๆ โชว์แถบไปอาจเข้าใจผิดว่าเป็นสัญญาณจริงแล้ว
   document.getElementById('qsReason').textContent=reason;
   const rEl=document.getElementById('qsRR');rEl.textContent=scoreLabel;rEl.className=`rr ${dir==='BUY'?'rr-b':dir==='SELL'?'rr-s':'rr-w'}`;
-  document.getElementById('cEntry').value=entry.toFixed(2);document.getElementById('cStop').value=sl.toFixed(2);calcPos();
+  if(_rcSrc()==='qs'){document.getElementById('cEntry').value=entry.toFixed(2);document.getElementById('cStop').value=sl.toFixed(2);calcPos();}
 
   const m15El=document.getElementById('qsM15Badge');
   if(m15El){
@@ -7627,15 +7651,37 @@ function renderKellyHint(){
   const pct=Math.min(k.halfKelly*100,10); // กัน edge case Kelly คำนวณได้ตัวเลขเวอร์เกินจริงจาก sample เล็ก ครอบเพดานไว้ที่ 10% กันเผลอกดใช้ตัวเลขที่สูงผิดปกติ
   el.innerHTML=`⚡ <strong style="color:var(--green);">Half-Kelly แนะนำ: ${pct.toFixed(2)}%</strong> <span style="color:var(--t3);">(จาก ${k.sampleSize} ไม้ · WR ${(k.winRate*100).toFixed(0)}% · payoff ${k.payoffRatio.toFixed(2)})</span> <button onclick="applyHalfKellyRisk(${pct.toFixed(2)})" style="margin-left:4px;padding:2px 8px;border-radius:6px;background:rgba(34,211,153,.1);border:1px solid rgba(34,211,153,.3);color:var(--green);font-size:9px;font-weight:700;cursor:pointer;">ใช้ค่านี้</button>`;
 }
+// ═══ v20.97 — เชื่อม Trend Rider ↔ Risk Calculator ═══
+// เดิม Risk Calculator ถูก Quick Signal เติม Entry/SL ทับตลอด (ทุกรอบ 30 วิ แม้เป็นแค่ preview) ไม่มีทางดึงไม้ Trend Rider มาคำนวณ
+// ตอนนี้เลือกแหล่งได้ — 'qs' = Quick Signal (เดิม) · 'tr' = Trend Rider (Entry จริง + SL เริ่มต้น + TP 1R/2R ตามการ์ด Trend Rider)
+function _rcSrc(){try{return localStorage.getItem('gtRCSource')==='tr'?'tr':'qs';}catch(e){return 'qs';}}
+function _rcPaint(){document.querySelectorAll('#rcSrcRow button').forEach(b=>b.classList.toggle('on',b.dataset.s===_rcSrc()));}
+function setRCSrc(v){
+  try{localStorage.setItem('gtRCSource',v==='tr'?'tr':'qs');}catch(e){}
+  _rcPaint();
+  if(v==='tr'){window._rcTRLast=null;try{renderTRStrip(livePrice);}catch(e){} if(!window._rcTRLast)showToast('ℹ️ ยังไม่มี Trend Rider ที่ล็อกอยู่ — จะดึงให้อัตโนมัติเมื่อมี');}
+  else{window._rcTRLast=null;try{generateQuickSignal(false);}catch(e){}}
+}
+window._rcTRLast=null;
+function rcSyncFromTR(dir,entry,r0){
+  if(_rcSrc()!=='tr'||!(r0>0)||!(entry>0))return;
+  const sl=dir==='BUY'?entry-r0:entry+r0;
+  const e=document.getElementById('cEntry'),t=document.getElementById('cStop');if(!e||!t)return;
+  e.value=entry.toFixed(2);t.value=sl.toFixed(2);window._rcTRLast={dir,entry,sl};calcPos();
+}
 function calcPos(){
   const acc=parseFloat(document.getElementById('cAcc').value)||10000;
   const rp=parseFloat(document.getElementById('cRisk').value)||1;
   const en=parseFloat(document.getElementById('cEntry').value)||(livePrice||4300);
   const sp=parseFloat(document.getElementById('cStop').value)||(en-18);
   const risk=acc*(rp/100),slp=Math.abs(en-sp);if(!slp)return;
-  const lot=(risk/(slp*100)).toFixed(2),tp1=en+(en-sp)*1.5;
-  const prof=(parseFloat(lot)*(tp1-en)*100).toFixed(0);
+  const trm=_rcSrc()==='tr',m1=trm?1:1.5; // v20.97 — Trend Rider ใช้ TP1=1R / TP2=2R ตามการ์ด Trend Rider (Quick Signal เดิม 1.5R)
+  const lot=(risk/(slp*100)).toFixed(2),tp1=en+(en-sp)*m1;
+  const prof=(parseFloat(lot)*Math.abs(tp1-en)*100).toFixed(0); // v20.97 แก้ SELL ที่ Profit ติดลบ (tp1<entry)
   document.getElementById('rLot').textContent=lot;document.getElementById('rRisk').textContent='$'+risk.toFixed(0);document.getElementById('rProfit').textContent='$'+prof;
+  const pl=document.getElementById('rProfitL');if(pl)pl.textContent=trm?'Profit (1R)':'Profit';
+  const ex=document.getElementById('rcExtra');
+  if(ex)ex.innerHTML=trm?`<span>TP1 (1R) <b style="color:var(--green)">+$${prof}</b></span><span>TP2 (2R) <b style="color:var(--green)">+$${(parseFloat(lot)*slp*2*100).toFixed(0)}</b></span><span style="color:var(--t3)">SL เริ่มต้นของ Trend Rider</span>`:'';
   document.getElementById('cRes').style.display='grid';
 }
 
@@ -12871,6 +12917,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   renderSignalHistory();
   renderM15EntryHistory(); // ═══ item — M15 Signal History (ใหม่) โหลดสถิติที่บันทึกไว้ตั้งแต่เปิดแอปครั้งแรก ═══
   renderM15ConfirmHistoryCard(); // v16 — M15 Confirmation History (local-only ไม่ต้อง poll ซ้ำเหมือนตัว server-synced ด้านบน — logM15ConfirmResult() เรียก refresh เองทุกครั้งที่มีไม้ resolve ใหม่อยู่แล้ว)
+  try{_rcPaint();}catch(e){}
   renderKellyHint(); // v17 — Half-Kelly hint ใน Risk Calculator โหลดค่าเริ่มต้นตอนเปิดแอป
   // ── CLOUD SYNC: poll เป็นระยะ ให้เห็นข้อมูลที่อุปกรณ์/โหมดอื่นเพิ่งเขียนไปโดยไม่ต้อง reload หน้าเว็บ ──
   setInterval(async()=>{
@@ -13613,6 +13660,7 @@ function renderTRStrip(cur){
   else if(htf&&htf.locked&&htf.bias&&realTA_H4&&realTA_H4.atr){dir=htf.bias==='BULLISH'?'BUY':'SELL';r0=realTA_H4.atr*TR_CHANDELIER_MULT;sl=dir==='BUY'?cur-r0:cur+r0;}
   if(!dir||!cur||!(r0>0)){el.style.display='none';return;}
   const col=dir==='BUY'?'var(--green)':'var(--red)';
+  try{rcSyncFromTR(dir,ref!=null?ref:cur,r0);}catch(e){} // v20.97 ส่ง Entry/R เริ่มต้นเข้า Risk Calculator
   const dist=Math.abs(cur-sl); // ระยะ SL จากราคาตอนนี้ (จุด = $1)
   const perPt=loadPipValuePref()*10; // USD ต่อ $1 ของราคา ต่อ 1 lot (pip $0.10 × pip value)
   const risk01=dist*perPt*0.1;
@@ -14062,7 +14110,7 @@ function mtfZoneHtml(z,price){
   const dist=inside?0:(p>top?p-top:bot-p);
   const kind=z.kind==='Order Block'?'OB':z.kind;
   const dTxt=inside?'ในโซน':`${p>top?'เหนือ':'ใต้'} ${dist.toFixed(1)}`;
-  return `<div class="mz" style="--zc:${col}">
+  return `<div class="mz ${isBull?'mz-u':'mz-d2'}" style="--zc:${col}">
     <div class="mz-h"><span class="mz-k">${isBull?'▲':'▼'} H4 ${kind}</span>${z.overlap?'<span class="mz-ov">ซ้อน H1</span>':''}${near?'<span class="mz-near">⚡ NEAR</span>':''}<span class="mz-age">${z.age} bars ago</span></div>
     <div class="zc-bar" style="margin:9px 4px 8px"><i class="zb" style="left:${pos(bot)}%;width:${(pos(top)-pos(bot)).toFixed(1)}%"></i><i class="zm" style="left:${pos(mid)}%"></i><i class="zp" style="left:${pos(p)}%"></i></div>
     <div class="mz-f"><span>${bot.toFixed(2)}</span><b>Mid ${mid.toFixed(2)}</b><span>${top.toFixed(2)}</span></div>
