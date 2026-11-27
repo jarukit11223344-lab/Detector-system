@@ -1582,8 +1582,8 @@ html body.glass3d:not(.light-mode) .kpi-card[class*="kc-"]{--hc:var(--kc);border
 body{--ti-c:#38bdf8}
 body.glass3d:not(.light-mode){--ti-c:#9a8cff}
 body.light-mode{--ti-c:#2563eb}
-.sh-title .ti,.lab-t .ti{width:18px;height:18px;margin-right:9px;vertical-align:-3px;color:var(--ti-c);flex:none}
-body.glass3d:not(.light-mode) .sh-title .ti,body.glass3d:not(.light-mode) .lab-t .ti{filter:drop-shadow(0 0 5px color-mix(in srgb,var(--ti-c) 55%,transparent))}
+.sh-title .tic,.lab-t .tic{width:18px;height:18px;margin-right:9px;vertical-align:-3px;color:var(--ti-c);flex:none}
+body.glass3d:not(.light-mode) .sh-title .tic,body.glass3d:not(.light-mode) .lab-t .tic{filter:drop-shadow(0 0 5px color-mix(in srgb,var(--ti-c) 55%,transparent))}
 
 /* v20.85 — widget style (ATR LED bars · COT wedge+rings · Kill Zone dots+rings) */
 .wd-top{display:flex;justify-content:space-between;align-items:flex-end;margin:2px 0 14px}
@@ -3243,7 +3243,7 @@ body.glass3d:not(.light-mode) .sh-title .ti,body.glass3d:not(.light-mode) .lab-t
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.85 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.86 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -14581,9 +14581,9 @@ document.addEventListener('visibilitychange',()=>{document.documentElement.class
   ];
   function apply(){
     document.querySelectorAll('.sh-title,.lab-t').forEach(el=>{
-      if(el.querySelector(':scope>svg.ti'))return;
+      if(el.querySelector(':scope>svg.tic'))return;
       const t=(el.textContent||'').trim();const r=RULES.find(x=>x[0].test(t));if(!r)return;
-      el.insertAdjacentHTML('afterbegin','<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+P[r[1]]+'"/></svg>');
+      el.insertAdjacentHTML('afterbegin','<svg class="tic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+P[r[1]]+'"/></svg>');
     });
   }
   try{apply();setTimeout(apply,800);}catch(e){}
