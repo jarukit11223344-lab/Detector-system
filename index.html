@@ -1696,6 +1696,17 @@ body.light-mode #csSegNum{background:linear-gradient(90deg,#5b21b6,#8b5cf6);-web
 body:not(.light-mode) .seg-meter i.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 10px -1px color-mix(in srgb,var(--sc) 75%,transparent)}
 body:not(.light-mode) .cf-seg i.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 8px color-mix(in srgb,var(--fc) 55%,transparent)}
 .cf-stack i{background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 60%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+
+/* v20.96 — ATR Gauge: พาเลตต์ม่วงเข้ม→ลาเวนเดอร์ เหมือน Confluence Score */
+.wd-led i{background-image:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+body:not(.light-mode) .wd-led i.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 9px -1px currentColor}
+.wd-led i.cur{box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 12px currentColor!important}
+.wd-tag{color:#dcc9ff;text-shadow:0 0 10px rgba(167,139,250,.55)}
+.wd-pc{color:#c4a6ff}
+.wd-num b{background:linear-gradient(90deg,#f0e4ff,#b79cff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;display:inline-block;filter:drop-shadow(0 0 8px rgba(167,139,250,.35))}
+body.light-mode .wd-tag{color:#5b21b6;text-shadow:none}
+body.light-mode .wd-pc{color:#6d28d9}
+body.light-mode .wd-num b{background:linear-gradient(90deg,#4c1d95,#8b5cf6);-webkit-background-clip:text;background-clip:text;filter:none}
 </style>
 <body>
 
@@ -3310,7 +3321,7 @@ body:not(.light-mode) .cf-seg i.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.35
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.95 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.96 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -8587,13 +8598,13 @@ function updateATR(price,chg){
       const N=32,lit=Math.max(1,Math.round(pct*N));
       let bars='';
       for(let i=0;i<N;i++){
-        const t=i/(N-1),col=`hsl(${Math.round(150-150*t)},85%,52%)`;
+        const t=i/(N-1),lt=document.body.classList.contains('light-mode'),A=lt?[76,29,149]:[88,38,205],B=lt?[139,92,246]:[200,166,255],col=`rgb(${A.map((a,k)=>Math.round(a+(B[k]-a)*t)).join(',')})`;
         bars+=`<i class="${i<lit?'on':''}${i===lit-1?' cur':''}" style="height:${14+Math.round(t*22)}px;background:${col};color:${col}"></i>`;
       }
       rb.innerHTML=`<div class="wd-led">${bars}</div>
-        <div class="wd-sc"><span>${atrReal?'ต่ำสุด':'ประมาณ'}</span><b style="color:${atrColor}">${Math.round(pct*100)}% ของช่วง</b><span>${atrReal?'สูงสุด (~100 แท่ง H1)':'ประมาณ'}</span></div>`;
+        <div class="wd-sc"><span>${atrReal?'ต่ำสุด':'ประมาณ'}</span><b class="wd-pc">${Math.round(pct*100)}% ของช่วง</b><span>${atrReal?'สูงสุด (~100 แท่ง H1)':'ประมาณ'}</span></div>`;
       const tg=document.getElementById('atrTag');
-      if(tg){tg.textContent=(atrLevel==='HIGH'?'⚠ ':'')+atrLevel;tg.style.color=atrColor;}
+      if(tg){tg.textContent=(atrLevel==='HIGH'?'⚠ ':'')+atrLevel;tg.style.color='';}
     }
   }catch(e){}
   const advEl=document.getElementById('atrAdvice');
