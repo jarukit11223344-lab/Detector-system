@@ -1640,6 +1640,12 @@ body.glass3d:not(.light-mode) .sh-title .tic,body.glass3d:not(.light-mode) .lab-
 body.light-mode .ig-ring.gr b{color:var(--b)!important;text-shadow:none}
 body.light-mode .ig-ring.gr::before{opacity:.28}
 body.light-mode .ig-ring.gr .tr{box-shadow:inset 0 1px 3px rgba(0,0,0,.12)}
+
+/* v20.88 — zone cards สั้นลง: รวมระยะห่าง/ความกว้างขึ้นแถวบน ตัดแถวท้ายการ์ด */
+.zc{padding:7px 10px 7px}
+.zc-top{margin-bottom:6px;row-gap:3px}
+.zc-bar{margin-bottom:7px}
+.zc-age{font-size:8.5px;text-align:right}
 </style>
 <body>
 
@@ -3254,7 +3260,7 @@ body.light-mode .ig-ring.gr .tr{box-shadow:inset 0 1px 3px rgba(0,0,0,.12)}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.87 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.88 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -12239,32 +12245,40 @@ function renderCSHistoryChart(arr){
       ${tile('เฉลี่ย',avg)}${tile('สูงสุด',mx)}${tile('ต่ำสุด',mn)}
     </div>`;}
   if(csHistoryChart)csHistoryChart.destroy();
-  const grad=(c,alpha)=>{const a=c.chartArea;if(!a)return '#818cf8';const g=c.ctx.createLinearGradient(0,a.bottom,0,a.top);
-    [[0,'255,66,88'],[.4,'255,198,26'],[.65,'166,240,43'],[1,'47,232,107']].forEach(([o,rgb])=>g.addColorStop(o,alpha?`rgba(${rgb},${alpha})`:`rgb(${rgb})`));return g;};
+  // v20.88 — สไตล์กราฟเส้นนุ่ม: เส้นหลักไล่ฟ้า→น้ำเงิน + พื้นใต้เส้นไล่เขียวอมฟ้าจางลง + เส้นเฉลี่ยประสีม่วงชมพู + เส้นเกณฑ์ประจาง
+  const lt=document.body.classList.contains('light-mode');
+  const C1=lt?[14,165,183]:[45,226,208],C2=lt?[79,109,245]:[91,140,255],PK=lt?'#b43fe0':'#d86bff';
+  const rgb=(c,a)=>a==null?`rgb(${c})`:`rgba(${c},${a})`;
+  const lineGrad=(c)=>{const a=c.chartArea;if(!a)return rgb(C1);const g=c.ctx.createLinearGradient(a.left,0,a.right,0);g.addColorStop(0,rgb(C1));g.addColorStop(1,rgb(C2));return g;};
+  const fillGrad=(c)=>{const a=c.chartArea;if(!a)return 'rgba(45,226,208,.2)';const g=c.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,rgb(C1,lt?.30:.42));g.addColorStop(.6,rgb(C1,lt?.10:.14));g.addColorStop(1,rgb(C1,0));return g;};
+  const W=6,sma=sc.map((_,i)=>{const sl=sc.slice(Math.max(0,i-W+1),i+1);return sl.reduce((x,y)=>x+y,0)/sl.length;});
   const zones={id:'cshZones',beforeDatasetsDraw(c){const a=c.chartArea,y=c.scales.y,x=c.ctx;if(!a)return;x.save();
-    [[0,4,'255,66,88',.07],[4,thr,'255,198,26',.06],[thr,10,'47,232,107',.08]].forEach(([lo,hi,rgb,al])=>{if(hi<=lo)return;const y1=y.getPixelForValue(hi),y2=y.getPixelForValue(lo);x.fillStyle=`rgba(${rgb},${al})`;x.fillRect(a.left,y1,a.right-a.left,y2-y1);});
-    const ty=y.getPixelForValue(thr);x.setLineDash([4,4]);x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1;x.beginPath();x.moveTo(a.left,ty);x.lineTo(a.right,ty);x.stroke();
-    x.setLineDash([]);x.fillStyle='rgba(255,255,255,.55)';x.font='9px monospace';x.textAlign='right';x.fillText('เกณฑ์ '+thr.toFixed(1),a.right-2,ty-3);x.restore();}};
+    const ty=y.getPixelForValue(thr);x.setLineDash([4,4]);x.strokeStyle=lt?'rgba(30,40,80,.35)':'rgba(255,255,255,.32)';x.lineWidth=1;x.beginPath();x.moveTo(a.left,ty);x.lineTo(a.right,ty);x.stroke();
+    x.setLineDash([]);x.fillStyle=lt?'rgba(30,40,80,.6)':'rgba(255,255,255,.55)';x.font='9px monospace';x.textAlign='right';x.fillText('เกณฑ์ '+thr.toFixed(1),a.right-2,ty-3);x.restore();}};
   const dot={id:'cshDot',afterDatasetsDraw(c){const m=c.getDatasetMeta(0).data,p=m[m.length-1];if(!p)return;const x=c.ctx;x.save();
-    x.shadowColor=cur>=thr?'#2fe86b':cur>=4?'#ffc61a':'#ff4258';x.shadowBlur=12;x.fillStyle='#fff';x.beginPath();x.arc(p.x,p.y,4.5,0,6.283);x.fill();x.restore();}};
+    x.shadowColor=rgb(C2);x.shadowBlur=14;x.fillStyle=lt?'#fff':'#fff';x.strokeStyle=rgb(C2);x.lineWidth=2;x.beginPath();x.arc(p.x,p.y,4.5,0,6.283);x.fill();x.stroke();x.restore();}};
+  const gridC=lt?'rgba(30,40,80,.08)':'rgba(255,255,255,.07)';
   csHistoryChart=new Chart(ctx,{
     type:'line',
     plugins:[zones,dot],
     data:{
       labels:arr.map(p=>new Date(p.t).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})),
       datasets:[{
-        data:sc,
-        borderColor:(c)=>grad(c.chart,0),
-        backgroundColor:(c)=>grad(c.chart,.16),
-        borderWidth:2.2,fill:true,pointRadius:0,tension:0.3,
+        label:'คะแนน',data:sc,
+        borderColor:(c)=>lineGrad(c.chart),
+        backgroundColor:(c)=>fillGrad(c.chart),
+        borderWidth:2.6,fill:true,pointRadius:0,tension:0.42,order:1,
+      },{
+        label:'เฉลี่ยเคลื่อนที่',data:sma,
+        borderColor:PK,backgroundColor:'transparent',borderDash:[6,5],borderWidth:2,fill:false,pointRadius:0,tension:0.42,order:2,
       }]
     },
     options:{
       responsive:true,maintainAspectRatio:false,layout:{padding:{right:6,top:4}},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>`Confluence ${c.parsed.y.toFixed(1)}/10`}}},
+      plugins:{legend:{display:true,position:'top',align:'start',labels:{usePointStyle:true,pointStyle:'circle',boxWidth:6,boxHeight:6,color:lt?'#5b6280':'#8a8fa3',font:{size:9},padding:10}},tooltip:{callbacks:{label:(c)=>`${c.dataset.label} ${c.parsed.y.toFixed(1)}/10`}}},
       scales:{
-        x:{grid:{display:false},border:{display:false},ticks:{color:'#8a8fa3',font:{size:9},maxTicksLimit:5,maxRotation:0,autoSkipPadding:18}},
-        y:{min:0,max:10,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8a8fa3',font:{size:9},stepSize:2}},
+        x:{grid:{color:gridC,drawTicks:false},border:{display:false},ticks:{color:'#8a8fa3',font:{size:9},maxTicksLimit:5,maxRotation:0,autoSkipPadding:18,padding:6}},
+        y:{min:0,max:10,grid:{color:gridC},border:{display:false},ticks:{color:'#8a8fa3',font:{size:9},stepSize:2}},
       }
     }
   });
@@ -14002,17 +14016,16 @@ function zoneCardHtml(z,label,price,tf){
   const lo=Math.min(bot,p),hi=Math.max(top,p),pad=Math.max(0.5,(hi-lo)*0.12),a=lo-pad,b=hi+pad,sp=b-a||1;
   const pos=v=>Math.max(0,Math.min(100,(v-a)/sp*100)).toFixed(1);
   const dist=inside?0:(p>top?p-top:bot-p);
-  const dTxt=inside?'ราคาอยู่ในโซน':`ห่าง ${dist.toFixed(1)} จุด · ${p>top?'ราคาอยู่เหนือโซน':'ราคาอยู่ใต้โซน'}`;
+  const dTxt=inside?'ราคาอยู่ในโซน':`ห่าง ${dist.toFixed(1)} · ${p>top?'เหนือ':'ใต้'}โซน`;
   const gapPts=top-bot;
   return `<div class="zc ${isBull?'bull':'bear'}${near||inside?' near':''}${z.filled?' filled':''}${tf?' tf':''}${z.overlap?' ov':''}" style="--zc:${col}">
     <div class="zc-top">
       <span class="zc-type">${isBull?'▲':'▼'} ${tfp}${z.type} ${label}</span>${z.overlap?'<span class="zc-ov">⭐ ซ้อน H1</span>':''}
       ${near||inside?'<span class="zc-near">⚡ NEAR</span>':''}${z.filled?'<span class="zc-fill">✓ Filled</span>':''}
-      <span class="zc-age">${z.age} ${tfp}bars ago</span>
+      <span class="zc-age">${z.age} ${tfp}bars · ${dTxt} · กว้าง ${gapPts.toFixed(1)}</span>
     </div>
     <div class="zc-bar"><i class="zb" style="left:${pos(bot)}%;width:${(pos(top)-pos(bot)).toFixed(1)}%"></i><i class="zm" style="left:${pos(mid)}%"></i><i class="zp" style="left:${pos(p)}%"></i></div>
     <div class="zc-px"><span><small>Bot</small><b>${bot.toFixed(2)}</b></span><span><small>Mid</small><b style="color:var(--zc)">${mid.toFixed(2)}</b></span><span><small>Top</small><b>${top.toFixed(2)}</b></span></div>
-    <div class="zc-ft"><span>${dTxt}</span><span>กว้าง ${gapPts.toFixed(1)}</span></div>
   </div>`;
 }
 function detectOrderBlocks(price){
