@@ -3291,7 +3291,7 @@ body.light-mode #csNeedle+circle{fill:#4338ca}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.93 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.94 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -4665,7 +4665,7 @@ function saveQSThreshold(){
   const v=parseFloat(document.getElementById('qsThresholdInp').value);
   if(!(v>=0)||!(v<=10)){showToast('⚠️ ค่าต้องอยู่ระหว่าง 0-10');return;}
   QS_THRESHOLD=v;
-  try{localStorage.setItem('gtQSThreshold',String(v));}catch(e){}
+  try{localStorage.setItem('gtQSThreshold',String(v));}catch(e){} try{pushClientStateToCloud();}catch(e){}
   updateQSThresholdDisplays();
   showToast(`✅ ตั้งเกณฑ์ Quick Signal เป็น ${v.toFixed(1)}/10 แล้ว`);
   generateQuickSignal(false);
@@ -4673,7 +4673,7 @@ function saveQSThreshold(){
 function resetQSThreshold(){
   if(!confirm('รีเซ็ตเกณฑ์คะแนน Quick Signal กลับเป็นค่าเริ่มต้น? (จะทับค่าที่ตั้งไว้ เช่น 6.0)'))return; // v20.48 กันกดพลาด
   QS_THRESHOLD=QS_THRESHOLD_DEFAULT;
-  try{localStorage.removeItem('gtQSThreshold');}catch(e){}
+  try{localStorage.setItem('gtQSThreshold',String(QS_THRESHOLD_DEFAULT));}catch(e){} try{pushClientStateToCloud();}catch(e){} // v20.94 เก็บเป็นค่าที่ตั้งเอง (6.5) เพื่อ sync ทับค่าเก่าในคลาวด์
   const inp=document.getElementById('qsThresholdInp');
   if(inp)inp.value=QS_THRESHOLD_DEFAULT;
   updateQSThresholdDisplays();
@@ -6710,7 +6710,7 @@ function pushClientStateToCloud(){
   // ปรับในแอปเลย (sync แค่ Circuit Breaker settings) ทำให้ fallback engine ใช้เกณฑ์ของตัวเองแยกขาดจากแอปเสมอ
   // v20.7 — เพิ่ม m15EntryLock/m15ConfirmLock เข้า sync (ดู comment ที่ saveM15Lock/clearM15Lock ด้านบน — ตัวเดียว
   // ในกลุ่ม lock ทั้งหมดที่เคยหลุดไม่ sync ทำให้ web vs Add-to-Home-Screen ล็อกคนละไม้กัน)
-  const payload={signalHistory:loadSignalHistory(),activeQS:loadActiveQS(),deletedIds:loadDeletedIds(),cbMaxLossR:CB_MAX_DAILY_LOSS_R,cbMaxStreak:CB_MAX_CONSECUTIVE_LOSSES,cbOverride:loadCBOverride(),cbMaxWeeklyLossR:CB_MAX_WEEKLY_LOSS_R,cbWeekOverride:loadCBWeekOverride(),qsThreshold:QS_THRESHOLD,m15Threshold:M15_THRESHOLD,m15AdxMin:M15_ADX_MIN,watchlistMin:WATCHLIST_MIN_SCORE,watchlistMax:WATCHLIST_MAX_SCORE,spreadPoints:loadSpreadPref(),confirmCandleEnabled:!!window._confirmCandleEnabled,confirmM15CandleEnabled:!!window._confirmM15CandleEnabled,lastM15SweepTime:(function(){try{return parseInt(localStorage.getItem('gtM15LastSweepTime'))||null;}catch(e){return null;}})(),m15EntryLock:loadM15Lock(M15_ENTRY_LOCK_KEY),m15ConfirmLock:loadM15Lock(M15_CONFIRM_LOCK_KEY),lastModified:lm};
+  const payload={signalHistory:loadSignalHistory(),activeQS:loadActiveQS(),deletedIds:loadDeletedIds(),cbMaxLossR:CB_MAX_DAILY_LOSS_R,cbMaxStreak:CB_MAX_CONSECUTIVE_LOSSES,cbOverride:loadCBOverride(),cbMaxWeeklyLossR:CB_MAX_WEEKLY_LOSS_R,cbWeekOverride:loadCBWeekOverride(),qsThreshold:_thrForSync('gtQSThreshold',QS_THRESHOLD),m15Threshold:_thrForSync('gtM15Threshold',M15_THRESHOLD),m15AdxMin:_thrForSync('gtM15AdxMin',M15_ADX_MIN),watchlistMin:WATCHLIST_MIN_SCORE,watchlistMax:WATCHLIST_MAX_SCORE,spreadPoints:loadSpreadPref(),confirmCandleEnabled:!!window._confirmCandleEnabled,confirmM15CandleEnabled:!!window._confirmM15CandleEnabled,lastM15SweepTime:(function(){try{return parseInt(localStorage.getItem('gtM15LastSweepTime'))||null;}catch(e){return null;}})(),m15EntryLock:loadM15Lock(M15_ENTRY_LOCK_KEY),m15ConfirmLock:loadM15Lock(M15_CONFIRM_LOCK_KEY),lastModified:lm};
   const _csw=_csWeightsForSync();if(_csw!==undefined)payload.csWeights=_csw;
   // v20.12 — baseVersion = version ล่าสุดของ cloud state ที่เครื่องนี้เห็น (จาก pull/POST ครั้งก่อน) ถ้า worker เจอว่าล้าหลัง
   // จะ merge แทนทับ (กันอุปกรณ์เก่า/cron ถูกเขียนทับ) — ไม่มีค่า (ครั้งแรกหลังอัปเดต) = พฤติกรรมเดิม 1 รอบ
@@ -6738,11 +6738,38 @@ function pushClientStateToCloud(){
       if(_cloudSyncPending){_cloudSyncPending=false;pushClientStateToCloud();}
     });
 }
+// ═══ v20.94 — กันเกณฑ์ (QS/M15/ADX) เด้งกลับเป็น default หลังอัปเดต/deploy ═══
+// สาเหตุ: เกณฑ์เก็บแค่ใน localStorage ของเบราว์เซอร์นั้นๆ (Safari กับ Home Screen app แยกกัน · iOS ล้างเองถ้าไม่เปิดนาน)
+// พอ key หาย แอปกลับเป็น 6.5 แล้ว "ส่ง 6.5 ทับของเดิมในคลาวด์" ทุกครั้งที่ sync → ค่าที่ตั้งไว้หายถาวรทั้งแอปและ Telegram
+// แก้: (1) ส่งขึ้นคลาวด์เฉพาะเกณฑ์ที่ผู้ใช้ตั้งเองในเครื่อง (ไม่มี key = ไม่ส่ง คลาวด์คงค่าเดิม)
+//      (2) ถ้าเครื่องนี้ไม่มี key แต่คลาวด์มีค่า → กู้ค่ากลับมาใช้ในเครื่อง
+function _thrForSync(key,val){
+  try{if(localStorage.getItem(key)===null)return undefined;}catch(e){return undefined;}
+  return val;
+}
+function _restoreThresholdsFromCloud(remote){
+  let restored=false;
+  try{
+    const rs=(key,v,max)=>{
+      if(typeof v==='number'&&v>=0&&v<=max&&localStorage.getItem(key)===null){localStorage.setItem(key,String(v));restored=true;}
+    };
+    rs('gtQSThreshold',remote.qsThreshold,10);
+    rs('gtM15Threshold',remote.m15Threshold,10);
+    rs('gtM15AdxMin',remote.m15AdxMin,50);
+    if(restored){
+      loadQSThreshold();loadM15Threshold();loadM15AdxMin();
+      console.info('♻️ กู้เกณฑ์ที่ตั้งไว้จากคลาวด์แล้ว (ในเครื่องไม่มีค่าเก็บไว้)');
+      try{generateQuickSignal(false);}catch(e){}
+    }
+  }catch(e){}
+  return restored;
+}
 async function pullClientStateFromCloud(){
   try{
     const r=await fetch(CLIENT_STATE_API,{headers:{'X-Auth-Key':WORKER_AUTH_KEY},signal:AbortSignal.timeout(10000)});
     if(!r.ok)return false;
     const remote=await r.json();
+    _restoreThresholdsFromCloud(remote);
     // ═══ รวม tombstone จากทั้ง 2 ฝั่งเสมอ ไม่ว่า lastModified ใครจะใหม่กว่า — กันเคสอุปกรณ์นี้เพิ่งรู้ว่ามี id
     // ถูกลบไปจากอุปกรณ์อื่น (remote.deletedIds) แต่ signalHistory ก้อนที่จะ push รอบถัดไปของตัวเองยังไม่ทันกรองออก
     const mergedDeletedIds=[...new Set([...loadDeletedIds(),...(remote.deletedIds||[])])];
@@ -10085,7 +10112,7 @@ function renderThresholdSweepResult(rows){
 }
 function applyThresholdFromSweep(threshold){
   QS_THRESHOLD=threshold;
-  try{localStorage.setItem('gtQSThreshold',String(threshold));}catch(e){}
+  try{localStorage.setItem('gtQSThreshold',String(threshold));}catch(e){} try{pushClientStateToCloud();}catch(e){}
   const inp=document.getElementById('qsThresholdInp');
   if(inp)inp.value=threshold;
   updateQSThresholdDisplays();
