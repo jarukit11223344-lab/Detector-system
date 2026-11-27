@@ -1629,6 +1629,17 @@ body.glass3d:not(.light-mode) .sh-title .tic,body.glass3d:not(.light-mode) .lab-
 .ss-c b{display:block;font-size:10.5px;font-weight:700;color:var(--t3);margin-top:3px}
 .ss-c.on b{color:var(--t1)}
 .ss-c em{display:block;font-style:normal;font-size:8.5px;margin-top:1px}
+
+/* v20.87 — Indicator Summary: glowing gradient ring (cyan→lime, flat ends, glow) */
+.ig-ring.gr{width:66px;height:66px;margin-bottom:7px;z-index:0;isolation:isolate}
+.ig-ring.gr::before{content:"";position:absolute;inset:-6px;z-index:-1;border-radius:50%;background:radial-gradient(circle at 72% 72%,color-mix(in srgb,var(--b) 55%,transparent),transparent 62%);filter:blur(9px);opacity:.5}
+.ig-ring.gr .tr,.ig-ring.gr .ar{position:absolute;inset:0;border-radius:50%;display:block}
+.ig-ring.gr .tr{background:radial-gradient(circle closest-side,transparent 21.5px,color-mix(in srgb,var(--t1) 10%,transparent) 22px);box-shadow:inset 0 2px 6px rgba(0,0,0,.4),inset 0 -1px 2px rgba(255,255,255,.05)}
+.ig-ring.gr .ar{background:conic-gradient(from 0deg,var(--a) 0deg,var(--b) var(--d),transparent var(--d));-webkit-mask-image:radial-gradient(circle closest-side,transparent 21.5px,#000 22px);mask-image:radial-gradient(circle closest-side,transparent 21.5px,#000 22px);filter:drop-shadow(0 0 6px color-mix(in srgb,var(--b) 70%,transparent))}
+.ig-ring.gr b{color:var(--a)!important;text-shadow:0 0 9px color-mix(in srgb,var(--a) 65%,transparent);letter-spacing:.4px}
+body.light-mode .ig-ring.gr b{color:var(--b)!important;text-shadow:none}
+body.light-mode .ig-ring.gr::before{opacity:.28}
+body.light-mode .ig-ring.gr .tr{box-shadow:inset 0 1px 3px rgba(0,0,0,.12)}
 </style>
 <body>
 
@@ -3243,7 +3254,7 @@ body.glass3d:not(.light-mode) .sh-title .tic,body.glass3d:not(.light-mode) .lab-
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.86 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.87 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -8015,9 +8026,12 @@ function updateIndicators(price,chg){
     if(i.n==='BB'){pct=bbDetail&&bbDetail.upper>bbDetail.lower?Math.max(4,Math.min(100,((price-bbDetail.lower)/(bbDetail.upper-bbDetail.lower))*100)):({Upper:90,Mid:50,Lower:10}[i.v]||50);}
     const vTxt=i.v==='Upper'?'UP':i.v==='Lower'?'LOW':i.v==='Mid'?'MID':i.v;
     const vSz=String(vTxt).length>=3?'12px':'15px';
-    const R=21,C=2*Math.PI*R;
+    const GR={green:['#2ee6ff','#8cff3d'],amber:['#ffe566','#ffb000'],orange:['#ffc247','#ff6a1a'],red:['#ff93a6','#ff2e5a']};
+    const gk=/green/.test(i.c)?'green':/amber/.test(i.c)?'amber':/orange/.test(i.c)?'orange':/red/.test(i.c)?'red':null;
+    const gc=gk?GR[gk]:['#c3cde6','#7586ad'];
+    const deg=Math.round(pct/100*360);
     return `<div class="ind-cell ig-cell">
-      <div class="ig-ring"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".13" stroke-width="5.5"/><circle cx="27" cy="27" r="${R}" fill="none" stroke="${i.c}" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="${(pct/100*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 27 27)"/></svg><b style="color:${i.c};font-size:${vSz}">${vTxt}</b></div>
+      <div class="ig-ring gr" style="--a:${gc[0]};--b:${gc[1]};--d:${deg}deg"><span class="tr"></span><span class="ar"></span><b style="font-size:${vSz}">${vTxt}</b></div>
       <div class="ig-n">${i.n}</div>
       <div class="ig-s" style="color:${i.c}">${i.s}</div>
     </div>`;
