@@ -1677,6 +1677,25 @@ body.light-mode #csAction,body.light-mode #csVerdict,body.light-mode #csSegLbl{c
 body.light-mode #csScoreText{fill:#3b2fa0}
 body.light-mode #csNeedle{stroke:#4338ca}
 body.light-mode #csNeedle+circle{fill:#4338ca}
+
+/* v20.95 — Confluence Score widgets: พาเลตต์ม่วงเข้ม + ไฮไลต์ลาเวนเดอร์เรืองแสง (สไตล์ไอคอนรูปที่ 2) */
+body{--g1:#3b1a8f;--g2:#8b5cf6;--g3:#e0c8ff;--cfp:#c9acff;--cfw:#8b5cf6;--cff:#5a34c0;--cftp:#dcc9ff;--cftw:#b196ff;--cftf:#8d72e4}
+body.light-mode{--g1:#4c1d95;--g2:#7c3aed;--g3:#a78bfa;--cfp:#5b21b6;--cfw:#8b5cf6;--cff:#c4b5fd;--cftp:#5b21b6;--cftw:#7c3aed;--cftf:#9a86d8}
+#csAction{color:#dcc9ff!important}
+#csVerdict{color:#dcc9ff!important;background:rgba(139,92,246,.2)!important;border-color:rgba(200,170,255,.5)!important;box-shadow:0 0 12px rgba(139,92,246,.35)}
+#csSegLbl{color:#dcc9ff!important}
+#csGlow{background:#7c3aed!important}
+#csSegNum{background:linear-gradient(90deg,#e6d3ff,#a98bff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 8px rgba(167,139,250,.45))}
+body.light-mode #csAction,body.light-mode #csVerdict,body.light-mode #csSegLbl{color:#5b21b6!important}
+body.light-mode #csVerdict{box-shadow:none;background:rgba(124,58,237,.12)!important;border-color:rgba(124,58,237,.35)!important}
+body.light-mode #csSegNum{background:linear-gradient(90deg,#5b21b6,#8b5cf6);-webkit-background-clip:text;background-clip:text;filter:none}
+#csGauge,svg:has(#csNeedle) path[stroke="url(#csGrad)"]{filter:drop-shadow(0 0 7px rgba(139,92,246,.55))}
+.seg-meter i.on,.cf-seg i.on{background-image:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.seg-meter i.on{background-color:var(--sc)}
+.cf-seg i.on{background-color:var(--fc)}
+body:not(.light-mode) .seg-meter i.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 10px -1px color-mix(in srgb,var(--sc) 75%,transparent)}
+body:not(.light-mode) .cf-seg i.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 8px color-mix(in srgb,var(--fc) 55%,transparent)}
+.cf-stack i{background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 60%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
 </style>
 <body>
 
@@ -2945,18 +2964,18 @@ body.light-mode #csNeedle+circle{fill:#4338ca}
       <svg width="110" height="66" viewBox="0 0 110 66" style="overflow:visible;">
         <defs>
           <linearGradient id="csGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#5b21b6"/>
-            <stop offset="50%" stop-color="#5b4bdb"/>
-            <stop offset="100%" stop-color="#3b82f6"/>
+            <stop offset="0%" style="stop-color:var(--g1)"/>
+            <stop offset="55%" style="stop-color:var(--g2)"/>
+            <stop offset="100%" style="stop-color:var(--g3)"/>
           </linearGradient>
         </defs>
         <path d="M 10 60 A 45 45 0 0 1 100 60" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="10" stroke-linecap="round"/>
         <path d="M 10 60 A 45 45 0 0 1 100 60" fill="none" stroke="url(#csGrad)" stroke-width="10" stroke-linecap="round" opacity=".8"/>
         <line id="csNeedle" x1="55" y1="60" x2="55" y2="22" stroke="white" stroke-width="2.5" stroke-linecap="round" style="transform-origin:55px 60px;transition:transform .9s cubic-bezier(.34,1.56,.64,1);"/>
         <circle cx="55" cy="60" r="4.5" fill="white" opacity=".95"/>
-        <text x="4" y="72" font-size="8" fill="#7c5cf0" font-family="JetBrains Mono">0</text>
-        <text x="48" y="16" font-size="8" fill="#8b7cf6" font-family="JetBrains Mono">5</text>
-        <text x="98" y="72" font-size="8" fill="#5b8def" font-family="JetBrains Mono" text-anchor="end">10</text>
+        <text x="4" y="72" font-size="8" fill="#9a78f5" font-family="JetBrains Mono">0</text>
+        <text x="48" y="16" font-size="8" fill="#b79cff" font-family="JetBrains Mono">5</text>
+        <text x="98" y="72" font-size="8" fill="#d4bcff" font-family="JetBrains Mono" text-anchor="end">10</text>
         <text id="csScoreText" x="55" y="56" font-size="18" font-weight="900" text-anchor="middle" font-family="Inter" fill="white">—</text>
       </svg>
     </div>
@@ -3291,7 +3310,7 @@ body.light-mode #csNeedle+circle{fill:#4338ca}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.94 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.95 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -6028,7 +6047,7 @@ function renderTRHud(cur){
   const seg=document.getElementById('csSeg');
   if(seg){
     seg.innerHTML=Array.from({length:20},()=>'<i></i>').join('');
-    const segCol=i=>{const t=i/19,A=[104,52,214],B=[56,98,230];return 'rgb('+A.map((a,k)=>Math.round(a+(B[k]-a)*t)).join(',')+')';}; // v20.92 ม่วง→น้ำเงิน
+    const segCol=i=>{const t=i/19,lt=document.body.classList.contains('light-mode'),A=lt?[76,29,149]:[88,38,205],B=lt?[139,92,246]:[200,166,255];return 'rgb('+A.map((a,k)=>Math.round(a+(B[k]-a)*t)).join(',')+')';}; // v20.92 ม่วง→น้ำเงิน
     watch(document.getElementById('csScoreText'),()=>{
       const t=document.getElementById('csScoreText').textContent,v=parseFloat(t);
       const num=document.getElementById('csSegNum'),lb=document.getElementById('csSegLbl');
@@ -12483,17 +12502,17 @@ function updateConfluenceScore(price,chg){
       const sc=Math.max(0,Math.min(2,f.score||0));
       if(sc>=1.5)nP++;else if(sc>=0.5)nW++;else nF++;
       const on=Math.round(sc/2*5);
-      const tone=sc>=1.5?'#5b8def':sc>=0.5?'#8b6cf0':'#6a5bd0'; // v20.93 ม่วง-น้ำเงินโทนเข้ม: ผ่าน=ฟ้า, ระวัง=ม่วง, ไม่ผ่าน=ม่วงเข้ม
-      const cells=Array.from({length:5},(_,k)=>`<i class="${k<on?'on':''}" style="--fc:${tone}"></i>`).join('');
+      const tk=sc>=1.5?'p':sc>=0.5?'w':'f'; // v20.93 ม่วง-น้ำเงินโทนเข้ม: ผ่าน=ฟ้า, ระวัง=ม่วง, ไม่ผ่าน=ม่วงเข้ม
+      const cells=Array.from({length:5},(_,k)=>`<i class="${k<on?'on':''}" style="--fc:var(--cf${tk})"></i>`).join('');
       return `<div class="cf-row">
         <span class="cf-name">${CS_WEIGHT_LABELS[f.id]||f.id}</span>
         <div class="cf-seg">${cells}</div>
-        <span class="cf-lbl" style="color:${tone};">${f.lbl}</span>
+        <span class="cf-lbl" style="color:var(--cft${tk});">${f.lbl}</span>
       </div>`;
     }).join('');
     const nT=Math.max(1,nP+nW+nF);
-    const sumHtml=`<div class="cf-sum"><div class="cf-stack"><i style="width:${nP/nT*100}%;background:#5b8def"></i><i style="width:${nW/nT*100}%;background:#8b6cf0"></i><i style="width:${nF/nT*100}%;background:#6a5bd0"></i></div>
-      <div class="cf-leg"><span><u style="background:#5b8def"></u>ผ่าน <b>${nP}</b></span><span><u style="background:#8b6cf0"></u>ระวัง <b>${nW}</b></span><span><u style="background:#6a5bd0"></u>ไม่ผ่าน <b>${nF}</b></span><em>จาก ${nT} ปัจจัย</em></div></div>`;
+    const sumHtml=`<div class="cf-sum"><div class="cf-stack"><i style="width:${nP/nT*100}%;background:var(--cfp)"></i><i style="width:${nW/nT*100}%;background:var(--cfw)"></i><i style="width:${nF/nT*100}%;background:var(--cff)"></i></div>
+      <div class="cf-leg"><span><u style="background:var(--cfp)"></u>ผ่าน <b>${nP}</b></span><span><u style="background:var(--cfw)"></u>ระวัง <b>${nW}</b></span><span><u style="background:var(--cff)"></u>ไม่ผ่าน <b>${nF}</b></span><em>จาก ${nT} ปัจจัย</em></div></div>`;
     factEl.innerHTML=sumHtml+rowsHtml;
   }
 
