@@ -1778,6 +1778,14 @@ body.light-mode .ag-verdict.bad{--vt:#b3194f}
 .ag-bar{margin-top:7px}
 html body .ag-htf{padding:2px 2px;margin-bottom:4px;background:none!important;border:0!important;box-shadow:none!important;border-radius:0}
 html body .ag-verdict{padding:0 2px;background:none!important;border:0!important;box-shadow:none!important;border-radius:0;color:var(--vt);line-height:1.5}
+
+/* v21.02 — Win Rate แยก Session: ตาราง 2x2 เล็กลง */
+#shSessionStats,#m15shSessionStats,#m15ccSessionStats{display:grid!important;grid-template-columns:1fr 1fr;gap:5px!important;margin-bottom:4px!important}
+#shSessionStats>div,#m15shSessionStats>div,#m15ccSessionStats>div{padding:4px 8px!important;border-radius:8px!important;flex-wrap:wrap;gap:0 4px}
+#shSessionStats>div>span:first-child,#m15shSessionStats>div>span:first-child,#m15ccSessionStats>div>span:first-child{font-size:9.5px!important}
+#shSessionStats>div>div,#m15shSessionStats>div>div,#m15ccSessionStats>div>div{gap:5px!important}
+#shSessionStats>div>div span,#m15shSessionStats>div>div span,#m15ccSessionStats>div>div span{font-size:9px!important;min-width:0!important}
+#shSessionStats>div>div span:last-child,#m15shSessionStats>div>div span:last-child,#m15ccSessionStats>div>div span:last-child{font-size:10.5px!important}
 </style>
 <body>
 
@@ -3394,7 +3402,7 @@ html body .ag-verdict{padding:0 2px;background:none!important;border:0!important
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.01 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.02 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -7242,7 +7250,7 @@ function histRow(o){
   const rTxt=o.r!=null?`<b class="hr-r" style="color:${o.r>=0?'var(--green)':'var(--red)'}">${o.r>=0?'+':''}${o.r.toFixed(2)}R</b>`:'';
   return `<div class="hr-row" data-k="${o.kind}" style="--hk:${col}">
     <div class="hr-l">
-      <div class="hr-t"><b style="color:${o.dir==='BUY'?'var(--green)':'var(--red)'}">${o.dir}</b>${o.entry!=null?`<span class="hr-px">@ ${o.entry.toFixed(2)}</span>`:''}${o.tag||''}</div>
+      <div class="hr-t"><b style="color:${o.dir==='BUY'?'var(--green)':'var(--red)'}">${o.dir}</b>${o.entry!=null?`<span class="hr-px">${o.entry.toFixed(2)}</span>`:''}${o.tag||''}</div>
       <div class="hr-m">${o.meta}</div>
     </div>
     <div class="hr-rt">
