@@ -1742,6 +1742,35 @@ body.light-mode .tp-row.poc .tp-px,body.light-mode #pocVal{color:#8b3fd0!importa
 body.light-mode .tp-fill.p{background:linear-gradient(90deg,#7c4dff,#d870f0);box-shadow:none}
 body.light-mode .tp-rb-top b{color:#8b3fd0!important}
 body.light-mode .tp-poc-l{color:#8b3fd0!important}
+
+/* v21.00 — H1×M15 Agreement: สองโทนม่วง-น้ำเงิน/ม่วง-ชมพู + แท่งคะแนน */
+.ag-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.ag-tile{--c1:#4f6cf0;--c2:#a45cf6;padding:11px 12px;border-radius:14px;background:linear-gradient(160deg,color-mix(in srgb,var(--c1) 14%,transparent),color-mix(in srgb,var(--c2) 6%,transparent));border:1px solid color-mix(in srgb,var(--c2) 38%,transparent);box-shadow:0 0 14px color-mix(in srgb,var(--c2) 16%,transparent),inset 0 1px 0 rgba(255,255,255,.06)}
+.ag-tile.ag-s{--c1:#c13bd8;--c2:#ff3d7a}
+.ag-l{font-size:9.5px;color:var(--t3);margin-bottom:3px}
+.ag-d{font-weight:800;font-size:18px;line-height:1.1;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--c2) 55%,transparent))}
+.ag-d span{font-size:11px;font-weight:600;-webkit-text-fill-color:var(--t2);color:var(--t2);margin-left:3px}
+.ag-bar{height:5px;border-radius:5px;background:rgba(255,255,255,.07);margin-top:9px;overflow:hidden}
+.ag-bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--c1),var(--c2));box-shadow:0 0 8px color-mix(in srgb,var(--c2) 70%,transparent)}
+.ag-htf{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;font-size:10px;margin-bottom:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:var(--t2)}
+.ag-htf b{font-size:10.5px;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.ag-htf.ul b{color:#ffd37a;background:rgba(255,190,70,.12);border:1px solid rgba(255,190,70,.35)}
+.ag-htf.lk b{color:#d6b8ff;background:rgba(150,100,255,.16);border:1px solid rgba(170,120,255,.45);box-shadow:0 0 10px rgba(150,100,255,.3)}
+.ag-verdict{padding:10px 12px;border-radius:12px;font-size:11px;font-weight:700;line-height:1.55;border:1px solid var(--vc);color:var(--vt);background:linear-gradient(135deg,color-mix(in srgb,var(--vc) 22%,transparent),color-mix(in srgb,var(--vc) 6%,transparent));box-shadow:0 0 14px color-mix(in srgb,var(--vc) 18%,transparent)}
+.ag-verdict.ok{--vc:#7c8cff;--vt:#d6dcff}
+.ag-verdict.mid{--vc:#e0a63a;--vt:#ffd98a}
+.ag-verdict.warn{--vc:#e8742f;--vt:#ffb98a}
+.ag-verdict.bad{--vc:#ff3d7a;--vt:#ff9fbd}
+body.light-mode .ag-tile{background:linear-gradient(160deg,color-mix(in srgb,var(--c1) 10%,#fff),#fff)}
+body.light-mode .ag-d span{-webkit-text-fill-color:#55586b;color:#55586b}
+body.light-mode .ag-bar{background:rgba(0,0,0,.08)}
+body.light-mode .ag-htf{background:#f7f6fb;border-color:rgba(0,0,0,.08);color:#55586b}
+body.light-mode .ag-htf.ul b{color:#9a5b00}
+body.light-mode .ag-htf.lk b{color:#6b2fc4}
+body.light-mode .ag-verdict.ok{--vt:#3b45b8}
+body.light-mode .ag-verdict.mid{--vt:#8a5a00}
+body.light-mode .ag-verdict.warn{--vt:#a8480f}
+body.light-mode .ag-verdict.bad{--vt:#b3194f}
 </style>
 <body>
 
@@ -3358,7 +3387,7 @@ body.light-mode .tp-poc-l{color:#8b3fd0!important}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.99 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.00 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -6247,19 +6276,12 @@ function updateAgreementSummary(){
   else if(htfAgreesH1){verdict='✅ ทุกอย่างตรงกัน — H1/M15/HTF Lock ไปทางเดียวกันหมด';verdictColor='var(--green)';}
   else{verdict='⚠️ H1/M15 ตรงกัน แต่สวนทาง HTF Lock — ระวังเทรนด์ใหญ่ยังไม่เปลี่ยน';verdictColor='var(--orange)';}
 
+  const tile=(lbl,dir,sc)=>`<div class="ag-tile ${dir==='BUY'?'ag-b':'ag-s'}"><div class="ag-l">${lbl}</div><div class="ag-d">${dir} <span>${sc.toFixed(1)}/10</span></div><div class="ag-bar"><i style="width:${Math.max(4,Math.min(100,sc*10)).toFixed(0)}%"></i></div></div>`;
+  const vk=!agree?'bad':!htfLocked?'mid':htfAgreesH1?'ok':'warn';
   el.innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-      <div style="padding:8px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
-        <div style="font-size:9px;color:var(--t3);margin-bottom:2px;">H1 (Quick Signal)</div>
-        <div style="font-weight:800;font-size:15px;color:${h1Dir==='BUY'?'var(--green)':'var(--red)'};">${h1Dir} <span style="font-size:10px;color:var(--t2);font-weight:600;">${h1Score.toFixed(1)}/10</span></div>
-      </div>
-      <div style="padding:8px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);">
-        <div style="font-size:9px;color:var(--t3);margin-bottom:2px;">M15 (Entry Signal)</div>
-        <div style="font-weight:800;font-size:15px;color:${m15Dir==='BUY'?'var(--green)':'var(--red)'};">${m15Dir} <span style="font-size:10px;color:var(--t2);font-weight:600;">${m15Score.toFixed(1)}/10</span></div>
-      </div>
-    </div>
-    <div style="font-size:10px;color:${htfCol};margin-bottom:8px;">HTF Lock (D1×3+H4×2+H1×1): <strong>${htfTxt}</strong></div>
-    <div style="padding:8px 10px;border-radius:8px;background:${verdictColor}15;border:1px solid ${verdictColor}44;font-size:11px;color:${verdictColor};font-weight:700;">${verdict}</div>
+    <div class="ag-grid">${tile('H1 (Quick Signal)',h1Dir,h1Score)}${tile('M15 (Entry Signal)',m15Dir,m15Score)}</div>
+    <div class="ag-htf ${htfLocked?'lk':'ul'}"><span>HTF Lock (D1×3+H4×2+H1×1)</span><b>${htfTxt}</b></div>
+    <div class="ag-verdict ${vk}">${verdict}</div>
   `;
 }
 const M15_ENTRY_LOCK_KEY='gtM15EntryLock';
