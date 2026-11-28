@@ -1826,6 +1826,28 @@ body.light-mode .dp-tl i.now{outline-color:#3b1d7a}
 body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5);background:#6b2fc4}
 
 .gt-hide{display:none!important}
+
+/* v21.07 — ประวัติสัญญาณ: สีผสม 2 โทน (ชนะ=น้ำเงิน→ม่วง · แพ้=ม่วงแดง→ชมพู · รอ=ส้ม→ทอง) */
+.hr-row{--h1:#4f6cf0;--h2:#a45cf6}
+.hr-row[data-k="loss"]{--h1:#c13bd8;--h2:#ff3d7a}
+.hr-row[data-k="pend"]{--h1:#ff8a3d;--h2:#ffd04a}
+.hr-row[data-k="exp"]{--h1:#6b6f8f;--h2:#9a9eb8}
+html body .hr-row{background:linear-gradient(120deg,color-mix(in srgb,var(--h1) 13%,transparent),color-mix(in srgb,var(--h2) 5%,transparent) 70%),color-mix(in srgb,var(--t1) 3%,var(--card));border-color:color-mix(in srgb,var(--h2) 30%,transparent)}
+html body .hr-row::before{background:linear-gradient(180deg,var(--h1),var(--h2));box-shadow:0 0 10px color-mix(in srgb,var(--h2) 70%,transparent)}
+.hd,.hg-b,.hg-s{background:linear-gradient(90deg,#4f6cf0,#a45cf6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.hd-s,.hg-s{background:linear-gradient(90deg,#c13bd8,#ff3d7a);-webkit-background-clip:text;background-clip:text}
+.hd{filter:drop-shadow(0 0 5px rgba(160,110,255,.45))}.hd-s{filter:drop-shadow(0 0 5px rgba(255,61,122,.4))}
+html body .hr-pill{color:#fff;background:linear-gradient(90deg,color-mix(in srgb,var(--h1) 55%,transparent),color-mix(in srgb,var(--h2) 45%,transparent));border:1px solid color-mix(in srgb,var(--h2) 60%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--h2) 35%,transparent)}
+.hr-row[data-k="pend"] .hr-pill{color:#ffe7b0}
+html body .hr-j{color:#d6b8ff;background:linear-gradient(90deg,rgba(79,108,240,.22),rgba(164,92,246,.18));border-color:rgba(164,92,246,.5)}
+html body .hr-j.ok{color:#bfc8ff;background:linear-gradient(90deg,rgba(79,108,240,.16),rgba(164,92,246,.1));border-color:rgba(124,140,255,.4)}
+html body .hr-tag{color:#d6b8ff;background:rgba(150,100,255,.16);border-color:rgba(164,92,246,.45)}
+body.light-mode .hr-pill{color:var(--t1)}
+body.light-mode .hr-row[data-k="win"] .hr-pill{color:#3b45b8}
+body.light-mode .hr-row[data-k="loss"] .hr-pill{color:#b3194f}
+body.light-mode .hr-row[data-k="pend"] .hr-pill{color:#8a5a00}
+body.light-mode .hr-j,body.light-mode .hr-tag{color:#6b2fc4}
+body.light-mode .hr-j.ok{color:#3b45b8}
 </style>
 <body>
 
@@ -3450,7 +3472,7 @@ body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5)
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.06 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.07 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -7354,10 +7376,10 @@ function histKind(status,r){
 }
 function histRow(o){
   const col=o.kind==='win'?'var(--green)':o.kind==='loss'?'var(--red)':o.kind==='exp'?'var(--t3)':'var(--amber)';
-  const rTxt=o.r!=null?`<b class="hr-r" style="color:${o.r>=0?'var(--green)':'var(--red)'}">${o.r>=0?'+':''}${o.r.toFixed(2)}R</b>`:'';
+  const rTxt=o.r!=null?`<b class="hr-r ${o.r>=0?'hg-b':'hg-s'}">${o.r>=0?'+':''}${o.r.toFixed(2)}R</b>`:'';
   return `<div class="hr-row" data-k="${o.kind}" style="--hk:${col}">
     <div class="hr-l">
-      <div class="hr-t"><b style="color:${o.dir==='BUY'?'var(--green)':'var(--red)'}">${o.dir}</b>${o.entry!=null?`<span class="hr-px">${o.entry.toFixed(2)}</span>`:''}${o.tag||''}</div>
+      <div class="hr-t"><b class="hd ${o.dir==='BUY'?'hd-b':'hd-s'}">${o.dir}</b>${o.entry!=null?`<span class="hr-px">${o.entry.toFixed(2)}</span>`:''}${o.tag||''}</div>
       <div class="hr-m">${o.meta}</div>
     </div>
     <div class="hr-rt">
