@@ -3450,7 +3450,7 @@ body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5)
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.05 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.06 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -6348,7 +6348,7 @@ function updateDailyPlan(){
     const sessW=`<div class="dp-w"><div class="dp-tl">${cells}</div><div class="dp-rl"><span>00</span><span>06</span><span>12</span><span>18</span><span>24 UTC</span></div></div>`;
     const newsW=(newsMins!=null&&newsMins<=1440)?`<div class="dp-w"><div class="dp-cd"><i style="width:${Math.max(3,Math.min(100,(1-newsMins/1440)*100)).toFixed(0)}%"></i></div><div class="dp-rl"><span>ตอนนี้</span><span>24 ชม.</span></div></div>`:'';
     const row=(k,v,c,w)=>`<div class="dp-r"><div class="dp-rt"><span class="dp-k">${k}</span><span class="dp-v ${c||''}">${v}</span></div>${w||''}</div>`;
-    el.innerHTML=row('ทิศ HTF',htfTxt,htfCls,htfW)+row('Session',sessTxt,'',sessW)+row('ข่าวถัดไป',newsTxt,newsCls,newsW)+row('แนวใกล้สุด',lvTxt,'',lvW)+`<div class="dp-sum ${sumCls}">${sum}</div>`;
+    el.innerHTML=row('ทิศ HTF',htfTxt,htfCls,htfW)+row('Session',sessTxt,'',sessW)+row('ข่าวถัดไป',newsTxt,newsCls,newsW)+row('แนวใกล้สุด',lvTxt,'',lvW);
   }catch(e){el.innerHTML='<div class="dp-wait">ข้อมูลยังไม่พอ</div>';}
 }
 // ═══ H1 × M15 Agreement Summary — การ์ดใหม่ ไม่คำนวณคะแนนเองเลย แค่เรียก evalConfluence()/_qsScoreOf() ที่มีอยู่
