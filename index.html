@@ -1847,6 +1847,13 @@ body.light-mode .hr-row[data-k="loss"] .hr-pill{color:#b3194f}
 body.light-mode .hr-row[data-k="pend"] .hr-pill{color:#8a5a00}
 body.light-mode .hr-j,body.light-mode .hr-tag{color:#6b2fc4}
 body.light-mode .hr-j.ok{color:#3b45b8}
+
+/* v21.09 — ป้ายสถานะ/ปุ่ม Journal: ไม่มีสีพื้น (โปร่งเห็นพื้นการ์ด) เหลือแค่ขอบ+ตัวอักษร */
+html body .hr-pill{background:transparent!important;box-shadow:none!important;color:color-mix(in srgb,var(--h2) 82%,#fff)!important;border-color:color-mix(in srgb,var(--h2) 65%,transparent)!important}
+html body .hr-j,html body .hr-j.ok{background:transparent!important;box-shadow:none!important}
+body.light-mode .hr-row[data-k="win"] .hr-pill{color:#3b45b8!important}
+body.light-mode .hr-row[data-k="loss"] .hr-pill{color:#b3194f!important}
+body.light-mode .hr-row[data-k="pend"] .hr-pill{color:#8a5a00!important}
 </style>
 <body>
 
@@ -3471,7 +3478,7 @@ body.light-mode .hr-j.ok{color:#3b45b8}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.08 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.09 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
