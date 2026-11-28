@@ -1729,6 +1729,19 @@ html body .vol-grad{background:linear-gradient(90deg,#1c0f55 0%,#3a1fa0 30%,#5b3
 body.light-mode #volRegimeRatio{background:linear-gradient(90deg,#5b21b6,#2563eb);-webkit-background-clip:text;background-clip:text;filter:none}
 .vol-tk span{color:#8f7fd6}
 body.light-mode .vol-tk span{color:#6d58c4}
+
+/* v20.98 — TPO Profile: 2 สีไล่เฉดตามตัวอย่างวงแหวน (เหนือราคา=ม่วงแดง→ชมพู · ใต้ราคา=น้ำเงิน→ม่วง · POC=ลาเวนเดอร์→ชมพูอ่อน) */
+.tp-fill.a{background:linear-gradient(90deg,#c13bd8,#ff3d7a)}
+.tp-fill.b{background:linear-gradient(90deg,#4f6cf0,#a45cf6)}
+.tp-fill.p{background:linear-gradient(90deg,#9b6cff,#f3a6ff);box-shadow:0 0 10px rgba(200,140,255,.65)}
+.tp-row.va{background:color-mix(in srgb,#8b5cf6 9%,transparent)}
+.tp-row.poc .tp-px{color:#d6b8ff}
+.tp-rb .va{background:linear-gradient(90deg,#4f6cf0,#a45cf6 55%,#ff3d7a)!important;opacity:.9}
+.tp-rb .pc{background:#f0c8ff;box-shadow:0 0 8px #c58bff}
+body.light-mode .tp-row.poc .tp-px,body.light-mode #pocVal{color:#8b3fd0!important}
+body.light-mode .tp-fill.p{background:linear-gradient(90deg,#7c4dff,#d870f0);box-shadow:none}
+body.light-mode .tp-rb-top b{color:#8b3fd0!important}
+body.light-mode .tp-poc-l{color:#8b3fd0!important}
 </style>
 <body>
 
@@ -3111,9 +3124,9 @@ body.light-mode .vol-tk span{color:#6d58c4}
   <div style="display:flex;flex-direction:column;gap:2.5px;margin-bottom:10px;" id="volProfile"></div>
   <div class="hdiv"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-top:6px;text-align:center;">
-    <div><div style="font-size:9px;color:var(--t3);">VAH</div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--red);" id="vahVal">—</div></div>
-    <div><div style="font-size:9px;color:var(--amber);font-weight:700;">POC</div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--amber);" id="pocVal">—</div></div>
-    <div><div style="font-size:9px;color:var(--t3);">VAL</div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);" id="valVal">—</div></div>
+    <div><div style="font-size:9px;color:var(--t3);">VAH</div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:#ff5c93;" id="vahVal">—</div></div>
+    <div><div class="tp-poc-l" style="font-size:9px;color:#d6b8ff;font-weight:700;">POC</div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:#d6b8ff;" id="pocVal">—</div></div>
+    <div><div style="font-size:9px;color:var(--t3);">VAL</div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:#7c8cff;" id="valVal">—</div></div>
     <div><div style="font-size:9px;color:var(--violet);font-weight:700;">VWAP*</div><div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--violet);" id="vwapVal">—</div></div>
   </div>
   <div style="font-size:8.5px;color:var(--t3);margin-top:6px;">* VWAP คำนวณจาก candle H1 จริงย้อนหลัง ~24 ชม. แบบ time-weighted (TWAP) เพราะ retail forex ไม่มี tick volume จริงให้ถ่วงน้ำหนัก</div>
@@ -3345,7 +3358,7 @@ body.light-mode .vol-tk span{color:#6d58c4}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v20.97 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v20.99 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -8700,7 +8713,7 @@ function updateVolProfile(price,chg){
     const here=price>=b.lo&&price<b.hi;
     return `<div class="tp-row${inVA?' va':''}${isPoc?' poc':''}">
       <div class="tp-px">${b.hi.toFixed(1)}</div>
-      <div class="tp-track"><div class="tp-fill" style="width:${pct}%;--tc:${isPoc?'var(--amber)':isAbove?'var(--red)':'var(--green)'};"></div>${here?'<span class="tp-now">◀ ราคา</span>':''}</div>
+      <div class="tp-track"><div class="tp-fill ${isPoc?'p':isAbove?'a':'b'}" style="width:${pct}%"></div>${here?'<span class="tp-now">◀ ราคา</span>':''}</div>
       <div class="tp-n">${b.vol}${hasRealData?'x':'~'}</div>
     </div>`;
   }).join('');
@@ -8715,7 +8728,7 @@ function updateVolProfile(price,chg){
       const vH=vahSrc.hi,vL=valSrc.lo,span=Math.max(0.01,hi-lo);
       const pos=v=>Math.max(0,Math.min(100,(v-lo)/span*100)).toFixed(1);
       const inside=price>=vL&&price<=vH;
-      const st=inside?['อยู่ใน Value Area','var(--amber)']:price>vH?['เหนือ Value Area','var(--red)']:['ใต้ Value Area','var(--green)'];
+      const st=inside?['อยู่ใน Value Area','#d6b8ff']:price>vH?['เหนือ Value Area','#ff5c93']:['ใต้ Value Area','#7c8cff'];
       rb.innerHTML=`<div class="tp-rb-top"><span>ช่วงราคาวันนี้ ${lo.toFixed(0)}–${hi.toFixed(0)}</span><b style="color:${st[1]}">${st[0]}</b></div>
         <div class="tp-rb"><i class="va" style="left:${pos(vL)}%;width:${(pos(vH)-pos(vL)).toFixed(1)}%"></i><i class="pc" style="left:${pos(poc.midPrice)}%"></i><i class="pr" style="left:${pos(price)}%"></i></div>`;
     }
@@ -13858,30 +13871,46 @@ async function fetchTrendRiderH4OHLC(){
       const q=result?.indicators?.quote?.[0];
       const ts=result?.timestamp||[];
       if(!q?.close)return null;
-      const c=[],h=[],l=[],t=[];
+      const c=[],h=[],l=[],t=[],o=[];
       for(let i=0;i<q.close.length;i++){
-        if(q.close[i]!=null&&q.high[i]!=null&&q.low[i]!=null){c.push(q.close[i]);h.push(q.high[i]);l.push(q.low[i]);t.push(ts[i]);}
+        if(q.close[i]!=null&&q.high[i]!=null&&q.low[i]!=null){c.push(q.close[i]);h.push(q.high[i]);l.push(q.low[i]);t.push(ts[i]);o.push(q.open&&q.open[i]!=null?q.open[i]:q.close[i]);}
       }
       if(c.length<200)return null;
-      const h4c=[],h4h=[],h4l=[],h4t=[];
+      const h4c=[],h4h=[],h4l=[],h4t=[],h4o=[];
       for(let i=0;i<c.length;i+=4){
         const cChunk=c.slice(i,i+4),hChunk=h.slice(i,i+4),lChunk=l.slice(i,i+4);
         if(!cChunk.length)continue;
+        h4o.push(o[i]);
         h4c.push(cChunk[cChunk.length-1]);
         h4h.push(Math.max(...hChunk));
         h4l.push(Math.min(...lChunk));
         h4t.push(t[Math.min(i+cChunk.length-1,t.length-1)]);
       }
       if(h4c.length<150)return null;
-      return{c:h4c,h:h4h,l:h4l,t:h4t};
+      return{c:h4c,h:h4h,l:h4l,t:h4t,o:h4o};
     }catch(e){return null;}
   }
   return(await fetchOne('GC=F'))||(await fetchOne('XAUUSD=X'));
 }
 // จำลองไม้ Trend Rider ทั้งหมดในช่วงข้อมูล — ไม่ lookahead (ทุก index ใช้ข้อมูลถึงจุดนั้นเท่านั้น) HTF Lock ประมาณ
 // ด้วย D1×3+H4×2 เท่านั้น (ไม่มี H1 bias ระดับบาร์จริง — เกณฑ์เดียวกับที่ M15 Backtest ยอมรับไว้แล้ว)
+// v20.99 — ตัวเลือกทดสอบเทียบ (ไม่กระทบระบบจริง — ใช้ใน backtest เท่านั้น):
+//   opts.exit  = 'trail'(เดิม: Trailing ล้วน) | 'partial'(ปิดครึ่งที่ 2R ที่เหลือ Trailing ต่อ) | 'fixed3'(ปิดทั้งหมดที่ 3R ตายตัว)
+//   opts.room  = true → ข้ามไม้ถ้ามีโซน H4 ฝั่งตรงข้าม (OB/FVG) อยู่ใกล้กว่า TR_ROOM_R เท่าของ R ในทิศที่จะเข้า (ไม่มี lookahead)
+// ข้อสมมติ: ถ้าแท่งเดียวชนทั้ง SL และเป้า นับว่าโดน SL ก่อน (เข้าข้างความเสี่ยง) · ราคา fill เป้า = ราคาเป้าพอดี (ไม่มี slippage)
+const TR_ROOM_R=2;
+function _trRoomBlocked(h4,i,dir,price,atr){
+  if(!h4.o||!atr)return false;
+  const w=Math.max(0,i-119);
+  const ta={opens:h4.o.slice(w,i+1),highs:h4.h.slice(w,i+1),lows:h4.l.slice(w,i+1),closes:h4.c.slice(w,i+1)};
+  const need=atr*TR_CHANDELIER_MULT*TR_ROOM_R;
+  let zs=[];
+  try{zs=[...computeOrderBlocksFor(ta,price),...computeFVGFor(ta.closes,price).filter(z=>!z.filled)];}catch(e){return false;}
+  return zs.some(z=>dir==='BUY'?(z.type==='Bearish'&&z.bot>price&&z.bot-price<need):(z.type==='Bullish'&&z.top<price&&price-z.top<need));
+}
 function simulateTrendRiderTrades(h4,d1,opts){
   const strongOn=!!(opts&&opts.strong);
+  const exitMode=(opts&&opts.exit)||'trail',roomOn=!!(opts&&opts.room);
   const{c,h,l,t}=h4;
   const n=c.length;
   const series=computeBacktestSeries(c,h,l); // ema20/ema50/rsi/atr/adx ต่อบาร์
@@ -13912,11 +13941,19 @@ function simulateTrendRiderTrades(h4,d1,opts){
       if(better)pos.sl=candidateSl;
       const hit=pos.dir==='BUY'?lo<=pos.sl:hi>=pos.sl;
       const htfFlipped=htfLocked&&htfBias&&((pos.dir==='BUY'&&htfBias==='BEARISH')||(pos.dir==='SELL'&&htfBias==='BULLISH'));
+      const risk0=pos.atr*TR_CHANDELIER_MULT;
+      const reachedR=r=>pos.dir==='BUY'?hi>=pos.entry+risk0*r:lo<=pos.entry-risk0*r;
       if(hit||htfFlipped){
         const exitPrice=hit?pos.sl:price;
-        const pl=pos.dir==='BUY'?exitPrice-pos.entry:pos.entry-exitPrice;
-        const mfe0=pos.dir==='BUY'?pos.extreme-pos.entry:pos.entry-pos.extreme,risk0=pos.atr*TR_CHANDELIER_MULT;
-        trades.push({dir:pos.dir,entry:pos.entry,exit:exitPrice,pl,entryIdx:pos.entryIdx,exitIdx:i,barsHeld:i-pos.entryIdx,reason:hit?'SL':'HTF_FLIP',mode:pos.mode,tp1Hit:mfe0>=risk0*TR_TP1_R,tp2Hit:mfe0>=risk0*TR_TP2_R});
+        const plFull=pos.dir==='BUY'?exitPrice-pos.entry:pos.entry-exitPrice;
+        const pl=pos.part?(0.5*2*risk0+0.5*plFull):plFull; // partial: ครึ่งแรกปิดที่ 2R แล้ว ครึ่งหลังออกตามจริง
+        const mfe0=pos.dir==='BUY'?pos.extreme-pos.entry:pos.entry-pos.extreme;
+        trades.push({dir:pos.dir,entry:pos.entry,exit:exitPrice,pl,r:pl/risk0,entryIdx:pos.entryIdx,exitIdx:i,barsHeld:i-pos.entryIdx,reason:hit?'SL':'HTF_FLIP',mode:pos.mode,tp1Hit:mfe0>=risk0*TR_TP1_R,tp2Hit:mfe0>=risk0*TR_TP2_R});
+        pos=null;
+      }else if(exitMode==='partial'&&!pos.part&&reachedR(2)){
+        pos.part=true;
+      }else if(exitMode==='fixed3'&&reachedR(3)){
+        trades.push({dir:pos.dir,entry:pos.entry,exit:pos.dir==='BUY'?pos.entry+risk0*3:pos.entry-risk0*3,pl:risk0*3,r:3,entryIdx:pos.entryIdx,exitIdx:i,barsHeld:i-pos.entryIdx,reason:'TP3',mode:pos.mode,tp1Hit:true,tp2Hit:true});
         pos=null;
       }
       continue; // ถือ position อยู่แล้ว ไม่ประเมิน entry ใหม่ซ้อนในบาร์เดียวกัน
@@ -13944,6 +13981,7 @@ function simulateTrendRiderTrades(h4,d1,opts){
     if(pendingDir!==dir){pendingDir=dir;pendingSinceIdx=i;continue;}
     if(i-pendingSinceIdx<1)continue; // ยังไม่ครบ 2 แท่งติดกัน (แท่งนี้เป็นแท่งที่ 2 พอดีถึงจะเข้าได้)
     pendingDir=null;pendingSinceIdx=null;
+    if(roomOn&&_trRoomBlocked(h4,i,dir,price,atrNow))continue; // v20.99 โหมดทดสอบกรอง: โซนฝั่งตรงข้ามใกล้เกิน → ข้าม
     pos={dir,entry:price,extreme:price,atr:atrNow,sl:dir==='BUY'?price-atrNow*TR_CHANDELIER_MULT:price+atrNow*TR_CHANDELIER_MULT,entryIdx:i,mode:_entryMode};
   }
   return trades; // position ที่ยังเปิดค้างตอนจบข้อมูลไม่นับ (เหมือน backtest อื่นๆ ที่ไม่นับไม้ pending)
@@ -13962,7 +14000,14 @@ async function runTrendRiderBacktest(){
     }
     const tStrict=simulateTrendRiderTrades(h4,d1,{strong:false});
     const tStrong=simulateTrendRiderTrades(h4,d1,{strong:true});
-    renderTrendRiderBacktestResult(TR_STRONG_MODE?tStrong:tStrict,h4.c.length,{strict:tStrict,strong:tStrong});
+    const base={strong:TR_STRONG_MODE};
+    const variants=[
+      {k:'trail',lbl:'Trailing ล้วน (ระบบปัจจุบัน)',t:TR_STRONG_MODE?tStrong:tStrict},
+      {k:'partial',lbl:'ปิดครึ่งที่ 2R + Trailing ต่อ',t:simulateTrendRiderTrades(h4,d1,{...base,exit:'partial'})},
+      {k:'fixed3',lbl:'เป้า 3R ตายตัว',t:simulateTrendRiderTrades(h4,d1,{...base,exit:'fixed3'})},
+      {k:'room',lbl:`Trailing + กรองโซน H4 ฝั่งตรงข้าม <${TR_ROOM_R}R`,t:simulateTrendRiderTrades(h4,d1,{...base,room:true})}
+    ];
+    renderTrendRiderBacktestResult(TR_STRONG_MODE?tStrong:tStrict,h4.c.length,{strict:tStrict,strong:tStrong},variants);
   }catch(e){
     if(resultEl)resultEl.innerHTML=`<div style="font-size:11px;color:var(--red);text-align:center;padding:14px 0;">❌ เกิดข้อผิดพลาด: ${_escH(String(e).slice(0,120))}</div>`;
   }
@@ -14013,13 +14058,21 @@ function _trSumm(trades){
   const wins=trades.filter(t=>t.pl>0).length,total=trades.reduce((a,t)=>a+t.pl,0);
   return{n,win:Math.round(wins/n*100),total,avg:total/n,days:trades.reduce((a,t)=>a+t.barsHeld,0)/n*4/24,tp1:trades.filter(t=>t.tp1Hit).length,tp2:trades.filter(t=>t.tp2Hit).length};
 }
-function renderTrendRiderBacktestResult(trades,barCount,cmp){
+function renderTrendRiderBacktestResult(trades,barCount,cmp,variants){
   _renderTrendRiderBacktestCore(trades,barCount);
   const el=document.getElementById('trbtResult');
   if(!el||!cmp)return;
   const line=(lbl,t,active)=>{const q=_trSumm(t);return `<div style="display:flex;justify-content:space-between;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;${active?'color:var(--t1);font-weight:700;':'color:var(--t2);'}"><span>${lbl}${active?' ← ใช้อยู่':''}</span><span style="text-align:right;">${q.n} ไม้ · ${q.win==null?'—':q.win+'%'} · <span style="color:${q.total>=0?'var(--green)':'var(--red)'};">${q.total>=0?'+':''}${q.total.toFixed(0)} จุด</span> · TP1 ${q.tp1}/${q.n} · TP2 ${q.tp2}/${q.n}</span></div>`;};
   const box=`<div style="padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:var(--t1);margin-bottom:4px;">⚖️ เทียบกฎเข้าไม้ (ข้อมูลชุดเดียวกัน)</div>${line('เข้มงวด (เดิม)',cmp.strict,!TR_STRONG_MODE)}${line('ผ่อน (Strong ใหม่)',cmp.strong,TR_STRONG_MODE)}<div style="font-size:9px;color:var(--t3);margin-top:5px;line-height:1.5;">ถ้า "ผ่อน" ไม่ดีกว่า "เข้มงวด" ชัดเจน (จุดรวม/ไม้เฉลี่ย) อย่าเพิ่งไว้ใจ — ไม้ที่ผ่านโหมด Strong มักเข้าใกล้ปลายรอบ · TP1/TP2 = จำนวนไม้ที่ราคาเคยวิ่งถึงเป้า 1R/2R ก่อนออก</div></div>`;
-  el.innerHTML=box+el.innerHTML;
+  let vbox='';
+  if(variants&&variants.length){
+    const rs=variants.map(v=>{const n=v.t.length,sumR=v.t.reduce((a,x)=>a+(x.r||0),0),wins=v.t.filter(x=>x.pl>0).length;return{...v,n,sumR,avgR:n?sumR/n:0,win:n?Math.round(wins/n*100):null,pts:v.t.reduce((a,x)=>a+x.pl,0)};});
+    const best=Math.max(...rs.map(r=>r.sumR));
+    const rows=rs.map((r,i)=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:10px;${r.sumR===best&&r.n?'color:var(--t1);':'color:var(--t2);'}"><div style="display:flex;justify-content:space-between;gap:6px;"><b>${r.lbl}${r.sumR===best&&r.n?' ★':''}</b><span style="font-family:var(--mono);color:${r.sumR>=0?'var(--green)':'var(--red)'};">${r.sumR>=0?'+':''}${r.sumR.toFixed(1)}R</span></div><div style="color:var(--t3);font-size:9px;margin-top:2px;">${r.n} ไม้ · Win ${r.win==null?'—':r.win+'%'} · เฉลี่ย ${r.avgR>=0?'+':''}${r.avgR.toFixed(2)}R/ไม้ · ${r.pts>=0?'+':''}${r.pts.toFixed(0)} จุด</div></div>`).join('');
+    const minN=Math.min(...rs.map(r=>r.n));
+    vbox=`<div style="padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:var(--t1);margin-bottom:2px;">🧪 ทดสอบเทียบวิธีออก/กรอง (ข้อมูลชุดเดียวกัน)</div><div style="font-size:9px;color:var(--t3);margin-bottom:4px;">เทียบเป็นหน่วย R (1R = ระยะ SL เริ่มต้นของแต่ละไม้) เพื่อไม่ให้ไม้ช่วงราคาสูงได้เปรียบ</div>${rows}<div style="font-size:9px;color:${minN<30?'var(--amber)':'var(--t3)'};margin-top:6px;line-height:1.5;">${minN<30?'⚠️ มีวิธีที่ไม้น้อยกว่า 30 ไม้ — ตัวอย่างเล็กเกินสรุป อย่าเปลี่ยนระบบจริงจากตารางนี้ ใช้ดูแนวโน้มเท่านั้น':'ตัวอย่าง≥30 ไม้ทุกวิธี — พอดูแนวโน้มได้ แต่ยังเป็นข้อมูลอดีต ~1 ปี ช่วงเดียว'}<br>ข้อสมมติ: แท่งที่ชนทั้ง SL และเป้า นับว่าโดน SL ก่อน · fill เป้าตรงราคา ไม่มี slippage · โหมดกรองโซนใช้ OB/FVG H4 สูตรเดียวกับการ์ด Multi-TF SMC</div></div>`;
+  }
+  el.innerHTML=box+vbox+el.innerHTML;
 }
 
 // ── 4. FVG AUTO-DETECT ──
