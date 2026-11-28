@@ -1786,6 +1786,23 @@ html body .ag-verdict{padding:0 2px;background:none!important;border:0!important
 #shSessionStats>div>div,#m15shSessionStats>div>div,#m15ccSessionStats>div>div{gap:5px!important}
 #shSessionStats>div>div span,#m15shSessionStats>div>div span,#m15ccSessionStats>div>div span{font-size:9px!important;min-width:0!important}
 #shSessionStats>div>div span:last-child,#m15shSessionStats>div>div span:last-child,#m15ccSessionStats>div>div span:last-child{font-size:10.5px!important}
+
+/* v21.03 — Daily Plan */
+#dailyPlanBody{display:flex;flex-direction:column;gap:2px}
+.dp-r{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px}
+.dp-k{color:var(--t3);white-space:nowrap;font-size:10px}
+.dp-v{color:var(--t1);text-align:right;font-weight:600;line-height:1.45}
+.dp-v small{color:var(--t3);font-weight:500}
+.dp-v.b{background:linear-gradient(90deg,#4f6cf0,#a45cf6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dp-v.s{background:linear-gradient(90deg,#c13bd8,#ff3d7a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dp-v.a{color:#ffd37a}.dp-v.r{color:#ff7fa6}.dp-v.n{color:var(--t1)}
+.dp-sum{margin-top:8px;font-size:11.5px;font-weight:700;line-height:1.5;color:#d6b8ff}
+.dp-sum.b{color:#9fb0ff}.dp-sum.s{color:#ff8fc0}.dp-sum.a{color:#ffd37a}.dp-sum.r{color:#ff7fa6}
+.dp-wait{font-size:11px;color:var(--t3);text-align:center;padding:8px 0}
+body.light-mode .dp-r{border-bottom-color:rgba(0,0,0,.07)}
+body.light-mode .dp-v.a,body.light-mode .dp-sum.a{color:#9a5b00}
+body.light-mode .dp-v.r,body.light-mode .dp-sum.r{color:#b3194f}
+body.light-mode .dp-sum{color:#6b2fc4}body.light-mode .dp-sum.b{color:#3b45b8}body.light-mode .dp-sum.s{color:#b3196f}
 </style>
 <body>
 
@@ -2090,6 +2107,14 @@ html body .ag-verdict{padding:0 2px;background:none!important;border:0!important
       </script>
     </div>
   </div>
+</div>
+
+<!-- ── DAILY PLAN (สรุปอ่านอย่างเดียว ดึงจากการ์ดเดิม ไม่คำนวณสัญญาณเอง) ── -->
+<div class="section-card sc-indigo" id="secDailyPlan">
+  <div class="sh">
+    <div><div class="sh-title">Daily Plan</div><div class="sh-sub">สรุปสั้นก่อนเทรด — ทิศ HTF · session · ข่าว · แนวใกล้สุด</div></div>
+  </div>
+  <div id="dailyPlanBody"><div class="dp-wait">⏳ รอข้อมูล...</div></div>
 </div>
 
 <!-- ── QUICK SIGNAL (Nova card style) ── -->
@@ -3402,7 +3427,7 @@ html body .ag-verdict{padding:0 2px;background:none!important;border:0!important
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.02 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.03 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -4339,7 +4364,7 @@ function updateDOM(cur,chg,prev,hi,lo){
   generateWatchlistSignal(); // การ์ดแยกต่างหาก เกณฑ์หลวมกว่า — ไม่แตะ/ไม่กระทบ generateQuickSignal ข้างบนเลย
   generateM15Confirmation(); // ═══ M15 Confirmation Mode — H1 นำทาง + M15 จับจังหวะ แยกต่างหาก แสดงผลอย่างเดียว ไม่แตะ/ไม่กระทบการ์ดอื่นเลย ═══
   generateM15EntrySignal(); // ═══ item C — การ์ด M15 Entry แยกต่างหาก แสดงผลอย่างเดียว ไม่แตะ/ไม่กระทบ generateQuickSignal เลย ═══
-  updateAgreementSummary(); // ═══ H1 x M15 Agreement Summary ═══
+  updateAgreementSummary(); updateDailyPlan(); // ═══ H1 x M15 Agreement Summary + Daily Plan ═══
 }
 
 // ═══ v20.39 — SPARKLINES จริง (แทนชุดเดิมที่ไม่เคยถูกเรียกใช้ และเคยมีข้อมูลตัวอย่างปลอมฝังไว้) ═══
@@ -6244,6 +6269,54 @@ function renderKZCal(nowMins){
 // ของตัวเอง, ไม่ผูกกับ Circuit Breaker เลย เพราะการทำให้เป็นระบบ auto-log คู่ขนานกับ H1 เต็มรูปแบบเป็นงานใหญ่
 // (ต้องแยก schema/state ทั้งชุด กระทบ win-rate stats และ factor attribution ที่ผูกกับ Signal History เดียวกัน)
 // ถ้าจะเทรดจริงจากการ์ดนี้ ต้องจดบันทึก position เอง ไม่มีการ track TP/SL อัตโนมัติเหมือน Quick Signal
+// ═══ v21.03 — Daily Plan: สรุปอ่านอย่างเดียว ดึงจากของเดิมทั้งหมด (htfLockState · sessionAtMs · getNewsBlackoutStatus/liveEconEvents · keyLevelInfo · gtSignalHistory)
+// ไม่คำนวณ/ไม่แก้สัญญาณใดๆ — ถ้าข้อมูลไม่พอจะขึ้น "ข้อมูลยังไม่พอ" แทนการเดา
+function updateDailyPlan(){
+  const el=document.getElementById('dailyPlanBody');if(!el)return;
+  try{
+    const cur=livePrice;
+    const htf=window.htfLockState;
+    const htfLocked=!!(htf&&htf.locked&&htf.bias);
+    const htfTxt=htfLocked?(htf.bias==='BULLISH'?'ขาขึ้น':'ขาลง')+' (ล็อก)':'ยังไม่ล็อก';
+    const htfCls=htfLocked?(htf.bias==='BULLISH'?'b':'s'):'n';
+    // session ตอนนี้ + Win Rate ของ session นั้นจากประวัติจริง
+    const now=Date.now(),sess=sessionAtMs(now);
+    let w=0,l=0;
+    try{loadSignalHistory().filter(x=>SIG_CLOSED_STATUSES.includes(x.status)).forEach(x=>{if(sessionAtMs(new Date(x.time).getTime())===sess){if(x.status==='LOSS')l++;else w++;}});}catch(e){}
+    const tot=w+l,wr=tot>=5?Math.round(w/tot*100):null;
+    const sessTxt=sess+(tot===0?' · ยังไม่มีสถิติ':tot<5?` · ${w}W-${l}L (น้อยกว่า 5 ไม้ ยังไม่พอสรุป)`:` · Win ${wr}% (${w}W-${l}L)`);
+    // ข่าว High-impact ที่ใกล้ที่สุดที่ "ยังไม่มาถึง" (ใช้แหล่งเดียวกับ getNewsBlackoutStatus)
+    let newsTxt='ไม่พบข่าวแรงที่กำลังจะมา',newsCls='n',newsWarn=false;
+    try{
+      const src=(typeof liveEconEvents!=='undefined'&&liveEconEvents&&liveEconEvents.length)?liveEconEvents.map(e=>({name:e.title,ts:e.ts,impact:'high'})):MAJOR_EVENTS_2026.map(e=>({name:e.name,ts:new Date(e.date).getTime(),impact:e.impact}));
+      const bo=getNewsBlackoutStatus();
+      if(bo&&bo.blackout&&bo.event){const m=Math.round(bo.diffMin);newsTxt=`${bo.event.name} — ${m>=0?'อีก '+m+' นาที':'ผ่านมา '+(-m)+' นาที'} · อยู่ในช่วงงดเข้าออเดอร์`;newsCls='r';newsWarn=true;}
+      else{
+        const up=src.filter(e=>e.impact==='high'&&e.ts>now).sort((a,b)=>a.ts-b.ts)[0];
+        if(up){const mins=(up.ts-now)/60000;newsTxt=`${up.name} — อีก ${mins<90?Math.round(mins)+' นาที':(mins/60).toFixed(mins<600?1:0)+' ชม.'}`;newsCls=mins<180?'a':'n';}
+      }
+    }catch(e){newsTxt='อ่านข่าวไม่ได้ตอนนี้';}
+    // แนวใกล้สุด (Key Levels เดิม)
+    let lvTxt='ข้อมูลยังไม่พอ';
+    try{
+      if(cur){
+        const atr=realTA&&realTA.atr?realTA.atr:null;
+        const k=keyLevelInfo(cur,atr,computeRealLiquidityZones(cur),(typeof realTA_D1!=='undefined')?realTA_D1:null);
+        const f=v=>Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+        const one=(c,a)=>c?`${a} ${f(c.level)} <small>(${c.atrDist!=null?c.atrDist.toFixed(1)+' ATR':'$'+c.dist.toFixed(1)})</small>`:'';
+        const parts=[one(k.res,'▲ ต้าน'),one(k.sup,'▼ รับ')].filter(Boolean);
+        if(parts.length)lvTxt=parts.join(' &nbsp;·&nbsp; ');
+      }
+    }catch(e){}
+    // บรรทัดสรุป — มีแค่ 3 แบบ ไม่ฟันธงเกินข้อมูล
+    let sum,sumCls;
+    if(newsWarn){sum='⏸ รอข่าวผ่านก่อน ค่อยพิจารณา';sumCls='r';}
+    else if(!htfLocked||!cur){sum='ข้อมูลยังไม่พอ — ยังไม่มีเทรนด์ใหญ่ยืนยัน ระวังจังหวะสั้น';sumCls='a';}
+    else{sum=`เทรนด์ใหญ่ ${htf.bias==='BULLISH'?'ขาขึ้น':'ขาลง'} — เน้นหาจังหวะฝั่ง ${htf.bias==='BULLISH'?'BUY':'SELL'} ตาม Quick Signal`;sumCls=htfCls;}
+    const row=(k,v,c)=>`<div class="dp-r"><span class="dp-k">${k}</span><span class="dp-v ${c||''}">${v}</span></div>`;
+    el.innerHTML=row('ทิศ HTF',htfTxt,htfCls)+row('Session',sessTxt)+row('ข่าวถัดไป',newsTxt,newsCls)+row('แนวใกล้สุด',lvTxt)+`<div class="dp-sum ${sumCls}">${sum}</div>`;
+  }catch(e){el.innerHTML='<div class="dp-wait">ข้อมูลยังไม่พอ</div>';}
+}
 // ═══ H1 × M15 Agreement Summary — การ์ดใหม่ ไม่คำนวณคะแนนเองเลย แค่เรียก evalConfluence()/_qsScoreOf() ที่มีอยู่
 // แล้วซ้ำ (สลับ csTF ชั่วคราวแบบเดียวกับที่ generateM15EntrySignal ทำ) แล้วสรุปเทียบกับ window.htfLockState —
 // จุดประสงค์: เดิมต้องเลื่อนดู 3-4 การ์ด (Quick Signal, Confluence Score, HTF Lock, M15 Entry) แล้วปะติดปะต่อเอง
@@ -12814,7 +12887,9 @@ const COLLAPSE_KEY='gtCollapsed';
 let collapsedSections=JSON.parse(localStorage.getItem(COLLAPSE_KEY)||'[]');
 
 function initSectionCollapse(){
-  document.querySelectorAll('.section-card').forEach((card,idx)=>{
+  const _scAll=[...document.querySelectorAll('.section-card')].filter(c=>c.id!=='secDailyPlan');
+  document.querySelectorAll('.section-card').forEach((card,_i)=>{
+    const idx=card.id==='secDailyPlan'?'dailyplan':_scAll.indexOf(card);
     const sh=card.querySelector(':scope > .sh');
     if(!sh)return;
 
@@ -13016,7 +13091,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     await refreshRealTA_M15();
     await refreshRealTA_M5(); // ═══ item C ═══
     generateM15EntrySignal(); // ═══ item C ═══
-    updateAgreementSummary(); // ═══ H1 x M15 Agreement Summary ═══
+    updateAgreementSummary(); updateDailyPlan(); // ═══ H1 x M15 Agreement Summary + Daily Plan ═══
     if(realTA){
       updateIndicators(livePrice||realTA.lastClose, livePriceData.chgPct||0);
       updateConfluenceScore(livePrice||realTA.lastClose, livePriceData.chgPct||0);
