@@ -1824,6 +1824,8 @@ body.light-mode .dp-sum{color:#6b2fc4}body.light-mode .dp-sum.b{color:#3b45b8}bo
 body.light-mode .dp-caps i,body.light-mode .dp-cd{background:rgba(0,0,0,.08)}
 body.light-mode .dp-tl i.now{outline-color:#3b1d7a}
 body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5);background:#6b2fc4}
+
+.gt-hide{display:none!important}
 </style>
 <body>
 
@@ -2145,7 +2147,7 @@ body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5)
     <span class="sh-badge sb-g">No API</span>
   </div>
   <div id="cbBanner" style="display:none;margin-bottom:10px;padding:10px 12px;border-radius:10px;"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;cursor:pointer;" onclick="const el=document.getElementById('cbSettingsBox');el.style.display=el.style.display==='none'?'flex':'none';">
+  <div class="gt-hide" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;cursor:pointer;" onclick="const el=document.getElementById('cbSettingsBox');el.style.display=el.style.display==='none'?'flex':'none';">
     <span style="font-size:9.5px;color:var(--t3);">⚙️ ตั้งค่า Circuit Breaker</span>
     <span style="font-size:9.5px;color:var(--t3);">▾</span>
   </div>
@@ -2155,7 +2157,7 @@ body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5)
     <div style="flex:1;min-width:90px;"><div class="clbl" style="font-size:9px;">ขาดทุนสะสม/สัปดาห์ (R)</div><input class="cinp" type="number" id="cbSetWeeklyLossR" step="0.5" placeholder="6" value=""/></div>
     <button onclick="saveCBSettings()" style="padding:9px 12px;border-radius:8px;background:var(--indigo);border:none;color:#fff;font-size:10.5px;font-weight:700;cursor:pointer;white-space:nowrap;">บันทึก</button>
   </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;cursor:pointer;" onclick="const el=document.getElementById('qsThresholdBox');el.style.display=el.style.display==='none'?'flex':'none';">
+  <div class="gt-hide" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;cursor:pointer;" onclick="const el=document.getElementById('qsThresholdBox');el.style.display=el.style.display==='none'?'flex':'none';">
     <span style="font-size:9.5px;color:var(--t3);">⚙️ ตั้งเกณฑ์ขั้นต่ำ Quick Signal เอง (ค่าเริ่มต้น 6.5)</span>
     <span style="font-size:9.5px;color:var(--t3);">▾</span>
   </div>
@@ -2164,7 +2166,7 @@ body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5)
     <button onclick="saveQSThreshold()" style="padding:9px 12px;border-radius:8px;background:var(--indigo);border:none;color:#fff;font-size:10.5px;font-weight:700;cursor:pointer;white-space:nowrap;">บันทึก</button>
     <button onclick="resetQSThreshold()" style="padding:9px 10px;border-radius:8px;background:transparent;border:1px solid var(--bd);color:var(--t3);font-size:10.5px;cursor:pointer;white-space:nowrap;">รีเซ็ต</button>
   </div>
-  <div style="font-size:9px;color:var(--t3);line-height:1.5;margin:-4px 0 10px;">💡 ไม่รู้จะตั้งเท่าไหร่ดี? เลื่อนลงไปกด "🔬 Threshold Sweep" ในการ์ด Historical Backtest ด้านล่าง จะช่วยเทียบหลายค่าให้เห็นความถี่สัญญาณ/วัน vs win rate ก่อนตัดสินใจ</div>
+  <div class="gt-hide" style="font-size:9px;color:var(--t3);line-height:1.5;margin:-4px 0 10px;">💡 ไม่รู้จะตั้งเท่าไหร่ดี? เลื่อนลงไปกด "🔬 Threshold Sweep" ในการ์ด Historical Backtest ด้านล่าง จะช่วยเทียบหลายค่าให้เห็นความถี่สัญญาณ/วัน vs win rate ก่อนตัดสินใจ</div>
   <div id="notifPermBanner" style="display:none;margin-bottom:10px;padding:10px 12px;border-radius:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
       <div style="font-size:11px;color:var(--t2);line-height:1.5;">🔔 เปิดแจ้งเตือนไว้ จะได้รู้ทันทีเมื่อมีสัญญาณเทรดใหม่ (BUY/SELL) หรือ Early Warning ขึ้น แม้ปิดแอปอยู่</div>
@@ -3448,7 +3450,7 @@ body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5)
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.04 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.05 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
