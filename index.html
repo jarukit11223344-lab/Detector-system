@@ -1938,6 +1938,16 @@ html body .kzr:not(.on) .kzr-d{display:none}
 html body .kzr-d i{height:5px}
 html body .cw-rings{margin-top:8px;padding-top:8px;gap:6px}
 html body .cw-r svg{width:46px;height:46px}
+
+/* v21.21 — Watchlist 2 สี: ขึ้น=ม่วง · ลง=ชมพูแมเจนต้า (ตามภาพอ้างอิงไอคอนเรืองแสง) */
+.wl-up{--w1:#7b2fe0;--w2:#d2a4ff}.wl-dn{--w1:#ff3fb0;--w2:#ffc2ef}
+.wl-row.wl-up,.wl-row.wl-dn{border-left-color:var(--w1)}
+html body .wl-row.wl-up,html body .wl-row.wl-dn{background:linear-gradient(100deg,color-mix(in srgb,var(--w1) 14%,transparent),transparent 60%),rgba(255,255,255,.02)}
+.wl-row .wl-bar{background:linear-gradient(90deg,var(--w1),var(--w2));opacity:.95;box-shadow:0 0 8px color-mix(in srgb,var(--w1) 70%,transparent)}
+.wl-up .wl-price,.wl-dn .wl-price{background:linear-gradient(90deg,var(--w1),var(--w2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--w1) 55%,transparent))}
+body.light-mode .wl-up .wl-price{background:linear-gradient(90deg,#5b1fc0,#9b5ff0);-webkit-background-clip:text;background-clip:text}
+body.light-mode .wl-dn .wl-price{background:linear-gradient(90deg,#d6188f,#ff6fc8);-webkit-background-clip:text;background-clip:text}
+body.light-mode .wl-up .wl-chg{color:#6b2fc4!important}body.light-mode .wl-dn .wl-chg{color:#c4177f!important}
 </style>
 <body>
 
@@ -3562,7 +3572,7 @@ html body .cw-r svg{width:46px;height:46px}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.20 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.21 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -8235,14 +8245,15 @@ function renderWatchlist(){
   el.innerHTML=wlShown.map(({w,i})=>{
     const p=w.price?w.price.toFixed(w.price>100?2:4):'—';
     const c=w.chg;
-    const col=c===null?'var(--t3)':c>=0?'var(--green)':'var(--red)';
+    const col=c===null?'var(--t3)':c>=0?'#a45cf6':'#ff4fc0';
     const cStr=c===null?'—':`${c>=0?'+':''}${c.toFixed(2)}%`;
-    const chgBg=c===null?'rgba(255,255,255,.04)':c>=0?'rgba(34,211,153,.1)':'rgba(244,63,94,.1)';
+    const chgBg=c===null?'rgba(255,255,255,.04)':c>=0?'rgba(139,63,232,.16)':'rgba(255,63,176,.14)';
+    const wk=c===null?'':c>=0?'wl-up':'wl-dn';
     const mag=c===null?0:Math.min(100,Math.abs(c)/2*100);
-    return `<div class="wl-row" style="--wc:${col}">
+    return `<div class="wl-row ${wk}" style="--wc:${col}">
       <i class="wl-bar" style="width:${mag.toFixed(0)}%"></i>
       <span class="wl-sym">${w.sym}</span>
-      <span class="wl-price" style="color:${c===null?'var(--t3)':c>=0?'var(--green)':'var(--red)'};">${p}</span>
+      <span class="wl-price" style="${c===null?'color:var(--t3)':''}">${p}</span>
       <span class="wl-chg" style="background:${chgBg};color:${col};">${cStr}</span>
       <button class="wl-del" onclick="removeWatchlist(${i})">✕</button>
     </div>`;
