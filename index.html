@@ -1803,6 +1803,27 @@ body.light-mode .dp-r{border-bottom-color:rgba(0,0,0,.07)}
 body.light-mode .dp-v.a,body.light-mode .dp-sum.a{color:#9a5b00}
 body.light-mode .dp-v.r,body.light-mode .dp-sum.r{color:#b3194f}
 body.light-mode .dp-sum{color:#6b2fc4}body.light-mode .dp-sum.b{color:#3b45b8}body.light-mode .dp-sum.s{color:#b3196f}
+
+/* v21.04 — Daily Plan widgets */
+.dp-r{display:block!important;padding:8px 0!important}
+.dp-rt{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.dp-w{margin-top:7px}
+.dp-rl{display:flex;justify-content:space-between;font-size:8.5px;color:var(--t3);margin-top:3px;font-family:var(--mono)}
+.dp-caps{display:flex;gap:5px}
+.dp-caps i{flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.07)}
+.dp-caps.b i.on{background:linear-gradient(90deg,#4f6cf0,#a45cf6);box-shadow:0 0 9px rgba(140,110,255,.6)}
+.dp-caps.s i.on{background:linear-gradient(90deg,#c13bd8,#ff3d7a);box-shadow:0 0 9px rgba(255,61,122,.55)}
+.dp-tl{display:flex;gap:2px}
+.dp-tl i{flex:1;height:12px;border-radius:3px;opacity:.55}
+.dp-tl i.a{background:#4a4f86}.dp-tl i.l{background:#6f7cf5}.dp-tl i.o{background:linear-gradient(180deg,#c13bd8,#ff3d7a)}.dp-tl i.n{background:#a45cf6}
+.dp-tl i.now{opacity:1;height:16px;margin-top:-2px;box-shadow:0 0 10px rgba(214,184,255,.85);outline:1.5px solid #f3e6ff}
+.dp-cd{height:7px;border-radius:7px;background:rgba(255,255,255,.07);overflow:hidden}
+.dp-cd i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#4f6cf0,#a45cf6 55%,#ffb347);box-shadow:0 0 9px rgba(255,179,71,.45)}
+.dp-rng{position:relative;height:9px;border-radius:9px;background:linear-gradient(90deg,#4f6cf0,#a45cf6 50%,#ff3d7a)}
+.dp-rng i{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(20,16,50,.9),0 0 12px rgba(214,184,255,.9)}
+body.light-mode .dp-caps i,body.light-mode .dp-cd{background:rgba(0,0,0,.08)}
+body.light-mode .dp-tl i.now{outline-color:#3b1d7a}
+body.light-mode .dp-rng i{box-shadow:0 0 0 3px #fff,0 1px 6px rgba(80,40,160,.5);background:#6b2fc4}
 </style>
 <body>
 
@@ -3427,7 +3448,7 @@ body.light-mode .dp-sum{color:#6b2fc4}body.light-mode .dp-sum.b{color:#3b45b8}bo
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.03 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.04 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -6286,18 +6307,18 @@ function updateDailyPlan(){
     const tot=w+l,wr=tot>=5?Math.round(w/tot*100):null;
     const sessTxt=sess+(tot===0?' · ยังไม่มีสถิติ':tot<5?` · ${w}W-${l}L (น้อยกว่า 5 ไม้ ยังไม่พอสรุป)`:` · Win ${wr}% (${w}W-${l}L)`);
     // ข่าว High-impact ที่ใกล้ที่สุดที่ "ยังไม่มาถึง" (ใช้แหล่งเดียวกับ getNewsBlackoutStatus)
-    let newsTxt='ไม่พบข่าวแรงที่กำลังจะมา',newsCls='n',newsWarn=false;
+    let newsTxt='ไม่พบข่าวแรงที่กำลังจะมา',newsCls='n',newsWarn=false,newsMins=null;
     try{
       const src=(typeof liveEconEvents!=='undefined'&&liveEconEvents&&liveEconEvents.length)?liveEconEvents.map(e=>({name:e.title,ts:e.ts,impact:'high'})):MAJOR_EVENTS_2026.map(e=>({name:e.name,ts:new Date(e.date).getTime(),impact:e.impact}));
       const bo=getNewsBlackoutStatus();
-      if(bo&&bo.blackout&&bo.event){const m=Math.round(bo.diffMin);newsTxt=`${bo.event.name} — ${m>=0?'อีก '+m+' นาที':'ผ่านมา '+(-m)+' นาที'} · อยู่ในช่วงงดเข้าออเดอร์`;newsCls='r';newsWarn=true;}
+      if(bo&&bo.blackout&&bo.event){const m=Math.round(bo.diffMin);newsTxt=`${bo.event.name} — ${m>=0?'อีก '+m+' นาที':'ผ่านมา '+(-m)+' นาที'} · อยู่ในช่วงงดเข้าออเดอร์`;newsCls='r';newsWarn=true;newsMins=Math.max(0,bo.diffMin);}
       else{
         const up=src.filter(e=>e.impact==='high'&&e.ts>now).sort((a,b)=>a.ts-b.ts)[0];
-        if(up){const mins=(up.ts-now)/60000;newsTxt=`${up.name} — อีก ${mins<90?Math.round(mins)+' นาที':(mins/60).toFixed(mins<600?1:0)+' ชม.'}`;newsCls=mins<180?'a':'n';}
+        if(up){const mins=(up.ts-now)/60000;newsTxt=`${up.name} — อีก ${mins<90?Math.round(mins)+' นาที':(mins/60).toFixed(mins<600?1:0)+' ชม.'}`;newsCls=mins<180?'a':'n';newsMins=mins;}
       }
     }catch(e){newsTxt='อ่านข่าวไม่ได้ตอนนี้';}
     // แนวใกล้สุด (Key Levels เดิม)
-    let lvTxt='ข้อมูลยังไม่พอ';
+    let lvTxt='ข้อมูลยังไม่พอ',lvW='';
     try{
       if(cur){
         const atr=realTA&&realTA.atr?realTA.atr:null;
@@ -6306,6 +6327,8 @@ function updateDailyPlan(){
         const one=(c,a)=>c?`${a} ${f(c.level)} <small>(${c.atrDist!=null?c.atrDist.toFixed(1)+' ATR':'$'+c.dist.toFixed(1)})</small>`:'';
         const parts=[one(k.res,'▲ ต้าน'),one(k.sup,'▼ รับ')].filter(Boolean);
         if(parts.length)lvTxt=parts.join(' &nbsp;·&nbsp; ');
+        if(k.res&&k.sup&&k.res.level>k.sup.level){const pos=Math.max(0,Math.min(100,(cur-k.sup.level)/(k.res.level-k.sup.level)*100));
+          lvW=`<div class="dp-w"><div class="dp-rng"><i style="left:${pos.toFixed(1)}%"></i></div><div class="dp-rl"><span>${f(k.sup.level)}</span><span>${f(cur)}</span><span>${f(k.res.level)}</span></div></div>`;}
       }
     }catch(e){}
     // บรรทัดสรุป — มีแค่ 3 แบบ ไม่ฟันธงเกินข้อมูล
@@ -6313,8 +6336,17 @@ function updateDailyPlan(){
     if(newsWarn){sum='⏸ รอข่าวผ่านก่อน ค่อยพิจารณา';sumCls='r';}
     else if(!htfLocked||!cur){sum='ข้อมูลยังไม่พอ — ยังไม่มีเทรนด์ใหญ่ยืนยัน ระวังจังหวะสั้น';sumCls='a';}
     else{sum=`เทรนด์ใหญ่ ${htf.bias==='BULLISH'?'ขาขึ้น':'ขาลง'} — เน้นหาจังหวะฝั่ง ${htf.bias==='BULLISH'?'BUY':'SELL'} ตาม Quick Signal`;sumCls=htfCls;}
-    const row=(k,v,c)=>`<div class="dp-r"><span class="dp-k">${k}</span><span class="dp-v ${c||''}">${v}</span></div>`;
-    el.innerHTML=row('ทิศ HTF',htfTxt,htfCls)+row('Session',sessTxt)+row('ข่าวถัดไป',newsTxt,newsCls)+row('แนวใกล้สุด',lvTxt)+`<div class="dp-sum ${sumCls}">${sum}</div>`;
+    // วิดเจ็ต: HTF = แคปซูลตามจำนวน TF ที่เห็นตรง · Session = แถบ 24 ชม. (UTC) ระบายสีตาม session + ขีดเวลาปัจจุบัน · ข่าว = แท่งนับถอยหลัง 24 ชม.
+    let htfW='';
+    if(htfLocked&&htf.totalTfs){const tn=htf.totalTfs,ag=htf.agreeCount||0;htfW=`<div class="dp-w"><div class="dp-caps ${htfCls}">${Array.from({length:tn},(_,i)=>`<i class="${i<ag?'on':''}"></i>`).join('')}</div><div class="dp-rl"><span>${ag}/${tn} TF เห็นตรงกัน</span></div></div>`;}
+    const nH=new Date(now).getUTCHours()+new Date(now).getUTCMinutes()/60;
+    const sc={'Asian':'a','London':'l','London+NY Overlap':'o','New York':'n'};
+    const d0=Math.floor(now/86400000)*86400000;
+    const cells=Array.from({length:24},(_,h)=>`<i class="${sc[sessionAtMs(d0+h*3600000+1800000)]}${Math.floor(nH)===h?' now':''}"></i>`).join('');
+    const sessW=`<div class="dp-w"><div class="dp-tl">${cells}</div><div class="dp-rl"><span>00</span><span>06</span><span>12</span><span>18</span><span>24 UTC</span></div></div>`;
+    const newsW=(newsMins!=null&&newsMins<=1440)?`<div class="dp-w"><div class="dp-cd"><i style="width:${Math.max(3,Math.min(100,(1-newsMins/1440)*100)).toFixed(0)}%"></i></div><div class="dp-rl"><span>ตอนนี้</span><span>24 ชม.</span></div></div>`:'';
+    const row=(k,v,c,w)=>`<div class="dp-r"><div class="dp-rt"><span class="dp-k">${k}</span><span class="dp-v ${c||''}">${v}</span></div>${w||''}</div>`;
+    el.innerHTML=row('ทิศ HTF',htfTxt,htfCls,htfW)+row('Session',sessTxt,'',sessW)+row('ข่าวถัดไป',newsTxt,newsCls,newsW)+row('แนวใกล้สุด',lvTxt,'',lvW)+`<div class="dp-sum ${sumCls}">${sum}</div>`;
   }catch(e){el.innerHTML='<div class="dp-wait">ข้อมูลยังไม่พอ</div>';}
 }
 // ═══ H1 × M15 Agreement Summary — การ์ดใหม่ ไม่คำนวณคะแนนเองเลย แค่เรียก evalConfluence()/_qsScoreOf() ที่มีอยู่
@@ -14851,6 +14883,7 @@ document.addEventListener('visibilitychange',()=>{document.documentElement.class
     pulse:'M22 12h-4l-3 9L9 3l-3 9H2',
     layers:'M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
     swap:'M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7',
+    plan:'M9 3h6v3H9zM7 5H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1M9 14l2 2 4-4',
     flask:'M10 2v7.3L4.5 19a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.3V2M8.5 2h7M7 16h10',
     lines:'M4 6h16M4 12h16M4 18h10',
     chip:'M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2M7 7h10v10H7zM10 10h4v4h-4z',
@@ -14896,7 +14929,7 @@ document.addEventListener('visibilitychange',()=>{document.documentElement.class
     spark:'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3zM19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8L19 17z'
   };
   const RULES=[
-    [/System Status/,'pulse'],[/Multi-TF SMC/,'layers'],[/H1 × M15 Agreement/,'swap'],[/Validation Lab|^Lab\b/,'flask'],
+    [/System Status/,'pulse'],[/Multi-TF SMC/,'layers'],[/H1 × M15 Agreement/,'swap'],[/Daily Plan/,'plan'],[/Validation Lab|^Lab\b/,'flask'],
     [/Smart Summary/,'lines'],[/AI Chart Analysis/,'chip'],[/AI Signal Generator/,'spark'],[/Risk Calculator/,'shield'],
     [/Trend Rider Backtest/,'repeat'],[/Trend Rider/,'trend'],[/Historical Backtest/,'rewind'],[/Pattern Recognition/,'candle'],
     [/Accuracy Diagnostics/,'cross'],[/Correlation/,'link'],[/HTF Bias Lock/,'lock'],[/Market Structure/,'search'],
