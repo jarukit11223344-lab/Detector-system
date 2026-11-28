@@ -1923,6 +1923,21 @@ body.light-mode .sc-toggle{box-shadow:none}
 /* v21.18 — ปุ่มของกล่อง Lab ให้เหมือนปุ่มการ์ดอื่น (เดิมโดนกฎ #labBar .lab-caret ทับสีลูกศรเป็นเทา) */
 html body #labBar .lab-caret{color:#fff!important;font-size:9px;opacity:1!important;text-shadow:0 0 3px rgba(190,200,255,.6)}
 body.light-mode #labBar .lab-caret{color:#4f3bd0!important;text-shadow:none}
+
+/* v21.19 — Trend Rider: คำอธิบายใต้ชื่อโชว์เฉพาะตอนหุบการ์ด · Kill Zone & Sessions กระชับ */
+.section-card:not(.collapsed) .tr-sub{display:none}
+html body .kz-cal{margin-bottom:6px;padding:8px 9px 6px}
+html body .kz-cal .kc-h{margin-bottom:5px}
+html body .kz-cal .kc-l{height:19px;margin-bottom:3px}
+html body .kz-cal .kc-ax{margin-top:3px;padding-top:3px}
+html body .kzw{padding:0 12px;margin-bottom:6px}
+html body .kzr{padding:6px 0 7px}
+html body .kzr-h{margin-bottom:0}
+html body .kzr.on .kzr-h{margin-bottom:6px}
+html body .kzr:not(.on) .kzr-d{display:none}
+html body .kzr-d i{height:5px}
+html body .cw-rings{margin-top:8px;padding-top:8px;gap:6px}
+html body .cw-r svg{width:46px;height:46px}
 </style>
 <body>
 
@@ -3003,7 +3018,7 @@ body.light-mode #labBar .lab-caret{color:#4f3bd0!important;text-shadow:none}
      Lock พลิกทิศไปเลย — เข้าเมื่อ HTF Lock (D1×3+H4×2+H1×1) ล็อกทิศชัดเจน + ADX H4 แข็งแรงพอ (ไม่ sideways) ── -->
 <div class="section-card" style="border-color:rgba(244,180,0,.2);">
   <div class="sh">
-    <div><div class="sh-title">Trend Rider</div><div class="sh-sub">Chandelier ATR Trailing (3×ATR H4) + เป้า TP1/TP2 (1R/2R) · ทยอยปิดที่เป้า ที่เหลือปล่อยวิ่งจนกว่า trend จะหัก · จับ trend ยาวหลายวัน</div></div>
+    <div><div class="sh-title">Trend Rider</div><div class="sh-sub tr-sub">Chandelier ATR Trailing (3×ATR H4) + เป้า TP1/TP2 (1R/2R) · ทยอยปิดที่เป้า ที่เหลือปล่อยวิ่งจนกว่า trend จะหัก · จับ trend ยาวหลายวัน</div></div>
     <span class="sh-badge" id="trBadge" style="font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;">—</span>
   </div>
   <div id="trStrip" style="display:none;margin:0 0 10px;padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);font-size:10.5px;line-height:1.65;color:var(--t2);"></div>
@@ -3547,7 +3562,7 @@ body.light-mode #labBar .lab-caret{color:#4f3bd0!important;text-shadow:none}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.18 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.20 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -8161,24 +8176,24 @@ function renderSeasonality(){
   const maxBias=Math.max(...SEASONALITY.map(s=>Math.abs(s.bias)));
   const badge=document.getElementById('curMonthBadge');
   const cur=SEASONALITY[curM];
-  if(badge){badge.textContent=cur.bias>0?`+${cur.bias}%`:cur.bias+'%';badge.style.color=cur.bias>0?'var(--green)':'var(--red)';}
+  if(badge){badge.textContent=cur.bias>0?`+${cur.bias}%`:cur.bias+'%';badge.style.color=cur.bias>0?'#2de2d0':'#3b82ff';}
   const el=document.getElementById('seasGrid');
   if(el){
     // v20.62 — วงแหวน 12 เดือน (สไตล์ "STAND 4 OF 12 HR") + กราฟแท่งขึ้น/ลงรอบเส้นศูนย์ (สไตล์แถบแท่ง 95 dB)
     const rank=[...SEASONALITY].sort((x,y)=>y.bias-x.bias).findIndex(x=>x.m===cur.m)+1;
     const CX=120,CY=120,RR=82,pos=i=>{const a=-Math.PI/2+i/12*2*Math.PI;return [CX+RR*Math.cos(a),CY+RR*Math.sin(a),CX+(RR+22)*Math.cos(a),CY+(RR+22)*Math.sin(a)];};
-    const cc=cur.bias>=0?'var(--green)':'var(--red)';
+    const cc=cur.bias>=0?'#2de2d0':'#3b82ff';
     const dots=SEASONALITY.map((s,i)=>{
-      const [x,y,lx,ly]=pos(i),col=s.bias>=0?'var(--green)':'var(--red)',r=4+Math.abs(s.bias)/maxBias*8,isCur=i===curM;
-      return `${isCur?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r+6).toFixed(1)}" fill="none" stroke="${col}" stroke-width="1.5" opacity=".55"/>`:''}<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${col}" opacity="${isCur?1:.78}" ${isCur?`style="filter:drop-shadow(0 0 6px ${s.bias>=0?'#2fe86b':'#ff4258'})"`:''}/><text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="middle" font-size="9" font-family="monospace" font-weight="${isCur?800:500}" fill="${isCur?'var(--t1)':'var(--t3)'}">${s.m.slice(0,3)}</text>`;
+      const [x,y,lx,ly]=pos(i),col=s.bias>=0?'#2de2d0':'#3b82ff',r=4+Math.abs(s.bias)/maxBias*8,isCur=i===curM;
+      return `${isCur?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r+6).toFixed(1)}" fill="none" stroke="${col}" stroke-width="1.5" opacity=".55"/>`:''}<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${col}" opacity="${isCur?1:.78}" ${isCur?`style="filter:drop-shadow(0 0 6px ${s.bias>=0?'#2de2d0':'#3b82ff'})"`:''}/><text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="middle" font-size="9" font-family="monospace" font-weight="${isCur?800:500}" fill="${isCur?'var(--t1)':'var(--t3)'}">${s.m.slice(0,3)}</text>`;
     }).join('');
     const ring=`<svg viewBox="0 0 240 240" style="width:100%;max-width:250px;display:block;margin:0 auto 4px;"><circle cx="${CX}" cy="${CY}" r="${RR}" fill="none" stroke="currentColor" stroke-opacity=".08" stroke-width="1"/>${dots}<text x="${CX}" y="${CY-6}" text-anchor="middle" font-size="12" font-family="monospace" font-weight="800" letter-spacing="1.5" fill="var(--t3)">${cur.m.toUpperCase()}</text><text x="${CX}" y="${CY+22}" text-anchor="middle" font-size="26" font-family="monospace" font-weight="800" fill="${cc}">${cur.bias>0?'+':''}${cur.bias}%</text><text x="${CX}" y="${CY+40}" text-anchor="middle" font-size="9" font-family="monospace" fill="var(--t3)">อันดับ ${rank} จาก 12</text></svg>`;
     const H=44,cols=SEASONALITY.map((s,i)=>{
-      const h=Math.max(3,Math.abs(s.bias)/maxBias*H),col=s.bias>=0?'var(--green)':'var(--red)',isCur=i===curM;
+      const h=Math.max(3,Math.abs(s.bias)/maxBias*H),col=s.bias>=0?'#2de2d0':'#3b82ff',isCur=i===curM;
       return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;${isCur?'background:color-mix(in srgb,var(--t1) 7%,transparent);border-radius:8px;outline:1px solid color-mix(in srgb,var(--t1) 20%,transparent);':''}">
-        <div style="height:${H}px;display:flex;align-items:flex-end;"><div style="width:9px;height:${s.bias>=0?h:0}px;background:${col};border-radius:3px 3px 0 0;${s.bias>=0?'box-shadow:0 0 6px -1px var(--green);':''}"></div></div>
+        <div style="height:${H}px;display:flex;align-items:flex-end;"><div style="width:11px;height:${s.bias>=0?h:0}px;background:linear-gradient(180deg,#5ff5de,#14a89a);border-radius:6px 6px 0 0;box-shadow:${s.bias>=0?'0 0 9px -1px rgba(45,226,208,.65),inset 0 0 4px rgba(255,255,255,.25)':'none'};"></div></div>
         <div style="height:1px;width:100%;background:var(--border);"></div>
-        <div style="height:${Math.round(H*0.55)}px;display:flex;align-items:flex-start;"><div style="width:9px;height:${s.bias<0?Math.min(h,H*0.55):0}px;background:${col};border-radius:0 0 3px 3px;"></div></div>
+        <div style="height:${Math.round(H*0.55)}px;display:flex;align-items:flex-start;"><div style="width:11px;height:${s.bias<0?Math.min(h,H*0.55):0}px;background:linear-gradient(180deg,#1d4ed8,#5aa2ff);border-radius:0 0 6px 6px;box-shadow:${s.bias<0?'0 0 9px -1px rgba(59,130,255,.7),inset 0 0 4px rgba(255,255,255,.2)':'none'};"></div></div>
         <div style="font-family:var(--mono);font-size:8px;color:${isCur?'var(--t1)':'var(--t3)'};font-weight:${isCur?800:500};padding:2px 0 3px;">${s.m.slice(0,1)}</div>
         <div style="font-family:var(--mono);font-size:7.5px;color:${col};padding-bottom:3px;">${s.bias>0?'+':''}${s.bias}</div></div>`;
     }).join('');
@@ -8187,7 +8202,7 @@ function renderSeasonality(){
   }
   const adv=document.getElementById('seasAdvice');
   if(adv){
-    adv.innerHTML=`<span style="color:${cur.bias>0?'var(--green)':'var(--red)'};font-weight:700;">${cur.m} Historical: ${cur.bias>0?'+':''}${cur.bias}%</span><br><span style="color:var(--t2);">${cur.desc}</span>`;
+    adv.innerHTML=`<span style="color:${cur.bias>0?'#2de2d0':'#3b82ff'};font-weight:700;">${cur.m} Historical: ${cur.bias>0?'+':''}${cur.bias}%</span><br><span style="color:var(--t2);">${cur.desc}</span>`;
   }
 }
 
