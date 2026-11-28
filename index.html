@@ -1892,6 +1892,9 @@ html body #secDailyPlan .dp-rl{font-size:8px;margin-top:2px}
 #secDailyPlan .dp-cb>span{grid-area:l;font-size:9px}
 #secDailyPlan .dp-cb>em{grid-area:v;min-width:0;font-size:9px}
 #secDailyPlan .dp-cb>div{grid-area:b}
+
+.ds-stat-val.hg-b,.ds-stat-val.hg-s{display:inline-block;width:fit-content;margin-left:auto;margin-right:auto}
+.hg-b,.hg-s{-webkit-text-fill-color:transparent!important}
 </style>
 <body>
 
@@ -3516,7 +3519,7 @@ html body #secDailyPlan .dp-rl{font-size:8px;margin-top:2px}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.11 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.12 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -7740,7 +7743,7 @@ function renderSessionStats(arr){
       <span style="font-size:10.5px;color:var(--t2);font-weight:600;">${sess}</span>
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-size:9px;color:var(--t3);">${total===0?'ไม่มีข้อมูล':`${win}W-${loss}L`}</span>
-        <span style="font-family:var(--mono);font-size:11.5px;font-weight:800;color:${col};min-width:38px;text-align:right;">${wr===null?'—':wr+'%'}</span>
+        <span style="font-family:var(--mono);font-size:11.5px;font-weight:800;color:${col};min-width:38px;text-align:right;" class="${wr===null?'':wr>=50?'hg-b':'hg-s'}">${wr===null?'—':wr+'%'}</span>
       </div>
     </div>`;
   }).join('');
@@ -15043,6 +15046,12 @@ document.addEventListener('visibilitychange',()=>{document.documentElement.class
     apply();setTimeout(apply,800);
   }catch(e){}
 })();
-</script>
+
+// v21.12 — Total R / Avg R ของการ์ดประวัติ: ใส่สีไล่เฉดตามเครื่องหมาย (บวก=น้ำเงิน→ม่วง · ลบ=ม่วงแดง→ชมพู) ผ่าน observer เพื่อไม่ต้องแตะโค้ดคำนวณเดิม 3 ชุด
+(function(){
+  const ids=['ecTotalR','ecAvgR','m15ecTotalR','m15ecAvgR','m15ccEcTotalR','m15ccEcAvgR'];
+  function tint(el){const t=(el.textContent||'').trim();el.classList.remove('hg-b','hg-s');if(/^[+-]?\d/.test(t))el.classList.add(t[0]==='-'?'hg-s':'hg-b');}
+  ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;tint(el);try{new MutationObserver(()=>tint(el)).observe(el,{childList:true,characterData:true,subtree:true});}catch(e){}});
+})();</script>
 </body>
 </html>
