@@ -1872,6 +1872,26 @@ body.light-mode .hr-row[data-k="pend"] .hr-pill{color:#8a5a00!important}
 body.light-mode .dp-rb{stroke:rgba(0,0,0,.09)}
 body.light-mode .dp-rings{border-bottom-color:rgba(0,0,0,.07)}
 .dp-ring.dim .dp-rf{display:none}
+
+/* v21.11 — Daily Plan กระชับ */
+html body #secDailyPlan .dp-r{padding:5px 0!important}
+html body #secDailyPlan .dp-w{margin-top:5px}
+html body #secDailyPlan .dp-rings{padding:6px 0 5px;gap:4px}
+html body #secDailyPlan .dp-ring svg{width:54px;height:54px}
+html body #secDailyPlan .dp-ring b{height:54px;font-size:12px}
+html body #secDailyPlan .dp-ring span{font-size:8.5px;margin-top:1px}
+html body #secDailyPlan .dp-tl i{height:9px}
+html body #secDailyPlan .dp-tl i.now{height:13px}
+html body #secDailyPlan .dp-rng{height:7px}
+html body #secDailyPlan .dp-rng i{width:11px;height:11px}
+html body #secDailyPlan .dp-caps i{height:7px}
+html body #secDailyPlan .dp-cd{height:5px}
+html body #secDailyPlan .dp-rl{font-size:8px;margin-top:2px}
+#secDailyPlan .dp-cbw{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+#secDailyPlan .dp-cb{display:grid;grid-template-columns:1fr auto;grid-template-areas:"l v" "b b";gap:3px 4px;margin:0}
+#secDailyPlan .dp-cb>span{grid-area:l;font-size:9px}
+#secDailyPlan .dp-cb>em{grid-area:v;min-width:0;font-size:9px}
+#secDailyPlan .dp-cb>div{grid-area:b}
 </style>
 <body>
 
@@ -3496,7 +3516,7 @@ body.light-mode .dp-rings{border-bottom-color:rgba(0,0,0,.07)}
 
 <!-- FOOTER -->
 <div style="text-align:center;padding:14px 0 6px;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.06);">
-  ⚡ Gold Trade AI v21.10 · Chart: TradingView · Price: Yahoo Finance ·
+  ⚡ Gold Trade AI v21.11 · Chart: TradingView · Price: Yahoo Finance ·
   <span style="color:var(--red);">⚠️ การเทรดมีความเสี่ยงสูง</span>
 </div>
 
@@ -6407,7 +6427,7 @@ function updateDailyPlan(){
     let cbW='',cbTxt='—';
     try{const cb=getCircuitBreakerStatus();const dl=Math.max(0,-cb.todayR),dp=Math.min(1,dl/CB_MAX_DAILY_LOSS_R),wl=Math.max(0,-cb.weeklyR),wp=Math.min(1,wl/CB_MAX_WEEKLY_LOSS_R);
       cbTxt=cb.tripped?'หยุดสัญญาณอยู่':'ปกติ';
-      cbW=`<div class="dp-w"><div class="dp-cb"><span>วันนี้</span><div class="dp-cd ${dp>=.67?'hot':''}"><i style="width:${(dp*100).toFixed(0)}%"></i></div><em>${cb.todayR>=0?'+':''}${cb.todayR.toFixed(1)} / -${CB_MAX_DAILY_LOSS_R}R</em></div>
+      cbW=`<div class="dp-w dp-cbw"><div class="dp-cb"><span>วันนี้</span><div class="dp-cd ${dp>=.67?'hot':''}"><i style="width:${(dp*100).toFixed(0)}%"></i></div><em>${cb.todayR>=0?'+':''}${cb.todayR.toFixed(1)} / -${CB_MAX_DAILY_LOSS_R}R</em></div>
       <div class="dp-cb"><span>สัปดาห์</span><div class="dp-cd ${wp>=.67?'hot':''}"><i style="width:${(wp*100).toFixed(0)}%"></i></div><em>${cb.weeklyR>=0?'+':''}${cb.weeklyR.toFixed(1)} / -${CB_MAX_WEEKLY_LOSS_R}R</em></div>
       <div class="dp-cb"><span>แพ้ติด</span><div class="dp-caps s">${Array.from({length:CB_MAX_CONSECUTIVE_LOSSES},(_,i)=>`<i class="${i<cb.streak?'on':''}"></i>`).join('')}</div><em>${cb.streak}/${CB_MAX_CONSECUTIVE_LOSSES}</em></div></div>`;
       if(cb.tripped)cbTxt='🛑 '+cbTxt;
